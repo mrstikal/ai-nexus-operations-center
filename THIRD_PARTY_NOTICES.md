@@ -14,6 +14,7 @@ Original project source is licensed under the MIT License in `LICENSE`.
 | `@nestjs/common` | 12.6.2 | MIT |
 | `@nestjs/core` | 12.6.2 | MIT |
 | `@nestjs/platform-express` | 12.6.2 | MIT |
+| `drizzle-orm` | 0.45.4 | Apache-2.0 |
 | `next` | 16.4.6 | MIT |
 | `pg` | 8.23.1 | MIT |
 | `react` | 19.3.1 | MIT |

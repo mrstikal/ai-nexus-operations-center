@@ -43,6 +43,8 @@ const {
   GatewayResultSchema,
   GatewaySuccessSchema,
   LoginRequestSchema,
+  LoginResponseSchema,
+  LogoutResponseSchema,
   MessagePartSchema,
   ModelCapabilitySchema,
   ModelRoleSchema,
@@ -91,6 +93,8 @@ const COMPONENTS = [
   ['AuthMeResponse', AuthMeResponseSchema],
   ['CsrfResponse', CsrfResponseSchema],
   ['LoginRequest', LoginRequestSchema],
+  ['LoginResponse', LoginResponseSchema],
+  ['LogoutResponse', LogoutResponseSchema],
   ['CaseStatus', CaseStatusSchema],
   ['CaseSummary', CaseSummarySchema],
   ['CaseDetail', CaseDetailSchema],
@@ -186,6 +190,126 @@ function addRecursiveComponent(schemas, name, schema) {
   }
 }
 
+function authProblemResponses() {
+  return {
+    400: { description: 'Invalid request', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    401: { description: 'Authentication required', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    403: { description: 'Origin, CSRF or role check failed', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    429: { description: 'Login rate limit exceeded', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    503: { description: 'Identity or admission dependency unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+  };
+}
+
+function registerAuthPaths(registry) {
+  registry.registerComponent('securitySchemes', 'sessionCookie', {
+    type: 'apiKey',
+    in: 'cookie',
+    name: 'nexus_session',
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/auth/csrf',
+    tags: ['auth'],
+    summary: 'Obtain a preauth challenge or rotate a session CSRF token',
+    request: {
+      headers: z.object({
+        Origin: z.string().optional(),
+        'Sec-Fetch-Site': z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'CSRF token and expiry',
+        content: { 'application/json': { schema: CsrfResponseSchema } },
+      },
+      403: {
+        description: 'Session CSRF refresh origin is not allowed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Identity storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/login',
+    tags: ['auth'],
+    summary: 'Consume a single-use preauth challenge and create an eight-hour session',
+    request: {
+      headers: z.object({
+        Origin: z.string(),
+        'X-CSRF-Token': z.string(),
+      }),
+      body: {
+        content: { 'application/json': { schema: LoginRequestSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Authenticated session',
+        headers: { 'Set-Cookie': { schema: { type: 'string' } } },
+        content: { 'application/json': { schema: LoginResponseSchema } },
+      },
+      ...authProblemResponses(),
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/auth/me',
+    tags: ['auth'],
+    summary: 'Read the authenticated identity and roles',
+    security: [{ sessionCookie: [] }],
+    responses: {
+      200: {
+        description: 'Identity and roles only (no sandbox context)',
+        content: { 'application/json': { schema: AuthMeResponseSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Identity storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/auth/logout',
+    tags: ['auth'],
+    summary: 'Revoke the current session',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({
+        Origin: z.string(),
+        'X-CSRF-Token': z.string(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Session revoked',
+        headers: { 'Set-Cookie': { schema: { type: 'string' } } },
+        content: { 'application/json': { schema: LogoutResponseSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Identity storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+}
+
 export function generateOpenApiDocument() {
   const registry = new OpenAPIRegistry();
   const registered = new Set();
@@ -200,6 +324,7 @@ export function generateOpenApiDocument() {
     registry.register(name, schema);
   }
 
+  registerAuthPaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -225,10 +350,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F03',
+    stage: 'F04',
     contracts: 'declared-and-frozen',
-    httpControllers: 'not-implemented-in-f03',
-    openapiPaths: 'none-declared',
+    httpControllers: 'auth-implemented',
+    openapiPaths: 'auth-only; later controllers are declared in their owner stages',
   };
 
   return document;

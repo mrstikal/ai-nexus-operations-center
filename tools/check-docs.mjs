@@ -9,6 +9,7 @@ const REQUIRED_FILES = [
   'docs/DEVELOPMENT.md',
   'docs/OPERATIONS.md',
   'docs/CONTRACTS.md',
+  'docs/SECURITY.md',
   'docs/adr/001-workspace.md',
   'docs/adr/002-data-ownership.md',
   'docs/adr/004-transport-roles.md',

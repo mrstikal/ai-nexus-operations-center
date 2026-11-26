@@ -61,9 +61,10 @@ the absolute `10^12` minor-unit bound and rejects overflow.
 Contract and event names carry a version. Additive fields cannot change an approved
 payload, plan hash, action meaning or event payload meaning without a new contract/event
 version and a reviewed migration. Approval decisions bind the whole-plan hash; a new
-revision invalidates prior decisions. The F03 OpenAPI document is a declaration catalog:
-its paths are empty because no controller exists in F03, and its
-`x-nexus-implementation-status` marks controllers as not implemented.
+revision invalidates prior decisions. F03 originally generated a declaration catalog with no paths. F04 adds the four
+implemented auth paths; later owners add their paths. The
+`x-nexus-implementation-status` marker names the current controller scope rather than
+implying that every declared schema has a live endpoint.
 
 ## State machines
 

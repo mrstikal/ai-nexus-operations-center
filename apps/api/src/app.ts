@@ -1,6 +1,8 @@
 import { Controller, Get, Inject, Module } from '@nestjs/common';
 import type { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { AuthModule } from './auth/module.js';
+import { ProblemFilter } from './errors.js';
 
 export const HEALTH_PROVIDER = 'NEXUS_HEALTH_PROVIDER';
 
@@ -34,6 +36,7 @@ export class HealthController {
 }
 
 @Module({
+  imports: [AuthModule],
   controllers: [HealthController],
   providers: [
     {
@@ -45,5 +48,7 @@ export class HealthController {
 export class ApiModule {}
 
 export async function createApiApp(): Promise<INestApplication> {
-  return NestFactory.create(ApiModule, { logger: false });
+  const app = await NestFactory.create(ApiModule, { logger: false });
+  app.useGlobalFilters(new ProblemFilter());
+  return app;
 }

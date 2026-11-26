@@ -86,6 +86,28 @@ path or artifact assertion in the owning phase; an empty selector never passes.
 hashing, state transitions, privileged-field rejection and OpenAPI/example parity. See the
 [contracts guide](CONTRACTS.md).
 
+## TypeScript declaration compatibility
+
+The pinned Drizzle ORM 0.45.4 declaration bundle is not compatible with TypeScript 6.0.3
+strict library checking. `skipLibCheck` is therefore scoped to `packages/db`, `apps/api`
+and the root test/tooling program; project source is still fully typechecked. Packages
+without that adapter dependency keep library checking enabled.
+
+## Local identity accounts
+
+`pnpm demo:init` applies migrations and seeds the three local roles from
+`fixtures/users/roles.json`: operator, ops approver and finance/admin. Generated passwords
+are stored in ignored `.env.local` with mode `0600`. The interactive terminal prints new
+credentials once; captured/non-interactive output does not contain them. Use
+`pnpm infra:up --dev-ports` when host-run API or tooling needs PostgreSQL/Valkey, and set
+the exact `NEXUS_ALLOWED_ORIGINS` for the browser origin. The API development script
+loads the root `.env` through Nest CLI `--env-file`, so `pnpm dev` and
+`pnpm --filter @nexus/api dev` receive the generated database/cache settings; a bare
+`node dist/main.js` needs the environment supplied explicitly. See the
+[security guide](SECURITY.md) for sessions, CSRF, cookie attributes, role permissions and
+rate limits. `/auth/me` intentionally returns identity/roles only until F05 adds sandbox
+context.
+
 ## Local infrastructure
 
 F02 adds PostgreSQL 18.7 with pgvector 0.8.7, RabbitMQ 4.4.1, and Valkey 9.2.0.

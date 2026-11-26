@@ -19,6 +19,11 @@ export const AuthMeResponseSchema = z
   .strict();
 export type AuthMeResponse = z.infer<typeof AuthMeResponseSchema>;
 
+export const LoginResponseSchema = AuthMeResponseSchema.extend({
+  csrfToken: z.string().min(16).max(200),
+}).strict();
+export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+
 export const CsrfResponseSchema = z
   .object({
     csrfToken: z.string().min(16).max(200),

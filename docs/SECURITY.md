@@ -1,0 +1,105 @@
+# NEXUS Security
+
+This document covers the F04 human identity boundary: sessions, CSRF, RBAC and rate
+limits. It does not add case, AI, action or external identity-provider behavior. A login
+role alone never represents human approval of an action; approval remains a separate
+reviewed decision in later phases.
+
+## Authentication endpoints
+
+All routes use the same-origin API prefix `/api/v1`.
+
+| Method and path | Behavior |
+|---|---|
+| `GET /api/v1/auth/csrf` | With a valid session, rotates and returns a session CSRF token. Without one, creates a five-minute single-use preauth challenge. |
+| `POST /api/v1/auth/login` | Consumes a freshly issued preauth challenge, validates Origin and CSRF, applies login rate limits, verifies scrypt credentials, creates an eight-hour session and sets the session cookie. |
+| `GET /api/v1/auth/me` | Requires a session. Returns identity and roles only; sandbox context is added by F05. |
+| `POST /api/v1/auth/logout` | Requires session, exact Origin and session CSRF. Revokes the session, clears the cookie and invalidates further use of the token. |
+
+Errors use `application/problem+json` with one of the frozen codes from
+`docs/CONTRACTS.md`. Login failures are generic; unknown user and wrong password do not
+produce distinguishable messages. Passwords, session tokens, CSRF tokens and password
+digests are never returned in error bodies or log capture.
+
+## Session and challenge rules
+
+- Session tokens are opaque 256-bit random values. Only their SHA-256 digest is stored.
+- Sessions last eight real hours from database `clock_timestamp()`; there is no invisible
+  renewal.
+- The session cookie is host-only, `HttpOnly`, `SameSite=Lax`, `Path=/`, and `Secure`
+  by default. Local development must explicitly set `NEXUS_COOKIE_SECURE=false`; the
+  attribute is never inferred from a client-supplied Host header. No `Domain` is set.
+- The preauth challenge is random, stored by digest, expires after five minutes and is
+  consumed atomically exactly once by login.
+- A session CSRF token is returned through the same-origin JSON response. It is kept in
+  browser memory, never in a URL or log, and its digest is bound to the session. GET
+  `/auth/csrf` can rotate it after a reload only for a same-origin request or an allowed
+  Origin; cross-site metadata is rejected.
+- Mutations require the exact allowed Origin, `X-CSRF-Token`, and a healthy Valkey
+  admission check. Missing/wrong values fail closed with 403; cache loss fails closed with
+  503. CORS is not used as a CSRF defense.
+- Password hashing uses Node scrypt with a random 16-byte salt, `N=32768`, `r=8`, `p=1`,
+  64-byte key, and a configured 64 MiB memory allowance. Digests are compared in constant
+  time. Invalid or out-of-bound hash parameters fail closed.
+
+## Authorization
+
+Roles are read from PostgreSQL on each protected request. Client headers, request bodies
+and login roles cannot grant a permission.
+
+| Role | Baseline permissions |
+|---|---|
+| `viewer` | Read cases/evidence/documents/traces/dashboard |
+| `operator` | Viewer reads plus case/document/proposal/clarification/run/assistant/demo launch |
+| `approver_ops` | Viewer reads plus operational approval |
+| `approver_finance` | Viewer reads plus financial approval |
+| `admin` | Viewer reads plus knowledge/config/evaluation/demo management; no implicit approval |
+
+Operator, approver and admin roles also receive viewer read access. Required role slots
+for high-cost actions are separate identity checks; the same user cannot fill both slots
+when the action policy requires separate people. Admin does not imply `approver_ops` or
+`approver_finance`.
+
+Database grants follow the same boundary: `nexus_api` maintains identity/session rows;
+`nexus_worker` receives only `SELECT` on the readonly `nexus.approver_role_view`, never
+password or session digests. Migration/seed credentials are not runtime API credentials.
+
+## Rate limits and cache outage
+
+Login admission uses Valkey counters keyed by SHA-256 of normalized username and client
+IP. The implementation reserves an attempt atomically before password verification: at most
+five attempts per username and twenty per IP in a 15-minute window. Exceeding a limit
+returns `RATE_LIMITED` with `Retry-After`. A missing, expired or replayed challenge
+releases its reservation; a successful login clears the username failure counter but
+does not refund the shared IP attempt budget. The IP budget therefore counts all
+admitted attempts in the window, including successes; shared egress addresses can
+reach it and should use the documented local accounts only in development.
+
+Valkey is admission state, not identity truth. If Valkey is unavailable, login and
+CSRF-protected mutations fail closed with `DEPENDENCY_UNAVAILABLE`. An already
+authenticated read such as `/auth/me` continues against PostgreSQL. Cache failure cannot
+grant a role, create a session or approve an action.
+
+## Local accounts
+
+`pnpm demo:init` applies identity migrations and seeds three local accounts:
+`operator`, `ops.approver`, and `finance.admin` from `fixtures/users/roles.json`.
+Generated passwords are written to ignored `.env.local` with mode `0600`. When run in an
+interactive terminal, the newly generated credentials are printed once; non-interactive
+or captured output is redacted from secrets. Never copy these passwords into examples,
+evidence, prompts, source or logs. No production password is hardcoded.
+
+For host-run local development, run `pnpm infra:up --dev-ports` so PostgreSQL and
+Valkey are reachable on loopback, and ensure `NEXUS_ALLOWED_ORIGINS` contains the exact
+web origin. The API development script loads the root `.env` with Nest CLI `--env-file`;
+a bare `node dist/main.js` requires the environment to be supplied explicitly. The F04 integration suite uses test-only accounts with disposable test passwords
+and an isolated Compose project.
+
+## F04 boundaries
+
+- No external identity provider, MFA, password reset, role administration UI, case/AI/
+  action endpoint or sandbox context is implemented.
+- The test-only guard routes live in the separate compiled `auth/test-app` entrypoint,
+  not the production API.
+- `/auth/me` intentionally omits sandbox context; F05 adds the active sandbox.
+- Passing F04 tests do not establish approval, execution or AI safety.

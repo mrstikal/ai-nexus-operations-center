@@ -13,17 +13,21 @@ describe('F03 OpenAPI fixture parity', () => {
     expect(generated).toBe(checkedIn);
   });
 
-  it('labels declaration-only status and exposes the stable components', () => {
+  it('exposes the stable components and current auth implementation status', () => {
     const document = generateOpenApiDocument() as unknown as {
       paths: Record<string, unknown>;
       components: { schemas: Record<string, unknown> };
       'x-nexus-implementation-status': Record<string, unknown>;
     };
-    expect(document.paths).toEqual({});
+    expect(Object.keys(document.paths).sort()).toEqual([
+      '/api/v1/auth/csrf',
+      '/api/v1/auth/login',
+      '/api/v1/auth/logout',
+      '/api/v1/auth/me',
+    ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F03',
-      httpControllers: 'not-implemented-in-f03',
-      openapiPaths: 'none-declared',
+      stage: 'F04',
+      httpControllers: 'auth-implemented',
     });
     expect(Object.keys(document.components.schemas)).toEqual(
       expect.arrayContaining([

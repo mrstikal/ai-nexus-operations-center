@@ -1,0 +1,30 @@
+{
+  "name": "@nexus/application",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./identity/sessions": {
+      "types": "./dist/identity/sessions.d.ts",
+      "default": "./dist/identity/sessions.js"
+    },
+    "./identity/passwords": {
+      "types": "./dist/identity/passwords.d.ts",
+      "default": "./dist/identity/passwords.js"
+    },
+    "./identity/permissions": {
+      "types": "./dist/identity/permissions.d.ts",
+      "default": "./dist/identity/permissions.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nexus/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11"
+  }
+}

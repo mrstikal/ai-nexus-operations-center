@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "username": "operator",
+      "displayName": "Local Operator",
+      "roles": ["operator", "viewer"]
+    },
+    {
+      "username": "ops.approver",
+      "displayName": "Local Ops Approver",
+      "roles": ["approver_ops", "viewer"]
+    },
+    {
+      "username": "finance.admin",
+      "displayName": "Local Finance Admin",
+      "roles": ["approver_finance", "admin", "viewer"]
+    }
+  ]
+}

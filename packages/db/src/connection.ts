@@ -1,5 +1,8 @@
 import pg from 'pg';
 import type { Pool as PgPool, PoolConfig } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as identitySchema from './schema/identity.js';
 
 const { Pool } = pg;
 
@@ -99,4 +102,10 @@ export function createNexusPool(
 
 export function describeDatabaseTarget(target: DatabaseTarget): string {
   return `${target.user}@${target.host}:${target.port}/${target.database}`;
+}
+
+export type NexusDb = NodePgDatabase<typeof identitySchema>;
+
+export function createNexusDb(pool: PgPool): NexusDb {
+  return drizzle(pool, { schema: identitySchema });
 }

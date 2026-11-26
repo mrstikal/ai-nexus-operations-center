@@ -22,6 +22,9 @@ const REQUIRED_ENV_KEYS = [
   'RABBITMQ_DEFAULT_USER',
   'RABBITMQ_DEFAULT_PASS',
   'VALKEY_PASSWORD',
+  'VALKEY_HOST',
+  'VALKEY_PORT',
+  'NEXUS_COOKIE_SECURE',
   'NEXUS_DB_HOST',
   'NEXUS_DB_PORT',
   'NEXUS_DB_NAME',
@@ -61,6 +64,9 @@ export function generateLocalEnv() {
     RABBITMQ_DEFAULT_USER: 'nexus_app',
     RABBITMQ_DEFAULT_PASS: secret(),
     VALKEY_PASSWORD: secret(),
+    VALKEY_HOST: '127.0.0.1',
+    VALKEY_PORT: '56379',
+    NEXUS_COOKIE_SECURE: 'false',
     NEXUS_DB_HOST: '127.0.0.1',
     NEXUS_DB_PORT: '55432',
     NEXUS_DB_NAME: 'nexus',
@@ -165,6 +171,9 @@ function backfillDerivedEnv(values) {
     ENTERPRISE_APP_DB_USER: values.ENTERPRISE_APP_DB_USER || 'enterprise_app',
     ENTERPRISE_APP_DB_PASSWORD:
       values.ENTERPRISE_APP_DB_PASSWORD || values.ENTERPRISE_APP_PASSWORD,
+    VALKEY_HOST: values.VALKEY_HOST || '127.0.0.1',
+    VALKEY_PORT: values.VALKEY_PORT || '56379',
+    NEXUS_COOKIE_SECURE: values.NEXUS_COOKIE_SECURE || 'false',
   };
 
   const added = {};
@@ -459,6 +468,22 @@ export function composePort(project, envFile, overrides, service, containerPort,
 
 export function restartService(project, envFile, overrides, service, env) {
   composeRun({ project, envFile, overrides, env }, ['restart', service]);
+}
+
+export function stopService(project, envFile, overrides, service, env) {
+  composeRun({ project, envFile, overrides, env }, ['stop', service]);
+}
+
+export function pauseService(project, envFile, overrides, service, env) {
+  composeRun({ project, envFile, overrides, env }, ['pause', service]);
+}
+
+export function unpauseService(project, envFile, overrides, service, env) {
+  composeRun({ project, envFile, overrides, env }, ['unpause', service]);
+}
+
+export function startService(project, envFile, overrides, service, env) {
+  composeRun({ project, envFile, overrides, env }, ['start', service]);
 }
 
 export function startDefaultInfrastructure(options = {}) {

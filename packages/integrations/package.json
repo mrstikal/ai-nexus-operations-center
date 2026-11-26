@@ -1,0 +1,23 @@
+{
+  "name": "@nexus/integrations",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./rate-limits": {
+      "types": "./dist/rate-limits.d.ts",
+      "default": "./dist/rate-limits.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "ioredis": "6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11",
+    "@types/redis-errors": "1.2.3"
+  }
+}

@@ -1,10 +1,14 @@
+import fs from 'node:fs';
+import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import {
   REPO_ROOT,
+  parseEnvFile,
   restoreDefaultInfrastructure,
   startMigrationInfrastructure,
+  writeEnvFile,
 } from './lib/infra.mjs';
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
@@ -51,6 +55,76 @@ async function migrate({ port, user, password, schema, directory, migrationModul
   }
 }
 
+async function seedLocalIdentity({ port, env }) {
+  let dbModule;
+  let identityModule;
+  let passwordModule;
+  try {
+    dbModule = await import('@nexus/db/connection');
+    identityModule = await import('@nexus/db/repositories/identity');
+    passwordModule = await import('@nexus/application/identity/passwords');
+  } catch (error) {
+    throw new Error(
+      `Compiled identity seed modules are missing. Run pnpm build first.\n${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      { cause: error },
+    );
+  }
+
+  const fixture = JSON.parse(
+    fs.readFileSync(path.join(REPO_ROOT, 'fixtures/users/roles.json'), 'utf8'),
+  );
+  const localEnvPath = path.join(REPO_ROOT, '.env.local');
+  const localValues = fs.existsSync(localEnvPath) ? parseEnvFile(localEnvPath) : {};
+  const passwordFor = (username) =>
+    `NEXUS_LOCAL_PASSWORD_${username.toUpperCase().replace(/[^A-Z0-9]/g, '_')}`;
+  const pool = dbModule.createNexusPool('api', {
+    NEXUS_DB_HOST: '127.0.0.1',
+    NEXUS_DB_PORT: String(port),
+    NEXUS_DB_NAME: 'nexus',
+    NEXUS_API_DB_USER: 'nexus_api',
+    NEXUS_API_DB_PASSWORD: env.NEXUS_API_PASSWORD,
+  });
+  const db = dbModule.createNexusDb(pool);
+  const created = [];
+  try {
+    for (const user of fixture.users) {
+      const key = passwordFor(user.username);
+      const password = localValues[key] || randomBytes(24).toString('base64url');
+      const passwordRecord = await passwordModule.hashPassword(password);
+      if (
+        await identityModule.createIdentityUser(db, {
+          username: user.username,
+          displayName: user.displayName,
+          roles: user.roles,
+          password: passwordRecord,
+        })
+      ) {
+        localValues[key] = password;
+        created.push({ username: user.username, password });
+      }
+    }
+  } finally {
+    await pool.end();
+  }
+
+  if (created.length > 0) {
+    writeEnvFile(localEnvPath, localValues);
+    console.log(
+      `Seeded local identity accounts: ${created.map((entry) => entry.username).join(', ')}.`,
+    );
+    console.log('Local passwords were stored in ignored .env.local (not displayed in captured logs).');
+    if (process.stdout.isTTY) {
+      for (const entry of created) {
+        console.log(`${entry.username}: ${entry.password}`);
+      }
+    }
+  } else {
+    console.log('Local identity accounts already exist; passwords were not changed.');
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   let migrateOnly = false;
@@ -90,8 +164,9 @@ async function main() {
         `enterprise applied=${enterpriseResult.applied.length} skipped=${enterpriseResult.skipped.length}.`,
     );
     if (!migrateOnly) {
-      console.log('Initial demo initialization is complete. No seed registrations exist in F02.');
-      console.log('Replay asset validation starts with the replay fixture phases; it is NOT RUN in F02.');
+      await seedLocalIdentity({ port, env: infrastructure.env });
+      console.log('Initial demo initialization is complete. F04 seeds local identity accounts only.');
+      console.log('Scenario and replay asset validation starts with later fixture phases; it is NOT RUN in F04.');
     }
   } finally {
     if (infrastructure) {

@@ -41,8 +41,27 @@
       ],
       "@nexus/domain/*": [
         "./packages/domain/src/*.ts"
+      ],
+      "@nexus/db/schema/identity": [
+        "./packages/db/src/schema/identity.ts"
+      ],
+      "@nexus/application/identity/sessions": [
+        "./packages/application/src/identity/sessions.ts"
+      ],
+      "@nexus/application/identity/passwords": [
+        "./packages/application/src/identity/passwords.ts"
+      ],
+      "@nexus/application/identity/permissions": [
+        "./packages/application/src/identity/permissions.ts"
+      ],
+      "@nexus/integrations/rate-limits": [
+        "./packages/integrations/src/rate-limits.ts"
+      ],
+      "@nexus/db/repositories/identity": [
+        "./packages/db/src/repositories/identity.ts"
       ]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": [
     "tests/**/*.ts",

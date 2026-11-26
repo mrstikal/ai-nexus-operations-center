@@ -417,9 +417,125 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f04-auth.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/schema/identity.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/migrations/0002_identity.sql",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/identity.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/src/identity/sessions.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/src/identity/passwords.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/src/identity/permissions.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/integrations/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/integrations/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/integrations/src/rate-limits.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/auth/controller.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/auth/guards.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/auth/module.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/auth/tokens.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/auth/test-app.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/errors.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "fixtures/users/roles.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/integration/f04-auth.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/DEVELOPMENT.md",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/auth.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": ".env.example",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/lib/infra.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/demo-init.mjs",
+          "minBytes": 1
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F05",
