@@ -2,6 +2,7 @@ export const TRACE_ALLOWED_KEYS = [
   'event',
   'step',
   'status',
+  'caseStatus',
   'durationMs',
   'attempt',
   'count',

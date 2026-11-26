@@ -28,14 +28,28 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/cases/{caseId}',
       '/api/v1/cases/{caseId}/history',
       '/api/v1/evidence/{evidenceId}',
+      '/api/v1/runs/{runId}',
       '/api/v1/runs/{runId}/cancel',
+      '/api/v1/runs/{runId}/events',
+      '/api/v1/runs/{runId}/events/page',
       '/api/v1/runs/{runId}/resume',
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F11A',
-      httpControllers: 'auth, case reads, durable case intake and run control',
+      stage: 'F11B',
+      httpControllers: 'auth, case reads, durable case intake, run control and run read/SSE',
     });
+    for (const readPath of [
+      '/api/v1/runs/{runId}',
+      '/api/v1/runs/{runId}/events/page',
+      '/api/v1/runs/{runId}/events',
+    ]) {
+      const operation = document.paths[readPath] as {
+        get: { responses: Record<string, unknown> };
+      };
+      expect(operation.get.responses['409'], readPath).toBeDefined();
+      expect(operation.get.responses['503'], readPath).toBeDefined();
+    }
     expect(Object.keys(document.components.schemas)).toEqual(
       expect.arrayContaining([
         'Money',

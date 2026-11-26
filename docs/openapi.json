@@ -1313,6 +1313,1187 @@
         ],
         "additionalProperties": false
       },
+      "RunStepSummary": {
+        "type": "object",
+        "properties": {
+          "stepKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "stepKind": {
+            "type": "string",
+            "enum": [
+              "pure",
+              "read",
+              "external"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "succeeded",
+              "retryable_failure",
+              "permanent_failure",
+              "waiting",
+              "cancelled"
+            ]
+          },
+          "attemptCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "maxAttempts": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "errorClass": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "startedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "stepKey",
+          "stepKind",
+          "status",
+          "attemptCount",
+          "maxAttempts",
+          "errorClass",
+          "startedAt",
+          "finishedAt"
+        ],
+        "additionalProperties": false
+      },
+      "RunDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "sandboxId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "caseId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "caseStatus": {
+            "type": "string",
+            "enum": [
+              "new",
+              "investigating",
+              "needs_input",
+              "needs_approval",
+              "executing",
+              "resolved",
+              "escalated",
+              "cancelled"
+            ]
+          },
+          "caseVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "definitionName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "definitionVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "waiting_input",
+              "waiting_approval",
+              "waiting_dependency",
+              "blocked",
+              "budget_exhausted",
+              "completed",
+              "failed",
+              "cancel_requested",
+              "cancelled"
+            ]
+          },
+          "waitReason": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "human_input"
+                    ]
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "kind",
+                  "prompt"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "approval"
+                    ]
+                  },
+                  "proposalId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "actionRevisionId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "proposalId",
+                  "actionRevisionId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "dependency"
+                    ]
+                  },
+                  "childCaseId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "childTriggerEventId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "childCaseId",
+                  "childTriggerEventId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "budget"
+                    ]
+                  },
+                  "accountId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "requestedMicrousd": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "pattern": "^(?:0|[1-9]\\d*)$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "accountId",
+                  "requestedMicrousd"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "activeMsLimit": {
+            "type": "integer",
+            "exclusiveMinimum": 0
+          },
+          "activeMsUsed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "deadlineAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stepKey": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "stepKind": {
+                  "type": "string",
+                  "enum": [
+                    "pure",
+                    "read",
+                    "external"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "running",
+                    "succeeded",
+                    "retryable_failure",
+                    "permanent_failure",
+                    "waiting",
+                    "cancelled"
+                  ]
+                },
+                "attemptCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "maxAttempts": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "errorClass": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "startedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "finishedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "stepKey",
+                "stepKind",
+                "status",
+                "attemptCount",
+                "maxAttempts",
+                "errorClass",
+                "startedAt",
+                "finishedAt"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "id",
+          "sandboxId",
+          "caseId",
+          "caseStatus",
+          "caseVersion",
+          "definitionName",
+          "definitionVersion",
+          "status",
+          "waitReason",
+          "effectiveAt",
+          "activeMsLimit",
+          "activeMsUsed",
+          "deadlineAt",
+          "createdAt",
+          "updatedAt",
+          "steps"
+        ],
+        "additionalProperties": false
+      },
+      "RunEvent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "event": {
+                "type": "string",
+                "enum": [
+                  "step"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "step": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "running",
+                      "succeeded",
+                      "retryable_failure",
+                      "permanent_failure",
+                      "waiting",
+                      "cancelled"
+                    ]
+                  },
+                  "attempt": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10
+                  },
+                  "durationMs": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 600000
+                  },
+                  "errorClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "required": [
+                  "step",
+                  "status",
+                  "attempt",
+                  "durationMs",
+                  "errorClass",
+                  "count"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "event",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "event": {
+                "type": "string",
+                "enum": [
+                  "status"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "caseStatus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "enum": [
+                      "new",
+                      "investigating",
+                      "needs_input",
+                      "needs_approval",
+                      "executing",
+                      "resolved",
+                      "escalated",
+                      "cancelled",
+                      null
+                    ]
+                  },
+                  "waitReason": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "human_input"
+                            ]
+                          },
+                          "prompt": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2000
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "prompt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "approval"
+                            ]
+                          },
+                          "proposalId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "actionRevisionId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "proposalId",
+                          "actionRevisionId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "dependency"
+                            ]
+                          },
+                          "childCaseId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "childTriggerEventId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "childCaseId",
+                          "childTriggerEventId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "budget"
+                            ]
+                          },
+                          "accountId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "requestedMicrousd": {
+                            "type": "string",
+                            "maxLength": 16,
+                            "pattern": "^(?:0|[1-9]\\d*)$"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "accountId",
+                          "requestedMicrousd"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "errorClass": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "required": [
+                  "status",
+                  "caseStatus",
+                  "waitReason",
+                  "errorClass",
+                  "count"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "event",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "event": {
+                "type": "string",
+                "enum": [
+                  "text_delta"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "provisional": {
+                    "type": "boolean",
+                    "enum": [
+                      true
+                    ]
+                  }
+                },
+                "required": [
+                  "text",
+                  "provisional"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "event",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "event": {
+                "type": "string",
+                "enum": [
+                  "final"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "caseStatus": {
+                    "type": "string",
+                    "enum": [
+                      "new",
+                      "investigating",
+                      "needs_input",
+                      "needs_approval",
+                      "executing",
+                      "resolved",
+                      "escalated",
+                      "cancelled"
+                    ]
+                  },
+                  "caseVersion": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0
+                  },
+                  "evidenceCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                },
+                "required": [
+                  "caseStatus",
+                  "caseVersion",
+                  "evidenceCount"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "event",
+              "data"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "event": {
+                "type": "string",
+                "enum": [
+                  "error"
+                ]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "event",
+              "data"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "RunEventsPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "event": {
+                      "type": "string",
+                      "enum": [
+                        "step"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "step": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "pending",
+                            "running",
+                            "succeeded",
+                            "retryable_failure",
+                            "permanent_failure",
+                            "waiting",
+                            "cancelled"
+                          ]
+                        },
+                        "attempt": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 10
+                        },
+                        "durationMs": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 0,
+                          "maximum": 600000
+                        },
+                        "errorClass": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1000
+                        }
+                      },
+                      "required": [
+                        "step",
+                        "status",
+                        "attempt",
+                        "durationMs",
+                        "errorClass",
+                        "count"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "event",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "event": {
+                      "type": "string",
+                      "enum": [
+                        "status"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "caseStatus": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "enum": [
+                            "new",
+                            "investigating",
+                            "needs_input",
+                            "needs_approval",
+                            "executing",
+                            "resolved",
+                            "escalated",
+                            "cancelled",
+                            null
+                          ]
+                        },
+                        "waitReason": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "human_input"
+                                  ]
+                                },
+                                "prompt": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 2000
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "prompt"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "approval"
+                                  ]
+                                },
+                                "proposalId": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                },
+                                "actionRevisionId": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "proposalId",
+                                "actionRevisionId"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "dependency"
+                                  ]
+                                },
+                                "childCaseId": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                },
+                                "childTriggerEventId": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "childCaseId",
+                                "childTriggerEventId"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "budget"
+                                  ]
+                                },
+                                "accountId": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                },
+                                "requestedMicrousd": {
+                                  "type": "string",
+                                  "maxLength": 16,
+                                  "pattern": "^(?:0|[1-9]\\d*)$"
+                                }
+                              },
+                              "required": [
+                                "kind",
+                                "accountId",
+                                "requestedMicrousd"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "errorClass": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "minimum": 0,
+                          "maximum": 1000
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "caseStatus",
+                        "waitReason",
+                        "errorClass",
+                        "count"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "event",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "event": {
+                      "type": "string",
+                      "enum": [
+                        "text_delta"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2000
+                        },
+                        "provisional": {
+                          "type": "boolean",
+                          "enum": [
+                            true
+                          ]
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "provisional"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "event",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "event": {
+                      "type": "string",
+                      "enum": [
+                        "final"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "caseStatus": {
+                          "type": "string",
+                          "enum": [
+                            "new",
+                            "investigating",
+                            "needs_input",
+                            "needs_approval",
+                            "executing",
+                            "resolved",
+                            "escalated",
+                            "cancelled"
+                          ]
+                        },
+                        "caseVersion": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        },
+                        "evidenceCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 100
+                        }
+                      },
+                      "required": [
+                        "caseStatus",
+                        "caseVersion",
+                        "evidenceCount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "event",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "event": {
+                      "type": "string",
+                      "enum": [
+                        "error"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "message": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        }
+                      },
+                      "required": [
+                        "code"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "event",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "maxItems": 200
+          },
+          "nextAfter": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items",
+          "nextAfter",
+          "hasMore"
+        ],
+        "additionalProperties": false
+      },
       "WorkflowStatus": {
         "type": "string",
         "enum": [
@@ -10367,6 +11548,1530 @@
         }
       }
     },
+    "/api/v1/runs/{runId}": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read a workflow run and its step summary",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "runId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persisted run detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "sandboxId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "caseId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "caseStatus": {
+                      "type": "string",
+                      "enum": [
+                        "new",
+                        "investigating",
+                        "needs_input",
+                        "needs_approval",
+                        "executing",
+                        "resolved",
+                        "escalated",
+                        "cancelled"
+                      ]
+                    },
+                    "caseVersion": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "definitionName": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "definitionVersion": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "queued",
+                        "running",
+                        "waiting_input",
+                        "waiting_approval",
+                        "waiting_dependency",
+                        "blocked",
+                        "budget_exhausted",
+                        "completed",
+                        "failed",
+                        "cancel_requested",
+                        "cancelled"
+                      ]
+                    },
+                    "waitReason": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "human_input"
+                              ]
+                            },
+                            "prompt": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 2000
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "prompt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "approval"
+                              ]
+                            },
+                            "proposalId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "actionRevisionId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "proposalId",
+                            "actionRevisionId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "dependency"
+                              ]
+                            },
+                            "childCaseId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "childTriggerEventId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "childCaseId",
+                            "childTriggerEventId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kind": {
+                              "type": "string",
+                              "enum": [
+                                "budget"
+                              ]
+                            },
+                            "accountId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "requestedMicrousd": {
+                              "type": "string",
+                              "maxLength": 16,
+                              "pattern": "^(?:0|[1-9]\\d*)$"
+                            }
+                          },
+                          "required": [
+                            "kind",
+                            "accountId",
+                            "requestedMicrousd"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "effectiveAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "activeMsLimit": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0
+                    },
+                    "activeMsUsed": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "deadlineAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stepKey": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "stepKind": {
+                            "type": "string",
+                            "enum": [
+                              "pure",
+                              "read",
+                              "external"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "running",
+                              "succeeded",
+                              "retryable_failure",
+                              "permanent_failure",
+                              "waiting",
+                              "cancelled"
+                            ]
+                          },
+                          "attemptCount": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 10
+                          },
+                          "maxAttempts": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 10
+                          },
+                          "errorClass": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "startedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "finishedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "stepKey",
+                          "stepKind",
+                          "status",
+                          "attemptCount",
+                          "maxAttempts",
+                          "errorClass",
+                          "startedAt",
+                          "finishedAt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "sandboxId",
+                    "caseId",
+                    "caseStatus",
+                    "caseVersion",
+                    "definitionName",
+                    "definitionVersion",
+                    "status",
+                    "waitReason",
+                    "effectiveAt",
+                    "activeMsLimit",
+                    "activeMsUsed",
+                    "deadlineAt",
+                    "createdAt",
+                    "updatedAt",
+                    "steps"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid run ID",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No active sandbox or stale resource scope",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Run read storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{runId}/events/page": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Read a bounded page of persisted run events",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "runId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "required": false,
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ordered persisted event page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "event": {
+                                "type": "string",
+                                "enum": [
+                                  "step"
+                                ]
+                              },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "step": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "pending",
+                                      "running",
+                                      "succeeded",
+                                      "retryable_failure",
+                                      "permanent_failure",
+                                      "waiting",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  "attempt": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 10
+                                  },
+                                  "durationMs": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ],
+                                    "minimum": 0,
+                                    "maximum": 600000
+                                  },
+                                  "errorClass": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "count": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 1000
+                                  }
+                                },
+                                "required": [
+                                  "step",
+                                  "status",
+                                  "attempt",
+                                  "durationMs",
+                                  "errorClass",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "event",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "event": {
+                                "type": "string",
+                                "enum": [
+                                  "status"
+                                ]
+                              },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "status": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "caseStatus": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "enum": [
+                                      "new",
+                                      "investigating",
+                                      "needs_input",
+                                      "needs_approval",
+                                      "executing",
+                                      "resolved",
+                                      "escalated",
+                                      "cancelled",
+                                      null
+                                    ]
+                                  },
+                                  "waitReason": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "human_input"
+                                            ]
+                                          },
+                                          "prompt": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 2000
+                                          }
+                                        },
+                                        "required": [
+                                          "kind",
+                                          "prompt"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "approval"
+                                            ]
+                                          },
+                                          "proposalId": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                          },
+                                          "actionRevisionId": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind",
+                                          "proposalId",
+                                          "actionRevisionId"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "dependency"
+                                            ]
+                                          },
+                                          "childCaseId": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                          },
+                                          "childTriggerEventId": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind",
+                                          "childCaseId",
+                                          "childTriggerEventId"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "budget"
+                                            ]
+                                          },
+                                          "accountId": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                                          },
+                                          "requestedMicrousd": {
+                                            "type": "string",
+                                            "maxLength": 16,
+                                            "pattern": "^(?:0|[1-9]\\d*)$"
+                                          }
+                                        },
+                                        "required": [
+                                          "kind",
+                                          "accountId",
+                                          "requestedMicrousd"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "errorClass": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "count": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ],
+                                    "minimum": 0,
+                                    "maximum": 1000
+                                  }
+                                },
+                                "required": [
+                                  "status",
+                                  "caseStatus",
+                                  "waitReason",
+                                  "errorClass",
+                                  "count"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "event",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "event": {
+                                "type": "string",
+                                "enum": [
+                                  "text_delta"
+                                ]
+                              },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "text": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2000
+                                  },
+                                  "provisional": {
+                                    "type": "boolean",
+                                    "enum": [
+                                      true
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "text",
+                                  "provisional"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "event",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "event": {
+                                "type": "string",
+                                "enum": [
+                                  "final"
+                                ]
+                              },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "caseStatus": {
+                                    "type": "string",
+                                    "enum": [
+                                      "new",
+                                      "investigating",
+                                      "needs_input",
+                                      "needs_approval",
+                                      "executing",
+                                      "resolved",
+                                      "escalated",
+                                      "cancelled"
+                                    ]
+                                  },
+                                  "caseVersion": {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0
+                                  },
+                                  "evidenceCount": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100
+                                  }
+                                },
+                                "required": [
+                                  "caseStatus",
+                                  "caseVersion",
+                                  "evidenceCount"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "event",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "exclusiveMinimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "event": {
+                                "type": "string",
+                                "enum": [
+                                  "error"
+                                ]
+                              },
+                              "data": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100
+                                  },
+                                  "message": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 200
+                                  }
+                                },
+                                "required": [
+                                  "code"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "event",
+                              "data"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "maxItems": 200
+                    },
+                    "nextAfter": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextAfter",
+                    "hasMore"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid run ID, cursor or limit",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No active sandbox or stale resource scope",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Run read storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/runs/{runId}/events": {
+      "get": {
+        "tags": [
+          "runs"
+        ],
+        "summary": "Stream persisted run events with Last-Event-ID replay",
+        "description": "SSE frames use id/event/data with event=step|status|text_delta|final|error. The 15-second heartbeat is a comment and is not stored. Disconnect does not cancel the run.",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "runId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "required": false,
+            "name": "after",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "Last-Event-ID",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Server-sent event stream",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid run ID, cursor or Last-Event-ID",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No active sandbox or stale resource scope",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Run read storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/runs/{runId}/resume": {
       "post": {
         "tags": [
@@ -12014,9 +14719,9 @@
   },
   "webhooks": {},
   "x-nexus-implementation-status": {
-    "stage": "F11A",
+    "stage": "F11B",
     "contracts": "declared-and-frozen",
-    "httpControllers": "auth, case reads, durable case intake and run control",
-    "openapiPaths": "auth, sandbox, case/evidence reads, case intake, and run resume/cancel; later controllers are declared in their owner stages"
+    "httpControllers": "auth, case reads, durable case intake, run control and run read/SSE",
+    "openapiPaths": "auth, sandbox, case/evidence reads, case intake, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages"
   }
 }

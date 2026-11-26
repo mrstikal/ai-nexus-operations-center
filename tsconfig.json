@@ -191,6 +191,12 @@
       ],
       "@nexus/db/repositories/workflow-case": [
         "./packages/db/src/repositories/workflow-case.ts"
+      ],
+      "@nexus/application/workflows/queries": [
+        "./packages/application/src/workflows/queries.ts"
+      ],
+      "@nexus/db/repositories/run-queries": [
+        "./packages/db/src/repositories/run-queries.ts"
       ]
     },
     "skipLibCheck": true

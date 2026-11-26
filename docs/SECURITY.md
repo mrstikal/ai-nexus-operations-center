@@ -162,6 +162,22 @@ tokens or derive permissions from tool input. F09 contract tests run a fake HTTP
 not mocked application repositories, and replace the read adapter with a test port without
 changing tool definitions or domain code.
 
+## Workflow read API and SSE (F11B)
+
+Run detail, event pages and SSE require a valid session and resolve the active sandbox; an
+inaccessible run is not disclosed. SSE reconnect re-checks the session and resource scope before
+opening the stream, so an expired session cannot resume an old subscription. The stream contains
+only persisted, allowlisted trace fields revalidated by the closed event contract; it never maps
+raw prompts, model reasoning, provider payloads, credentials, enterprise payloads or unmapped trace
+keys. Event pages are capped at 200 and the mapper skips malformed rows.
+
+Heartbeats are comments, not audit/trace rows. A disconnect destroys only the response/subscription;
+the run and its journal continue, and cancellation remains the explicit authenticated F11A POST.
+The pending write budget closes a connection that would exceed the bound; the client reconnects
+with `Last-Event-ID` and no gap/duplicate. This is a server memory bound, not a claim that a slow
+network is impossible.
+
+## Durable ingress, outbox and inbox (F10)
 ## Durable ingress, outbox and inbox (F10)
 
 The public case intake derives the actor from the authenticated session and the sandbox from
@@ -210,8 +226,8 @@ object, evidence IDs joined to existing evidence rows in the same sandbox and re
 class. Evidence references are checked for UUID syntax, uniqueness, existence and sandbox
 ownership; an invalid reference becomes a journaled permanent failure, not a repeated execution.
 Attempts do not copy raw documents, prompts, model reasoning or enterprise payloads. Trace records
-use the existing allowlist and carry only step/status/attempt/duration/error/evidence-count/retry
-fields.
+use the existing allowlist and carry only step/status/case-status/attempt/duration/error/
+evidence-count/retry fields.
 
 Only pure/read steps use the bounded `1s`/`5s`/`30s` retry policy with at most three attempts;
 definitions and the database reject a larger limit. External steps are never generically retried;

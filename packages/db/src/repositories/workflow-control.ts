@@ -169,7 +169,7 @@ async function resumeDependencyParent(
     runId: parent.id,
     level: 'info',
     event: 'workflow.run.resumed',
-    data: { status: 'queued', attempt: 0 },
+    data: { status: 'queued', caseStatus: 'investigating', attempt: 0 },
   });
 }
 
@@ -212,7 +212,7 @@ async function escalateDependencyParent(
     runId: parent.id,
     level: 'error',
     event: 'workflow.dependency.escalated',
-    data: { status: 'escalated', errorClass },
+    data: { status: 'cancelled', caseStatus: 'escalated', errorClass },
   });
 }
 

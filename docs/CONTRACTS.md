@@ -234,6 +234,27 @@ case update and audit. Dependency matching uses the event sandbox, child case, t
 and terminal version/status; stale or duplicate events do not wake. The event is not a workflow
 root trigger and is marked processed by the dependency coordinator.
 
+## Run read and SSE (F11B)
+
+`GET /api/v1/runs/{runId}` returns `RunDetail`; `GET /api/v1/runs/{runId}/events/page` returns a
+`RunEventsPage` with `after` (trace sequence, default 0) and `limit` (1-200, default 100). Both
+require a session and resolve the active sandbox; an inaccessible run returns not found.
+
+`GET /api/v1/runs/{runId}/events` is `text/event-stream`. Frames are
+`id: <monotonic trace sequence>`, `event: step|status|text_delta|final|error`, `data: <validated
+JSON>`. `Last-Event-ID` (or `after`) replays persisted rows after the sequence; the same event IDs
+are never repeated. Heartbeats are `: heartbeat` comments every 15 seconds and are not audit or
+trace rows. The stream is read-only: disconnect does not cancel the run; cancellation is the
+explicit F11A POST.
+
+Event data is a closed discriminated union. Step data carries step key/status/attempt/duration/
+error/count; status data carries a bounded status string, nullable case status and wait reason;
+final data carries terminal case status/version/evidence count; text deltas are provisional; error
+data carries a bounded code. Raw prompts, model reasoning, provider payloads, credentials and
+unmapped trace fields are not mapped into the stream. The mapper revalidates the persisted
+allowlisted data and skips anything malformed.
+
+## Durable case intake and events (F10)
 ## Durable case intake and events (F10)
 
 F10 adds `packages/contracts/src/ingress.ts`. `CaseIntakeRequest` carries a title, nullable

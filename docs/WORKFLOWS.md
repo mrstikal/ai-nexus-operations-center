@@ -47,8 +47,8 @@ expiry. The database clock, not a process clock, decides lease validity.
 
 Every committed attempt stores the strict input hash, output hash, redacted output object,
 evidence references, error class, definition/policy/model/config/prompt revisions and timing. An
-attempt trace carries only allowlisted fields: step key, status, attempt, duration, error class,
-evidence count and retry flag. Evidence IDs are joined to existing evidence rows; no raw evidence
+attempt trace carries only allowlisted fields: step key, status, case status, attempt, duration, error
+class, evidence count and retry flag. Evidence IDs are joined to existing evidence rows; no raw evidence
 or document payload is copied into the journal.
 
 Input identity is the canonical hash of definition name/version, run ingress hash, step key and
@@ -189,6 +189,47 @@ sandbox identity.
 `test-retry-v1` fails retryably, `test-external-v1` is external and `test-wait-v1` persists a human
 wait. They exist only behind `NEXUS_WORKFLOW_TEST_DEFINITION=1`. The production default registry
 and trigger map are empty, so F11 does not pretend a business workflow is available.
+
+## Read API and persisted SSE (F11B)
+
+`GET /api/v1/runs/{runId}` returns the persisted run detail: case/run status, definition identity,
+wait reason, budgets/deadline, timestamps and a bounded step summary. It never returns raw ingress,
+prompts, model output or enterprise payloads. `GET /api/v1/runs/{runId}/events/page?after=&limit=`
+returns an ordered bounded page (maximum 200) with `nextAfter`/`hasMore`.
+
+`GET /api/v1/runs/{runId}/events` is the SSE stream. Each frame is
+`id: <trace sequence>`, `event: step|status|text_delta|final|error`, and a validated JSON `data`
+built only from allowlisted trace fields. `Last-Event-ID` replays persisted events after that
+sequence; reconnect uses the same persisted trace rows, not Redis or an in-memory subscription.
+The 15-second heartbeat is an SSE comment and is never stored as audit/trace. A disconnected browser
+stops only the subscription; the run and its cancel route remain unchanged.
+
+The stream writes bounded pages and a pending write budget. A write that would exceed the budget
+closes the connection; the client reconnects from its last event ID. This prevents unbounded server
+buffering for a slow client. The browser must use the explicit POST cancel route; closing SSE never
+cancels a run. Source/model data is redacted at persistence and again at the response mapper, so
+chain-of-thought, credentials and raw payloads cannot be streamed.
+
+Example page:
+
+```json
+{
+  "items": [
+    {"id": 41, "event": "status", "data": {"status": "running", "caseStatus": null, "waitReason": null, "errorClass": null, "count": null}},
+    {"id": 42, "event": "step", "data": {"step": "alpha", "status": "succeeded", "attempt": 1, "durationMs": 3, "errorClass": null, "count": 0}}
+  ],
+  "nextAfter": 42,
+  "hasMore": true
+}
+```
+
+SSE frame example:
+
+```text
+id: 42
+event: step
+data: {"step":"alpha","status":"succeeded","attempt":1,"durationMs":3,"errorClass":null,"count":0}
+```
 
 ## Boundaries
 

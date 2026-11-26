@@ -202,6 +202,7 @@ export async function applyCaseTransition(
         entityType: 'case',
         entityId: input.caseId,
         version,
+        count: evidenceIds.length,
       },
     });
     terminalEventEmitted = true;

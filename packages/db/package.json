@@ -79,6 +79,10 @@
     "./repositories/workflow-case": {
       "types": "./dist/repositories/workflow-case.d.ts",
       "default": "./dist/repositories/workflow-case.js"
+    },
+    "./repositories/run-queries": {
+      "types": "./dist/repositories/run-queries.d.ts",
+      "default": "./dist/repositories/run-queries.js"
     }
   },
   "scripts": {

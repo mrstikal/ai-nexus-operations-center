@@ -58,7 +58,12 @@ const {
   ProblemSchema,
   RunCancelRequestSchema,
   RunControlResponseSchema,
+  RunDetailSchema,
+  RunEventsPageSchema,
+  RunEventSchema,
+  RunEventsQuerySchema,
   RunResumeRequestSchema,
+  RunStepSummarySchema,
   RequestContextSchema,
   ReviewerOutputSchema,
   SandboxSummarySchema,
@@ -116,6 +121,10 @@ const COMPONENTS = [
   ['RunResumeRequest', RunResumeRequestSchema],
   ['RunCancelRequest', RunCancelRequestSchema],
   ['RunControlResponse', RunControlResponseSchema],
+  ['RunStepSummary', RunStepSummarySchema],
+  ['RunDetail', RunDetailSchema],
+  ['RunEvent', RunEventSchema],
+  ['RunEventsPage', RunEventsPageSchema],
   ['WorkflowStatus', WorkflowStatusSchema],
   ['WaitReason', WaitReasonSchema],
   ['WorkflowRun', WorkflowRunSchema],
@@ -328,6 +337,117 @@ function registerCasePaths(registry) {
       },
       503: {
         description: 'Case intake storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/runs/{runId}',
+    tags: ['runs'],
+    summary: 'Read a workflow run and its step summary',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ runId: z.string().uuid() }) },
+    responses: {
+      200: {
+        description: 'Persisted run detail',
+        content: { 'application/json': { schema: RunDetailSchema } },
+      },
+      400: {
+        description: 'Invalid run ID',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Run not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'No active sandbox or stale resource scope',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Run read storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/runs/{runId}/events/page',
+    tags: ['runs'],
+    summary: 'Read a bounded page of persisted run events',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ runId: z.string().uuid() }),
+      query: RunEventsQuerySchema,
+    },
+    responses: {
+      200: {
+        description: 'Ordered persisted event page',
+        content: { 'application/json': { schema: RunEventsPageSchema } },
+      },
+      400: {
+        description: 'Invalid run ID, cursor or limit',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Run not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'No active sandbox or stale resource scope',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Run read storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/runs/{runId}/events',
+    tags: ['runs'],
+    summary: 'Stream persisted run events with Last-Event-ID replay',
+    description:
+      'SSE frames use id/event/data with event=step|status|text_delta|final|error. The 15-second heartbeat is a comment and is not stored. Disconnect does not cancel the run.',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ runId: z.string().uuid() }),
+      headers: z.object({ 'Last-Event-ID': z.string().optional() }),
+      query: RunEventsQuerySchema,
+    },
+    responses: {
+      200: {
+        description: 'Server-sent event stream',
+        content: { 'text/event-stream': { schema: z.string() } },
+      },
+      400: {
+        description: 'Invalid run ID, cursor or Last-Event-ID',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Run not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'No active sandbox or stale resource scope',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Run read storage unavailable',
         content: { 'application/problem+json': { schema: ProblemSchema } },
       },
     },
@@ -671,10 +791,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F11A',
+    stage: 'F11B',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake and run control',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, and run resume/cancel; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, run control and run read/SSE',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
   };
 
   return document;

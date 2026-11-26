@@ -75,6 +75,10 @@
     "./workflows/dependency-events": {
       "types": "./dist/workflows/dependency-events.d.ts",
       "default": "./dist/workflows/dependency-events.js"
+    },
+    "./workflows/queries": {
+      "types": "./dist/workflows/queries.d.ts",
+      "default": "./dist/workflows/queries.js"
     }
   },
   "scripts": {
