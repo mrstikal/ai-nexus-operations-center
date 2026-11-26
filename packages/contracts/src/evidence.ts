@@ -91,6 +91,8 @@ export const EvidenceSchema = z
     caseId: EntityIdSchema.nullable(),
     kind: EvidenceKindSchema,
     sourceRef: EntityRefSchema.nullable(),
+    sourceStatus: z.enum(['available', 'missing']),
+    missingReason: z.string().min(1).max(1000).nullable(),
     contentHash: HashSchema,
     locator: EvidenceLocatorSchema.nullable(),
     capturedFacts: JsonValueSchema,
@@ -98,6 +100,32 @@ export const EvidenceSchema = z
   })
   .strict();
 export type Evidence = z.infer<typeof EvidenceSchema>;
+
+export const EvidenceCreateInputSchema = z
+  .object({
+    caseId: EntityIdSchema.nullable(),
+    kind: EvidenceKindSchema,
+    sourceStatus: z.enum(['available', 'missing']),
+    sourceRef: EntityRefSchema.nullable(),
+    sourceSandboxId: EntityIdSchema.nullable(),
+    contentHash: HashSchema.nullable(),
+    locator: EvidenceLocatorSchema.nullable(),
+    capturedFacts: JsonValueSchema,
+    missingReason: z.string().min(1).max(1000).nullable(),
+  })
+  .strict()
+  .refine(
+    (value) =>
+      value.sourceStatus === 'missing'
+        ? value.sourceRef === null &&
+          value.sourceSandboxId === null &&
+          value.missingReason !== null
+        : value.sourceRef !== null &&
+          value.sourceSandboxId !== null &&
+          value.missingReason === null,
+    'Evidence source status, source reference and missing reason are inconsistent',
+  );
+export type EvidenceCreateInput = z.infer<typeof EvidenceCreateInputSchema>;
 
 export const FieldSourceSchema = z
   .object({

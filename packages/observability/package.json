@@ -1,0 +1,23 @@
+{
+  "name": "@nexus/observability",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./redaction": {
+      "types": "./dist/redaction.d.ts",
+      "default": "./dist/redaction.js"
+    },
+    "./trace": {
+      "types": "./dist/trace.d.ts",
+      "default": "./dist/trace.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11"
+  }
+}

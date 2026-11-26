@@ -546,9 +546,145 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f05-cases.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/schema/cases.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/schema/evidence.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/schema/audit.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/schema/trace.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/migrations/0003_cases_evidence_audit_trace.sql",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/types.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/cases.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/evidence.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/audit.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/repositories/trace.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/src/cases/context.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/application/src/cases/service.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/observability/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/observability/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/observability/src/redaction.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/observability/src/trace.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/common.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/cases.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/evidence.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/app.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/cases/controller.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/cases/module.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/src/cases/tokens.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/integration/f05-cases.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/adr/011-sandbox-isolation.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/check-boundaries.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/migrations/0004_case_model_conventions.sql",
+          "minBytes": 1
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F06",

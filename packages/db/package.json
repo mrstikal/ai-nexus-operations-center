@@ -19,6 +19,38 @@
     "./repositories/identity": {
       "types": "./dist/repositories/identity.d.ts",
       "default": "./dist/repositories/identity.js"
+    },
+    "./schema/cases": {
+      "types": "./dist/schema/cases.d.ts",
+      "default": "./dist/schema/cases.js"
+    },
+    "./schema/evidence": {
+      "types": "./dist/schema/evidence.d.ts",
+      "default": "./dist/schema/evidence.js"
+    },
+    "./schema/audit": {
+      "types": "./dist/schema/audit.d.ts",
+      "default": "./dist/schema/audit.js"
+    },
+    "./schema/trace": {
+      "types": "./dist/schema/trace.d.ts",
+      "default": "./dist/schema/trace.js"
+    },
+    "./repositories/cases": {
+      "types": "./dist/repositories/cases.d.ts",
+      "default": "./dist/repositories/cases.js"
+    },
+    "./repositories/evidence": {
+      "types": "./dist/repositories/evidence.d.ts",
+      "default": "./dist/repositories/evidence.js"
+    },
+    "./repositories/audit": {
+      "types": "./dist/repositories/audit.d.ts",
+      "default": "./dist/repositories/audit.js"
+    },
+    "./repositories/trace": {
+      "types": "./dist/repositories/trace.d.ts",
+      "default": "./dist/repositories/trace.js"
     }
   },
   "scripts": {
@@ -28,6 +60,7 @@
   "dependencies": {
     "@nexus/application": "workspace:*",
     "@nexus/contracts": "workspace:*",
+    "@nexus/observability": "workspace:*",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1"
   },

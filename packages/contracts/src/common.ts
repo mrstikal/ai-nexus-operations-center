@@ -92,6 +92,20 @@ export const RequestContextSchema = z
   .strict();
 export type RequestContext = z.infer<typeof RequestContextSchema>;
 
+export const SANDBOX_STATUSES = ['active', 'retired'] as const;
+export const SandboxStatusSchema = z.enum(SANDBOX_STATUSES);
+export type SandboxStatus = z.infer<typeof SandboxStatusSchema>;
+
+export const SandboxSummarySchema = z
+  .object({
+    id: EntityIdSchema,
+    name: plainTextSchema(200),
+    status: SandboxStatusSchema,
+    businessEffectiveAt: IsoUtcTimestampSchema,
+  })
+  .strict();
+export type SandboxSummary = z.infer<typeof SandboxSummarySchema>;
+
 export const ProblemSchema = z
   .object({
     code: z.string().min(1).max(64).regex(/^[A-Z][A-Z0-9_]*$/),

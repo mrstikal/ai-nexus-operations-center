@@ -37,6 +37,7 @@
     "@nexus/domain": "workspace:*",
     "@nexus/enterprise-db": "workspace:*",
     "@nexus/integrations": "workspace:*",
+    "@nexus/observability": "workspace:*",
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.11",
     "@types/pg": "8.23.1",

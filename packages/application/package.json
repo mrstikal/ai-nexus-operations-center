@@ -15,6 +15,14 @@
     "./identity/permissions": {
       "types": "./dist/identity/permissions.d.ts",
       "default": "./dist/identity/permissions.js"
+    },
+    "./cases/service": {
+      "types": "./dist/cases/service.d.ts",
+      "default": "./dist/cases/service.js"
+    },
+    "./cases/context": {
+      "types": "./dist/cases/context.d.ts",
+      "default": "./dist/cases/context.js"
     }
   },
   "scripts": {
@@ -22,7 +30,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@nexus/contracts": "workspace:*"
+    "@nexus/contracts": "workspace:*",
+    "@nexus/domain": "workspace:*",
+    "@nexus/observability": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.11"

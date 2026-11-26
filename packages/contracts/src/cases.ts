@@ -43,6 +43,23 @@ export const CaseDetailSchema = CaseSummarySchema.extend({
 }).strict();
 export type CaseDetail = z.infer<typeof CaseDetailSchema>;
 
+export const CaseCreateInputSchema = z
+  .object({
+    title: plainTextSchema(200),
+    summary: z.string().min(1).max(5000).nullable(),
+  })
+  .strict();
+export type CaseCreateInput = z.infer<typeof CaseCreateInputSchema>;
+
+export const CaseUpdateInputSchema = z
+  .object({
+    expectedVersion: z.number().int().nonnegative().max(2_147_483_647),
+    status: CaseStatusSchema,
+    terminalReason: z.string().min(1).max(1000).nullable(),
+  })
+  .strict();
+export type CaseUpdateInput = z.infer<typeof CaseUpdateInputSchema>;
+
 export const CaseListResponseSchema = CursorPageSchema(CaseSummarySchema);
 export type CaseListResponse = z.infer<typeof CaseListResponseSchema>;
 

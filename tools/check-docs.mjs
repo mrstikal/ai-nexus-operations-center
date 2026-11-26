@@ -10,9 +10,11 @@ const REQUIRED_FILES = [
   'docs/OPERATIONS.md',
   'docs/CONTRACTS.md',
   'docs/SECURITY.md',
+  'docs/DATA_MODEL.md',
   'docs/adr/001-workspace.md',
   'docs/adr/002-data-ownership.md',
   'docs/adr/004-transport-roles.md',
+  'docs/adr/011-sandbox-isolation.md',
   'LICENSE',
   'THIRD_PARTY_NOTICES.md',
 ];

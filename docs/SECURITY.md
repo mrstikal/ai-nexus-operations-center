@@ -92,8 +92,9 @@ evidence, prompts, source or logs. No production password is hardcoded.
 For host-run local development, run `pnpm infra:up --dev-ports` so PostgreSQL and
 Valkey are reachable on loopback, and ensure `NEXUS_ALLOWED_ORIGINS` contains the exact
 web origin. The API development script loads the root `.env` with Nest CLI `--env-file`;
-a bare `node dist/main.js` requires the environment to be supplied explicitly. The F04 integration suite uses test-only accounts with disposable test passwords
-and an isolated Compose project.
+a bare `node dist/main.js` requires the environment to be supplied explicitly. The F04
+integration suite uses test-only accounts with disposable test passwords and an isolated
+Compose project.
 
 ## F04 boundaries
 
@@ -103,3 +104,25 @@ and an isolated Compose project.
   not the production API.
 - `/auth/me` intentionally omits sandbox context; F05 adds the active sandbox.
 - Passing F04 tests do not establish approval, execution or AI safety.
+
+## Case reads, audit and trace
+
+F05 adds read-only case, history and evidence APIs under `/api/v1`. The server resolves the
+active sandbox; a browser-supplied sandbox is never accepted. Foreign-sandbox case/evidence
+IDs return 404 without content. Mutations against a retired sandbox return `STALE_STATE`.
+`/api/v1/sandbox` exposes only the server-selected sandbox context. `/auth/me` remains
+identity/roles only.
+
+Audit is append-only security/business history. Runtime API and worker roles may select and
+insert audit rows, but cannot update or delete them. Audit stores actor/request/correlation
+context, target identity/version, before/after hashes, outcome and allowlisted details.
+Free-form uploads, personal addresses, secrets and provider content are not audit fields;
+the redaction allowlist rejects them before insert. Per-sandbox sequence allocation is
+transactional, so concurrent appends receive unique sequence numbers.
+
+Trace is bounded operational diagnostics, not audit evidence. It stores level/event and an
+allowlisted primitive payload with a per-sandbox sequence, and is retained under the
+diagnostic policy without becoming a workflow journal. Trace must not contain raw prompts,
+secrets or personal data. Application roles can append/read trace but cannot alter existing
+audit or trace rows. Audit/decision/receipt/spend records are retained longer than traces;
+retention jobs arrive in F46A and must never purge approval/audit history silently.

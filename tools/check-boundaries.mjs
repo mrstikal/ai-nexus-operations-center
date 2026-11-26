@@ -310,8 +310,12 @@ function checkImport({ from, specifier, typeOnly, workspaces }) {
   }
 
   if (fromRelative === 'packages/application') {
-    if (targetRelative !== 'packages/contracts' && targetRelative !== 'packages/domain') {
-      return 'packages/application may depend only on contracts and domain ports';
+    if (
+      targetRelative !== 'packages/contracts' &&
+      targetRelative !== 'packages/domain' &&
+      targetRelative !== 'packages/observability'
+    ) {
+      return 'packages/application may depend only on contracts, domain ports and observability utilities';
     }
     return null;
   }

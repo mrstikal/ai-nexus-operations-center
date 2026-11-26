@@ -209,6 +209,9 @@ importers:
       '@nexus/integrations':
         specifier: workspace:*
         version: link:packages/integrations
+      '@nexus/observability':
+        specifier: workspace:*
+        version: link:packages/observability
       '@playwright/test':
         specifier: 1.65.1
         version: 1.65.1
@@ -335,6 +338,12 @@ importers:
       '@nexus/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@nexus/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@nexus/observability':
+        specifier: workspace:*
+        version: link:../observability
     devDependencies:
       '@types/node':
         specifier: 26.6.11
@@ -358,6 +367,9 @@ importers:
       '@nexus/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@nexus/observability':
+        specifier: workspace:*
+        version: link:../observability
       drizzle-orm:
         specifier: 0.45.4
         version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)
@@ -403,6 +415,12 @@ importers:
       '@types/redis-errors':
         specifier: 1.2.3
         version: 1.2.3
+
+  packages/observability:
+    devDependencies:
+      '@types/node':
+        specifier: 26.6.11
+        version: 26.6.11
 
 packages:
 

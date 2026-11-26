@@ -59,6 +59,42 @@
       ],
       "@nexus/db/repositories/identity": [
         "./packages/db/src/repositories/identity.ts"
+      ],
+      "@nexus/observability/redaction": [
+        "./packages/observability/src/redaction.ts"
+      ],
+      "@nexus/observability/trace": [
+        "./packages/observability/src/trace.ts"
+      ],
+      "@nexus/db/schema/cases": [
+        "./packages/db/src/schema/cases.ts"
+      ],
+      "@nexus/db/schema/evidence": [
+        "./packages/db/src/schema/evidence.ts"
+      ],
+      "@nexus/db/schema/audit": [
+        "./packages/db/src/schema/audit.ts"
+      ],
+      "@nexus/db/schema/trace": [
+        "./packages/db/src/schema/trace.ts"
+      ],
+      "@nexus/db/repositories/cases": [
+        "./packages/db/src/repositories/cases.ts"
+      ],
+      "@nexus/db/repositories/evidence": [
+        "./packages/db/src/repositories/evidence.ts"
+      ],
+      "@nexus/db/repositories/audit": [
+        "./packages/db/src/repositories/audit.ts"
+      ],
+      "@nexus/db/repositories/trace": [
+        "./packages/db/src/repositories/trace.ts"
+      ],
+      "@nexus/application/cases/service": [
+        "./packages/application/src/cases/service.ts"
+      ],
+      "@nexus/application/cases/context": [
+        "./packages/application/src/cases/context.ts"
       ]
     },
     "skipLibCheck": true

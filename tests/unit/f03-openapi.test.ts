@@ -24,10 +24,15 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/auth/login',
       '/api/v1/auth/logout',
       '/api/v1/auth/me',
+      '/api/v1/cases',
+      '/api/v1/cases/{caseId}',
+      '/api/v1/cases/{caseId}/history',
+      '/api/v1/evidence/{evidenceId}',
+      '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F04',
-      httpControllers: 'auth-implemented',
+      stage: 'F05',
+      httpControllers: 'auth-and-read-only-cases',
     });
     expect(Object.keys(document.components.schemas)).toEqual(
       expect.arrayContaining([

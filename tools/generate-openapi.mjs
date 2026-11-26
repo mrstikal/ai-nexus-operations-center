@@ -24,6 +24,7 @@ const {
   AuthMeResponseSchema,
   AuthUserSchema,
   CaseDetailSchema,
+  CaseHistoryResponseSchema,
   CaseListResponseSchema,
   CaseStatusSchema,
   CaseSummarySchema,
@@ -53,6 +54,7 @@ const {
   ProblemSchema,
   RequestContextSchema,
   ReviewerOutputSchema,
+  SandboxSummarySchema,
   SseEventSchema,
   StructuredClaimSchema,
   ToolDefinitionSchema,
@@ -99,6 +101,7 @@ const COMPONENTS = [
   ['CaseSummary', CaseSummarySchema],
   ['CaseDetail', CaseDetailSchema],
   ['CaseListResponse', CaseListResponseSchema],
+  ['CaseHistoryResponse', CaseHistoryResponseSchema],
   ['WorkflowStatus', WorkflowStatusSchema],
   ['WaitReason', WaitReasonSchema],
   ['WorkflowRun', WorkflowRunSchema],
@@ -120,6 +123,7 @@ const COMPONENTS = [
   ['ActionProposal', ActionProposalSchema],
   ['ApprovalDecision', ApprovalDecisionSchema],
   ['ActionExecution', ActionExecutionSchema],
+  ['SandboxSummary', SandboxSummarySchema],
   ['ModelRole', ModelRoleSchema],
   ['ModelCapability', ModelCapabilitySchema],
   ['ToolName', ToolNameSchema],
@@ -198,6 +202,168 @@ function authProblemResponses() {
     429: { description: 'Login rate limit exceeded', content: { 'application/problem+json': { schema: ProblemSchema } } },
     503: { description: 'Identity or admission dependency unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
   };
+}
+
+function registerCasePaths(registry) {
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/sandbox',
+    tags: ['cases'],
+    summary: 'Read the server-resolved active sandbox',
+    security: [{ sessionCookie: [] }],
+    responses: {
+      200: {
+        description: 'Active sandbox context',
+        content: { 'application/json': { schema: SandboxSummarySchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role or scope denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Case storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/cases',
+    tags: ['cases'],
+    summary: 'List persisted cases in the active sandbox',
+    security: [{ sessionCookie: [] }],
+    request: {
+      query: z.object({
+        status: CaseStatusSchema.optional(),
+        cursor: z.string().optional(),
+        limit: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Stable paginated case list',
+        content: { 'application/json': { schema: CaseListResponseSchema } },
+      },
+      400: {
+        description: 'Invalid filter or cursor',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Case storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/cases/{caseId}',
+    tags: ['cases'],
+    summary: 'Read a case in the active sandbox',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ caseId: z.string() }) },
+    responses: {
+      200: {
+        description: 'Case detail',
+        content: { 'application/json': { schema: CaseDetailSchema } },
+      },
+      400: {
+        description: 'Malformed identifier',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Case not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/cases/{caseId}/history',
+    tags: ['cases'],
+    summary: 'Read redacted append-only history for a case',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ caseId: z.string() }),
+      query: z.object({
+        cursor: z.string().optional(),
+        limit: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Paginated redacted history',
+        content: { 'application/json': { schema: CaseHistoryResponseSchema } },
+      },
+      400: {
+        description: 'Malformed identifier or cursor',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Case not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/evidence/{evidenceId}',
+    tags: ['cases'],
+    summary: 'Read immutable evidence in the active sandbox',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ evidenceId: z.string() }) },
+    responses: {
+      200: {
+        description: 'Evidence snapshot or explicitly missing source',
+        content: {
+          'application/json': { schema: { $ref: '#/components/schemas/Evidence' } },
+        },
+      },
+      400: {
+        description: 'Malformed identifier',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Evidence not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
 }
 
 function registerAuthPaths(registry) {
@@ -325,6 +491,7 @@ export function generateOpenApiDocument() {
   }
 
   registerAuthPaths(registry);
+  registerCasePaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -350,10 +517,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F04',
+    stage: 'F05',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth-implemented',
-    openapiPaths: 'auth-only; later controllers are declared in their owner stages',
+    httpControllers: 'auth-and-read-only-cases',
+    openapiPaths: 'auth, sandbox, cases and evidence reads; later controllers are declared in their owner stages',
   };
 
   return document;

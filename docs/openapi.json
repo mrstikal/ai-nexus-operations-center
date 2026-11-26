@@ -770,6 +770,115 @@
         ],
         "additionalProperties": false
       },
+      "CaseHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "caseId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "caseVersion": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 2147483647
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "new",
+                    "investigating",
+                    "needs_input",
+                    "needs_approval",
+                    "executing",
+                    "resolved",
+                    "escalated",
+                    "cancelled"
+                  ]
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                },
+                "actor": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "human",
+                        "workflow",
+                        "service"
+                      ]
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "viewer",
+                          "operator",
+                          "approver_ops",
+                          "approver_finance",
+                          "admin"
+                        ]
+                      },
+                      "maxItems": 10
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "id",
+                    "roles"
+                  ],
+                  "additionalProperties": false
+                },
+                "occurredAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                }
+              },
+              "required": [
+                "id",
+                "caseId",
+                "caseVersion",
+                "status",
+                "summary",
+                "actor",
+                "occurredAt"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 100
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "additionalProperties": false
+      },
       "WorkflowStatus": {
         "type": "string",
         "enum": [
@@ -5321,6 +5430,38 @@
         ],
         "additionalProperties": false
       },
+      "SandboxSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "retired"
+            ]
+          },
+          "businessEffectiveAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "businessEffectiveAt"
+        ],
+        "additionalProperties": false
+      },
       "ModelRole": {
         "type": "string",
         "enum": [
@@ -6743,6 +6884,25 @@
               }
             ]
           },
+          "sourceStatus": {
+            "type": "string",
+            "enum": [
+              "available",
+              "missing"
+            ]
+          },
+          "missingReason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "contentHash": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$"
@@ -6855,6 +7015,8 @@
           "caseId",
           "kind",
           "sourceRef",
+          "sourceStatus",
+          "missingReason",
           "contentHash",
           "locator",
           "capturedFacts",
@@ -8632,13 +8794,1380 @@
           }
         }
       }
+    },
+    "/api/v1/sandbox": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Read the server-resolved active sandbox",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Active sandbox context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "active",
+                        "retired"
+                      ]
+                    },
+                    "businessEffectiveAt": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "status",
+                    "businessEffectiveAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role or scope denied",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Case storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "List persisted cases in the active sandbox",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "new",
+                "investigating",
+                "needs_input",
+                "needs_approval",
+                "executing",
+                "resolved",
+                "escalated",
+                "cancelled"
+              ]
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stable paginated case list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "sandboxId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "new",
+                              "investigating",
+                              "needs_input",
+                              "needs_approval",
+                              "executing",
+                              "resolved",
+                              "escalated",
+                              "cancelled"
+                            ]
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 2147483647
+                          },
+                          "terminalReason": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "sandboxId",
+                          "title",
+                          "status",
+                          "version",
+                          "terminalReason",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter or cursor",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role denied",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Case storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{caseId}": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Read a case in the active sandbox",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "caseId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case detail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "sandboxId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "new",
+                        "investigating",
+                        "needs_input",
+                        "needs_approval",
+                        "executing",
+                        "resolved",
+                        "escalated",
+                        "cancelled"
+                      ]
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2147483647
+                    },
+                    "terminalReason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "minLength": 1,
+                      "maxLength": 1000
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "summary": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "minLength": 1,
+                      "maxLength": 5000
+                    },
+                    "entityRefs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "system": {
+                            "type": "string",
+                            "enum": [
+                              "nexus",
+                              "enterprise"
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 64,
+                            "pattern": "^[a-z][a-z0-9_]*$"
+                          },
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 2147483647
+                          }
+                        },
+                        "required": [
+                          "system",
+                          "type",
+                          "id",
+                          "version"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 50
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "sandboxId",
+                    "title",
+                    "status",
+                    "version",
+                    "terminalReason",
+                    "createdAt",
+                    "updatedAt",
+                    "summary",
+                    "entityRefs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed identifier",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role denied",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Case not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cases/{caseId}/history": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Read redacted append-only history for a case",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "caseId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated redacted history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "caseId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "caseVersion": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 2147483647
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "new",
+                              "investigating",
+                              "needs_input",
+                              "needs_approval",
+                              "executing",
+                              "resolved",
+                              "escalated",
+                              "cancelled"
+                            ]
+                          },
+                          "summary": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2000
+                          },
+                          "actor": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "human",
+                                  "workflow",
+                                  "service"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 128
+                              },
+                              "roles": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "enum": [
+                                    "viewer",
+                                    "operator",
+                                    "approver_ops",
+                                    "approver_finance",
+                                    "admin"
+                                  ]
+                                },
+                                "maxItems": 10
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "id",
+                              "roles"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "occurredAt": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "caseId",
+                          "caseVersion",
+                          "status",
+                          "summary",
+                          "actor",
+                          "occurredAt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed identifier or cursor",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role denied",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Case not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/evidence/{evidenceId}": {
+      "get": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Read immutable evidence in the active sandbox",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "evidenceId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evidence snapshot or explicitly missing source",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evidence"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed identifier",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Viewer role denied",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evidence not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "webhooks": {},
   "x-nexus-implementation-status": {
-    "stage": "F04",
+    "stage": "F05",
     "contracts": "declared-and-frozen",
-    "httpControllers": "auth-implemented",
-    "openapiPaths": "auth-only; later controllers are declared in their owner stages"
+    "httpControllers": "auth-and-read-only-cases",
+    "openapiPaths": "auth, sandbox, cases and evidence reads; later controllers are declared in their owner stages"
   }
 }

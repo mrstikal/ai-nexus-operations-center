@@ -62,7 +62,8 @@ Contract and event names carry a version. Additive fields cannot change an appro
 payload, plan hash, action meaning or event payload meaning without a new contract/event
 version and a reviewed migration. Approval decisions bind the whole-plan hash; a new
 revision invalidates prior decisions. F03 originally generated a declaration catalog with no paths. F04 adds the four
-implemented auth paths; later owners add their paths. The
+implemented auth paths, and F05 adds the sandbox, case-list/detail/history and evidence
+read paths; later owners add their paths. The
 `x-nexus-implementation-status` marker names the current controller scope rather than
 implying that every declared schema has a live endpoint.
 
