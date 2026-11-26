@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "stages": [
+    {
+      "id": "F01",
+      "name": "Empty fixture stage",
+      "dependencies": [],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    }
+  ]
+}

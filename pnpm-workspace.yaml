@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - packages/*
+minimumReleaseAgeExclude:
+  - '@nestjs/common@12.6.2'
+  - '@nestjs/core@12.6.2'
+  - '@nestjs/platform-express@12.6.2'
+  - '@types/node@26.6.11'
+  - '@types/react@19.3.3'
+  - '@vitest/mocker@5.1.2'
+  - '@vitest/spy@5.1.2'
+  - vitest@5.1.2

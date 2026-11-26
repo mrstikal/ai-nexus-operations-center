@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"]
+  },
+  "include": [
+    "tests/**/*.ts",
+    "tools/**/*.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "tests/fixtures/**",
+    "node_modules",
+    "apps",
+    "dist",
+    ".next"
+  ]
+}

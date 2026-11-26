@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "stages": [
+    {
+      "id": "F01",
+      "name": "Executable fixture stage",
+      "dependencies": [],
+      "checkpoint": false,
+      "unitTests": ["tests/unit/f01-tooling.test.ts"],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": [
+        {
+          "path": "package.json",
+          "minBytes": 1
+        }
+      ]
+    }
+  ]
+}

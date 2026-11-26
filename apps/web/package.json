@@ -1,0 +1,22 @@
+{
+  "name": "@nexus/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev -H 127.0.0.1 -p 3000",
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start -H 127.0.0.1",
+    "typecheck": "NEXT_TELEMETRY_DISABLED=1 next typegen && tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11",
+    "@types/react": "19.3.3",
+    "@types/react-dom": "19.3.0"
+  }
+}

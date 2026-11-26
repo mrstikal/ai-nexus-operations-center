@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "stages": [
+    {
+      "id": "F01",
+      "name": "Missing artifact fixture stage",
+      "dependencies": [],
+      "checkpoint": false,
+      "unitTests": ["tests/unit/f01-tooling.test.ts"],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": [
+        {
+          "path": "tests/fixtures/phases/does-not-exist.txt",
+          "minBytes": 1
+        }
+      ]
+    }
+  ]
+}

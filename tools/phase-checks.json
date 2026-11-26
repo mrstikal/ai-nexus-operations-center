@@ -1,0 +1,1450 @@
+{
+  "version": 1,
+  "stages": [
+    {
+      "id": "F01",
+      "name": "Workspace and Verification Harness",
+      "dependencies": [],
+      "checkpoint": false,
+      "unitTests": [
+        "tests/unit/f01-tooling.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f01-nest-health.test.ts"
+      ],
+      "e2eTests": [
+        "tests/e2e/f01-web-render.spec.ts"
+      ],
+      "artifacts": [
+        {
+          "path": "package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "pnpm-workspace.yaml",
+          "minBytes": 1
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "minBytes": 1
+        },
+        {
+          "path": ".node-version",
+          "minBytes": 1
+        },
+        {
+          "path": ".npmrc",
+          "minBytes": 1
+        },
+        {
+          "path": "tsconfig.base.json",
+          "minBytes": 1
+        },
+        {
+          "path": "eslint.config.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "vitest.config.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "playwright.config.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/api/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/worker/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/check-boundaries.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/run-phase.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/run-integration.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/run-e2e.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/check-docs.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/check-licenses.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f01-tooling.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/integration/f01-nest-health.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/e2e/f01-web-render.spec.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/DEVELOPMENT.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/adr/001-workspace.md",
+          "minBytes": 1
+        },
+        {
+          "path": "LICENSE",
+          "minBytes": 1
+        },
+        {
+          "path": "THIRD_PARTY_NOTICES.md",
+          "minBytes": 1
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "name": "Infrastructure, Connections and Migration Runner",
+      "dependencies": [
+        "F01"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F03",
+      "name": "Shared Kernel and Stable Contracts",
+      "dependencies": [
+        "F01",
+        "F02"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F04",
+      "name": "Authentication, Sessions and Authorization",
+      "dependencies": [
+        "F02",
+        "F03"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F05",
+      "name": "Cases, Evidence and Audit Persistence",
+      "dependencies": [
+        "F03",
+        "F04"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F06",
+      "name": "Web Shell and Session UX",
+      "dependencies": [
+        "F04",
+        "F05"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F07",
+      "name": "Simulator Supply and Sales Read Model",
+      "dependencies": [
+        "F02",
+        "F03",
+        "F05"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F08",
+      "name": "Simulator Command Receipts and Supply Mutations",
+      "dependencies": [
+        "F07"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F09",
+      "name": "Enterprise Client and Authorized Tool Registry",
+      "dependencies": [
+        "F03",
+        "F04",
+        "F07",
+        "F08"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F10",
+      "name": "Durable Ingress, Outbox and Inbox",
+      "dependencies": [
+        "F05",
+        "F08",
+        "F09"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F11",
+      "name": "Workflow Journal, Jobs and Leases",
+      "dependencies": [
+        "F03",
+        "F05",
+        "F10"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F11A",
+      "name": "Workflow Waits, Resume and Cancellation Control",
+      "dependencies": [
+        "F11"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F11B",
+      "name": "Workflow Read API and Persisted SSE",
+      "dependencies": [
+        "F05",
+        "F11A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F12",
+      "name": "Action Proposals and Deterministic Policies",
+      "dependencies": [
+        "F03",
+        "F05",
+        "F09",
+        "F11"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F13",
+      "name": "Human Decisions Bound to the Whole Plan",
+      "dependencies": [
+        "F08",
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F13A",
+      "name": "Sequential Plan Executor and Per-Item Receipts",
+      "dependencies": [
+        "F08",
+        "F09",
+        "F11A",
+        "F12",
+        "F13"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F13B",
+      "name": "Uncertain Outcomes, Partial Effects and Cancellation",
+      "dependencies": [
+        "F13A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F14",
+      "name": "Shared Replay Gateway and Budget Ledger",
+      "dependencies": [
+        "F03",
+        "F05",
+        "F11"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F15",
+      "name": "Secure Document Intake and Blob Storage",
+      "dependencies": [
+        "F05",
+        "F10",
+        "F11"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F15A",
+      "name": "Isolated Digital PDF, Email and Text Extraction",
+      "dependencies": [
+        "F11",
+        "F15"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F16",
+      "name": "Structured Extraction and Human Corrections",
+      "dependencies": [
+        "F12",
+        "F13B",
+        "F14",
+        "F15A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F17",
+      "name": "Versioned Knowledge and Lexical Policy Retrieval",
+      "dependencies": [
+        "F05",
+        "F12",
+        "F15",
+        "F16"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F18",
+      "name": "Supply Calculations and Deterministic Verification",
+      "dependencies": [
+        "F03",
+        "F07",
+        "F09",
+        "F12",
+        "F16",
+        "F17"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F19",
+      "name": "Supply Workflow End to End",
+      "dependencies": [
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F20",
+      "name": "Case Workbench, Evidence and Execution Trace",
+      "dependencies": [
+        "F06",
+        "F19"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F21",
+      "name": "Approval Center and Human Input UI",
+      "dependencies": [
+        "F13",
+        "F16",
+        "F20"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F22",
+      "name": "First Supply Demo Launcher",
+      "dependencies": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F22A",
+      "name": "First Vertical Integration and Architecture Gate",
+      "dependencies": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F23",
+      "name": "OpenRouter Adapter and Live Configuration Preflight",
+      "dependencies": [
+        "F14",
+        "F22A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F24",
+      "name": "OCR, Image Inputs and Bounded Vision Fallback",
+      "dependencies": [
+        "F15",
+        "F16",
+        "F23"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F25",
+      "name": "Embedding Index and Hybrid Retrieval",
+      "dependencies": [
+        "F14",
+        "F17",
+        "F23"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F26",
+      "name": "Independent Reviewer Backend and Live Admission Gate",
+      "dependencies": [
+        "F18",
+        "F19",
+        "F23",
+        "F25"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F26A",
+      "name": "Verification Evidence and Human Disagreement UI",
+      "dependencies": [
+        "F21",
+        "F26"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F27",
+      "name": "Simulator Delivery and Invoice Read Context",
+      "dependencies": [
+        "F08",
+        "F09",
+        "F26"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F27A",
+      "name": "Verified Goods Receipt Command",
+      "dependencies": [
+        "F13B",
+        "F27"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F27B",
+      "name": "Invoice Reconciled and Hold Commands",
+      "dependencies": [
+        "F27A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F28",
+      "name": "Deterministic Three-Way Reconciliation",
+      "dependencies": [
+        "F16",
+        "F18",
+        "F27B"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F29",
+      "name": "Reconciliation Workflow and Finance Review",
+      "dependencies": [
+        "F24",
+        "F25",
+        "F26",
+        "F26A",
+        "F27",
+        "F27A",
+        "F27B",
+        "F28"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F30",
+      "name": "Document Center and B Integration Gate",
+      "dependencies": [
+        "F20",
+        "F21",
+        "F29"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F31",
+      "name": "Simulator Customer Context and Terms",
+      "dependencies": [
+        "F08",
+        "F27",
+        "F30"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F31A",
+      "name": "Return Authorization Command",
+      "dependencies": [
+        "F13B",
+        "F31"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F31B",
+      "name": "Damaged-Item Replacement and Stock Reservation",
+      "dependencies": [
+        "F31A"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F31C",
+      "name": "Verified Credit-Note Draft Command",
+      "dependencies": [
+        "F28",
+        "F31B"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F31D",
+      "name": "Pre-Dispatch Delivery Address Command",
+      "dependencies": [
+        "F31C"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F32",
+      "name": "Customer Eligibility and Linked Investigation",
+      "dependencies": [
+        "F18",
+        "F28",
+        "F31D"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F33",
+      "name": "Customer Workflow, Drafts and Escalation",
+      "dependencies": [
+        "F26A",
+        "F29",
+        "F31",
+        "F31A",
+        "F31B",
+        "F31C",
+        "F31D",
+        "F32"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F33A",
+      "name": "Durable Linked-Case Coordination",
+      "dependencies": [
+        "F11A",
+        "F19",
+        "F29",
+        "F32",
+        "F33"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F34",
+      "name": "Customer Workbench and Three-Scenario Gate",
+      "dependencies": [
+        "F20",
+        "F21",
+        "F30",
+        "F33A"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F35",
+      "name": "Reviewed Operational Memory and Feedback",
+      "dependencies": [
+        "F17",
+        "F25",
+        "F34"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F36",
+      "name": "Bounded Conversational Assistant Backend",
+      "dependencies": [
+        "F14",
+        "F25",
+        "F26",
+        "F34",
+        "F35"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F37",
+      "name": "Assistant Panel and Controlled Contextual UI",
+      "dependencies": [
+        "F21",
+        "F36"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F38",
+      "name": "Knowledge Center and Publication UX",
+      "dependencies": [
+        "F24",
+        "F25",
+        "F30",
+        "F35"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F39",
+      "name": "Operations Dashboard and Source-Backed Briefings",
+      "dependencies": [
+        "F26",
+        "F34",
+        "F35"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F40",
+      "name": "Model, Workflow-Limit and Cost Administration",
+      "dependencies": [
+        "F23",
+        "F26",
+        "F39"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F41",
+      "name": "OpenTelemetry and Failure Inspection",
+      "dependencies": [
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F23",
+        "F40"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F42",
+      "name": "Offline Evaluation Engine and Scorers",
+      "dependencies": [
+        "F19",
+        "F25",
+        "F29",
+        "F33A",
+        "F41"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F43",
+      "name": "Versioned Benchmark, Regression Reports and Results UI",
+      "dependencies": [
+        "F34",
+        "F42"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F44",
+      "name": "Opt-In Live Comparisons and Independent Quality Rubric",
+      "dependencies": [
+        "F23",
+        "F26",
+        "F40",
+        "F42",
+        "F43"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F45",
+      "name": "Complete Demo Catalog and Guided Paths",
+      "dependencies": [
+        "F22",
+        "F30",
+        "F34",
+        "F43",
+        "F44"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F46",
+      "name": "Safe Sandbox Reset Saga",
+      "dependencies": [
+        "F08",
+        "F13",
+        "F35",
+        "F45"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F46A",
+      "name": "Retention, Evidence Holds and Disk Admission",
+      "dependencies": [
+        "F15",
+        "F35",
+        "F46"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F47",
+      "name": "Event and Infrastructure Recovery Gate",
+      "dependencies": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F22A",
+        "F23",
+        "F24",
+        "F25",
+        "F26",
+        "F26A",
+        "F27",
+        "F27A",
+        "F27B",
+        "F28",
+        "F29",
+        "F30",
+        "F31",
+        "F31A",
+        "F31B",
+        "F31C",
+        "F31D",
+        "F32",
+        "F33",
+        "F33A",
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F46A"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F47A",
+      "name": "Workflow Lease, Wait and Deadline Recovery Gate",
+      "dependencies": [
+        "F47"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F47B",
+      "name": "Provider, Budget and Verification Failure Gate",
+      "dependencies": [
+        "F47A"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F47C",
+      "name": "Command, Partial-Plan and Reset Recovery Gate",
+      "dependencies": [
+        "F47B"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F48",
+      "name": "Authorization and AI-Abuse Security Gate",
+      "dependencies": [
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F46A",
+        "F47",
+        "F47A",
+        "F47B",
+        "F47C"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F48A",
+      "name": "Parser, Browser and Container Isolation Gate",
+      "dependencies": [
+        "F48"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F48B",
+      "name": "Supply Chain, License and Secret Inventory Gate",
+      "dependencies": [
+        "F48A"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F49",
+      "name": "Performance, Accessibility and Responsive Verification",
+      "dependencies": [
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F46A",
+        "F47",
+        "F47A",
+        "F47B",
+        "F47C",
+        "F48",
+        "F48A",
+        "F48B"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F50",
+      "name": "Clean Local Packaging and Onboarding",
+      "dependencies": [
+        "F46",
+        "F46A",
+        "F47",
+        "F47A",
+        "F47B",
+        "F47C",
+        "F48",
+        "F48A",
+        "F48B",
+        "F49"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F51",
+      "name": "Portfolio Documentation and Decision Records",
+      "dependencies": [
+        "F22",
+        "F34",
+        "F43",
+        "F44",
+        "F48",
+        "F48A",
+        "F48B",
+        "F49",
+        "F50"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F51A",
+      "name": "Final Requirement and Evidence Assembly",
+      "dependencies": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F22A",
+        "F23",
+        "F24",
+        "F25",
+        "F26",
+        "F26A",
+        "F27",
+        "F27A",
+        "F27B",
+        "F28",
+        "F29",
+        "F30",
+        "F31",
+        "F31A",
+        "F31B",
+        "F31C",
+        "F31D",
+        "F32",
+        "F33",
+        "F33A",
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F46A",
+        "F47",
+        "F47A",
+        "F47B",
+        "F47C",
+        "F48",
+        "F48A",
+        "F48B",
+        "F49",
+        "F50",
+        "F51"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F51B",
+      "name": "Independent Final Architecture and Code Review",
+      "dependencies": [
+        "F51A"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F52",
+      "name": "Final Product and Architectural Acceptance Gate",
+      "dependencies": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F11A",
+        "F11B",
+        "F12",
+        "F13",
+        "F13A",
+        "F13B",
+        "F14",
+        "F15",
+        "F15A",
+        "F16",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F22A",
+        "F23",
+        "F24",
+        "F25",
+        "F26",
+        "F26A",
+        "F27",
+        "F27A",
+        "F27B",
+        "F28",
+        "F29",
+        "F30",
+        "F31",
+        "F31A",
+        "F31B",
+        "F31C",
+        "F31D",
+        "F32",
+        "F33",
+        "F33A",
+        "F34",
+        "F35",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41",
+        "F42",
+        "F43",
+        "F44",
+        "F45",
+        "F46",
+        "F46A",
+        "F47",
+        "F47A",
+        "F47B",
+        "F47C",
+        "F48",
+        "F48A",
+        "F48B",
+        "F49",
+        "F50",
+        "F51",
+        "F51A",
+        "F51B"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "nexus",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=26.13.1 <27",
+    "pnpm": "12.23.0"
+  },
+  "scripts": {
+    "build": "pnpm -r --if-present build",
+    "dev": "pnpm -r --parallel --if-present dev",
+    "lint": "node tools/check-format.mjs && eslint . && node tools/check-boundaries.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm -r --if-present typecheck",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "node tools/run-integration.mjs",
+    "test:e2e": "node tools/run-e2e.mjs",
+    "verify:phase": "node tools/run-phase.mjs",
+    "docs:check": "node tools/check-docs.mjs",
+    "licenses:check": "node tools/check-licenses.mjs",
+    "infra:up": "node tools/not-implemented.mjs infra:up F02",
+    "db:migrate": "node tools/not-implemented.mjs db:migrate F02",
+    "demo:init": "node tools/not-implemented.mjs demo:init F02",
+    "demo:reset": "node tools/not-implemented.mjs demo:reset F46",
+    "eval:offline": "node tools/not-implemented.mjs eval:offline F42",
+    "retrieval:check": "node tools/not-implemented.mjs retrieval:check F25",
+    "eval:live": "node tools/not-implemented.mjs eval:live F44"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.11",
+    "eslint": "10.15.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.74.0",
+    "vite": "8.3.8",
+    "vitest": "5.1.2"
+  }
+}
