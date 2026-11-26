@@ -70,7 +70,7 @@ export const WORKFLOW_TRANSITIONS: Record<WorkflowStatus, readonly WorkflowStatu
     'cancel_requested',
   ],
   waiting_input: ['queued', 'cancel_requested'],
-  waiting_approval: ['queued', 'cancel_requested'],
+  waiting_approval: ['waiting_input', 'queued', 'cancel_requested'],
   waiting_dependency: ['queued', 'cancel_requested'],
   blocked: ['queued', 'cancel_requested'],
   budget_exhausted: ['queued', 'cancel_requested'],

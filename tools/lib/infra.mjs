@@ -263,7 +263,7 @@ function redact(text, env) {
 }
 
 export function dockerPreflight() {
-  const version = spawnSync('docker', ['version', '--format', '{{.Server.Version}}'], {
+  const version = spawnSync('docker', ['info', '--format', '{{.ServerVersion}}'], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
   });

@@ -367,3 +367,26 @@ with `nextCursor` pagination.
 current revision. The OpenAPI paths are generated from these schemas. Stale concurrency returns
 `STALE_STATE`; a second open procurement plan per case returns `CONFLICT`. A pending or approved
 revision is never an execution authorization. See [ACTIONS.md](ACTIONS.md).
+
+## Human decision contracts (F13)
+
+`ApprovalDecision` now includes the filled `role`, `state` (`active|superseded`) and revision
+`expiresAt`; every decision also carries the whole revision ID, plan hash, required roles, actor,
+reason and decision time. `ApprovalDecisionRequest` contains only the expected `actionRevisionId`,
+`planHash` and optional bounded reason. The server derives the decision, role and status.
+
+`ApprovalDecisionResult`, `ApprovalQueueItem` and `ApprovalQueueResponse` expose the current
+authoritative proposal/revision plus filled and missing slots. `ActionRevision` now exposes its
+`policyContentHash`; approval additionally rejects a revision whose policy identity is not the
+current bundle. `ActionRevisionRequestInput` is the
+same exact revision/hash binding for clarification and reanalysis; `ActionRevisionRequest` records
+kind, state, actor, bounded reason and optional wait run. `NoActionInput` is a bounded reason and
+`NoActionResponse` records the resolved case version, actor and time; no-action requires an active
+workflow run. `ApprovalPreflight` is the F13A handoff: exact revision/hash, policy identity,
+required/filled/missing roles, expiry and execution state.
+
+Routes are `GET /api/v1/approvals`,
+`POST /api/v1/proposals/{proposalId}/approve|reject|clarification|reanalyse` and
+`POST /api/v1/cases/{caseId}/resolve-no-action`. All mutation POSTs require UUID
+`Idempotency-Key`; decision/request routes use the server-selected role and current database roles.
+The OpenAPI paths and components are generated from these schemas. See [ACTIONS.md](ACTIONS.md).

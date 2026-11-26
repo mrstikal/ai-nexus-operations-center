@@ -227,6 +227,24 @@
       ],
       "@nexus/db/repositories/actions": [
         "./packages/db/src/repositories/actions.ts"
+      ],
+      "@nexus/db/schema/approvals": [
+        "./packages/db/src/schema/approvals.ts"
+      ],
+      "@nexus/db/repositories/approvals": [
+        "./packages/db/src/repositories/approvals.ts"
+      ],
+      "@nexus/application/actions/decisions": [
+        "./packages/application/src/actions/decisions.ts"
+      ],
+      "@nexus/application/actions/clarification": [
+        "./packages/application/src/actions/clarification.ts"
+      ],
+      "@nexus/application/actions/reanalysis": [
+        "./packages/application/src/actions/reanalysis.ts"
+      ],
+      "@nexus/application/cases/no-action": [
+        "./packages/application/src/cases/no-action.ts"
       ]
     },
     "skipLibCheck": true

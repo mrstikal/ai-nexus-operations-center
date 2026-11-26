@@ -95,6 +95,22 @@
     "./actions/policy-source": {
       "types": "./dist/actions/policy-source.d.ts",
       "default": "./dist/actions/policy-source.js"
+    },
+    "./actions/decisions": {
+      "types": "./dist/actions/decisions.d.ts",
+      "default": "./dist/actions/decisions.js"
+    },
+    "./actions/clarification": {
+      "types": "./dist/actions/clarification.d.ts",
+      "default": "./dist/actions/clarification.js"
+    },
+    "./actions/reanalysis": {
+      "types": "./dist/actions/reanalysis.d.ts",
+      "default": "./dist/actions/reanalysis.js"
+    },
+    "./cases/no-action": {
+      "types": "./dist/cases/no-action.d.ts",
+      "default": "./dist/cases/no-action.js"
     }
   },
   "scripts": {

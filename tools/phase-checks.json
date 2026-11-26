@@ -1721,9 +1721,105 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f13-decisions.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/actions.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/db/src/schema/approvals.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/migrations/0009_approvals.sql",
+          "minBytes": 6000
+        },
+        {
+          "path": "packages/db/src/repositories/approvals.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "packages/application/src/actions/decisions.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "packages/application/src/actions/clarification.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/actions/reanalysis.ts",
+          "minBytes": 300
+        },
+        {
+          "path": "packages/application/src/cases/no-action.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "apps/api/src/actions.module.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "apps/api/src/approvals/controller.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "apps/api/src/proposals/control-controller.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "apps/api/src/cases/control-controller.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "tests/integration/f13-decisions.test.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "docs/ACTIONS.md",
+          "minBytes": 4000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 15000
+        },
+        {
+          "path": "tools/generate-openapi.mjs",
+          "minBytes": 3000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/lib/infra.mjs",
+          "minBytes": 5000
+        },
+        {
+          "path": "docs/WORKFLOWS.md",
+          "minBytes": 2000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F13A",

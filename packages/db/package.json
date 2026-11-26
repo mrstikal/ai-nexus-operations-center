@@ -95,6 +95,14 @@
     "./repositories/actions": {
       "types": "./dist/repositories/actions.d.ts",
       "default": "./dist/repositories/actions.js"
+    },
+    "./schema/approvals": {
+      "types": "./dist/schema/approvals.d.ts",
+      "default": "./dist/schema/approvals.js"
+    },
+    "./repositories/approvals": {
+      "types": "./dist/repositories/approvals.d.ts",
+      "default": "./dist/repositories/approvals.js"
     }
   },
   "scripts": {

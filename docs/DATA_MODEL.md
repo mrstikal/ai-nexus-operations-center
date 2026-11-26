@@ -252,7 +252,9 @@ Migration `packages/db/migrations/0008_actions_policies.sql` adds four Nexus tab
   `draft|pending_approval|approved|rejected|superseded|expired|cancelled` lifecycle status, a
   server-derived procurement flag, the creator and a row version. Composite foreign keys bind
   the sandbox/case and the current revision. A partial unique index permits at most one open
-  (`draft`/`pending_approval`) procurement proposal per case.
+  (`draft`/`pending_approval`) procurement proposal per case. F13 adds a generated identity
+  `sequence` used as the exact approval-queue pagination key; the API role receives explicit sequence
+  USAGE.
 - `action_revisions` stores immutable revision content: revision number, lifecycle state, plan
   hash, bounded item JSON, required role JSON, typed bigint aggregate impact in EUR minor units,
   procurement flag, policy revision/content hash, rationale, author actor fields, expiry and
@@ -271,3 +273,30 @@ scripting, role grant, threshold widening or future-table prior-execution query 
 The worker consumes enterprise change inbox rows and expires affected open proposals in place.
 Approval decisions, role slots, executions, enterprise receipts and enterprise effects remain
 absent until F13/F13A. See [ACTIONS.md](ACTIONS.md) for the derivation and hash rules.
+
+## Human decisions and control (F13)
+
+Migration `packages/db/migrations/0009_approvals.sql` adds:
+
+- `approval_decisions`: one immutable human approve/reject row bound to proposal, current action
+  revision, plan hash, required role set, selected role, actor with roles at decision time, reason,
+  revision expiry and lifecycle `active|superseded`. Partial unique indexes prevent two active
+  decisions for one role, one actor filling two approval slots, or two active rejections for one
+  revision.
+- `action_command_idempotency`: UUID key replay scoped by sandbox, actor and route, with canonical
+  request hash, resource identity and original response.
+- `action_revision_requests`: clarification/reanalysis rows bound to the exact revision and plan
+  hash, with bounded reason, actor and optional human-input wait run. One recorded request of each
+  kind can exist per revision.
+- `case_resolutions`: human no-action resolution rows with case version, bounded reason, actor and
+  time.
+
+The API role alone may insert decisions/requests/resolutions and update decision/request lifecycle
+columns; the worker may read decisions/requests/resolutions and may only update decision lifecycle when an
+external change invalidates a proposal; it cannot insert human decisions. Editing or expiring a
+revision supersedes its active decisions in the same transaction. An edit retargets a matching
+approval wait to the new revision; expiry moves it to a recorded human-input wait. Approval
+completion resumes the matching waiting workflow run; rejection, clarification and reanalysis move it
+to a recorded human-input wait. No-action requires an active run, cancels unstarted plans/active
+runs, then resolves through the case reducer only after the execution-state port reports no
+started/succeeded/unknown effect. Enterprise execution remains absent until F13A.

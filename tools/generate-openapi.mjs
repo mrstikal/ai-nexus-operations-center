@@ -22,9 +22,17 @@ const {
   ActionProposalEditInputSchema,
   ActionProposalListResponseSchema,
   ActionProposalSchema,
+  ActionRevisionRequestInputSchema,
+  ActionRevisionRequestResponseSchema,
+  ActionRevisionRequestSchema,
   ActionRevisionSchema,
+  ApprovalDecisionRequestSchema,
+  ApprovalDecisionResultSchema,
+  ApprovalPreflightSchema,
   ActorSchema,
   ApprovalDecisionSchema,
+  ApprovalQueueItemSchema,
+  ApprovalQueueResponseSchema,
   AuthMeResponseSchema,
   AuthUserSchema,
   CaseDetailSchema,
@@ -52,6 +60,8 @@ const {
   GatewaySuccessSchema,
   IdempotencyKeySchema,
   LoginRequestSchema,
+  NoActionInputSchema,
+  NoActionResponseSchema,
   LoginResponseSchema,
   LogoutResponseSchema,
   MessagePartSchema,
@@ -157,6 +167,16 @@ const COMPONENTS = [
   ['ActionProposalListResponse', ActionProposalListResponseSchema],
   ['PolicyBundle', PolicyBundleSchema],
   ['ApprovalDecision', ApprovalDecisionSchema],
+  ['ApprovalDecisionRequest', ApprovalDecisionRequestSchema],
+  ['ApprovalDecisionResult', ApprovalDecisionResultSchema],
+  ['ApprovalQueueItem', ApprovalQueueItemSchema],
+  ['ApprovalQueueResponse', ApprovalQueueResponseSchema],
+  ['ApprovalPreflight', ApprovalPreflightSchema],
+  ['ActionRevisionRequest', ActionRevisionRequestSchema],
+  ['ActionRevisionRequestInput', ActionRevisionRequestInputSchema],
+  ['ActionRevisionRequestResponse', ActionRevisionRequestResponseSchema],
+  ['NoActionInput', NoActionInputSchema],
+  ['NoActionResponse', NoActionResponseSchema],
   ['ActionExecution', ActionExecutionSchema],
   ['SandboxSummary', SandboxSummarySchema],
   ['ModelRole', ModelRoleSchema],
@@ -653,6 +673,118 @@ function registerCasePaths(registry) {
 }
 
 
+function registerDecisionPaths(registry) {
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/approvals',
+    tags: ['approvals'],
+    summary: 'List pending revisions the current approver can still decide',
+    security: [{ sessionCookie: [] }],
+    request: {
+      query: z.object({ limit: z.string().optional(), cursor: z.string().optional() }),
+    },
+    responses: {
+      200: {
+        description: 'Bounded approval queue with role slot state',
+        content: { 'application/json': { schema: ApprovalQueueResponseSchema } },
+      },
+      400: { description: 'Malformed cursor or limit', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      401: { description: 'Session missing or expired', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      403: { description: 'No approver role', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      503: { description: 'Approval storage unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    },
+  });
+  for (const decision of ['approve', 'reject']) {
+    registry.registerPath({
+      method: 'post',
+      path: `/api/v1/proposals/{proposalId}/${decision}`,
+      tags: ['approvals'],
+      summary: decision === 'approve' ? 'Approve the exact whole-plan revision slot' : 'Reject the exact whole-plan revision',
+      security: [{ sessionCookie: [] }],
+      request: {
+        params: z.object({ proposalId: z.string() }),
+        headers: z.object({ 'idempotency-key': UuidSchema }),
+        body: { content: { 'application/json': { schema: ApprovalDecisionRequestSchema } } },
+      },
+      responses: {
+        200: {
+          description: 'Recorded immutable human decision and current slot state',
+          content: { 'application/json': { schema: ApprovalDecisionResultSchema } },
+        },
+        400: { description: 'Invalid decision request or header', content: { 'application/problem+json': { schema: ProblemSchema } } },
+        401: { description: 'Session missing or expired', content: { 'application/problem+json': { schema: ProblemSchema } } },
+        403: { description: 'Self-approval or missing eligible role', content: { 'application/problem+json': { schema: ProblemSchema } } },
+        404: { description: 'Proposal not found', content: { 'application/problem+json': { schema: ProblemSchema } } },
+        409: { description: 'Stale revision, wrong hash, expiry or conflicting decision', content: { 'application/problem+json': { schema: ProblemSchema } } },
+        503: { description: 'Approval storage unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      },
+    });
+  }
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/proposals/{proposalId}/clarification',
+    tags: ['approvals'],
+    summary: 'Record a clarification request and the exact human-input wait',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ proposalId: z.string() }),
+      headers: z.object({ 'idempotency-key': UuidSchema }),
+      body: { content: { 'application/json': { schema: ActionRevisionRequestInputSchema } } },
+    },
+    responses: {
+      200: { description: 'Clarification request recorded; revision is unchanged', content: { 'application/json': { schema: ActionRevisionRequestResponseSchema } } },
+      400: { description: 'Invalid request or header', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      401: { description: 'Session missing or expired', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      403: { description: 'Operator role, origin or CSRF check failed', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      404: { description: 'Proposal not found', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      409: { description: 'Stale revision, wrong hash, expiry or request conflict', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      503: { description: 'Proposal control unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/proposals/{proposalId}/reanalyse',
+    tags: ['approvals'],
+    summary: 'Supersede the unexecuted revision and record a reanalysis wait',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ proposalId: z.string() }),
+      headers: z.object({ 'idempotency-key': UuidSchema }),
+      body: { content: { 'application/json': { schema: ActionRevisionRequestInputSchema } } },
+    },
+    responses: {
+      200: { description: 'Reanalysis recorded; old revision remains immutable', content: { 'application/json': { schema: ActionRevisionRequestResponseSchema } } },
+      400: { description: 'Invalid request or header', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      401: { description: 'Session missing or expired', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      403: { description: 'Operator role, origin or CSRF check failed', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      404: { description: 'Proposal not found', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      409: { description: 'Stale revision, wrong hash, expiry or request conflict', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      503: { description: 'Proposal control unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/cases/{caseId}/resolve-no-action',
+    tags: ['approvals'],
+    summary: 'Human-only justified no-action case resolution',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ caseId: z.string() }),
+      headers: z.object({ 'idempotency-key': UuidSchema }),
+      body: { content: { 'application/json': { schema: NoActionInputSchema } } },
+    },
+    responses: {
+      200: { description: 'Case resolved with recorded human reason', content: { 'application/json': { schema: NoActionResponseSchema } } },
+      400: { description: 'Invalid reason or header', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      401: { description: 'Session missing or expired', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      403: { description: 'Operator role, origin or CSRF check failed', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      404: { description: 'Case not found', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      409: { description: 'Terminal case or started/unknown/succeeded effect', content: { 'application/problem+json': { schema: ProblemSchema } } },
+      503: { description: 'No-action storage unavailable', content: { 'application/problem+json': { schema: ProblemSchema } } },
+    },
+  });
+}
+
 function registerProposalPaths(registry) {
   registry.registerPath({
     method: 'post',
@@ -942,6 +1074,7 @@ export function generateOpenApiDocument() {
   registerAuthPaths(registry);
   registerCasePaths(registry);
   registerProposalPaths(registry);
+  registerDecisionPaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -967,10 +1100,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F12',
+    stage: 'F13',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, run control and run read/SSE',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
   };
 
   return document;

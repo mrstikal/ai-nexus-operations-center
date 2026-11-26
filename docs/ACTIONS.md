@@ -197,3 +197,58 @@ enterprise receipts, partial effects, outbox command rows, browser UI or automat
 execution. It does not implement policy scripting, configurable roles, AI-selected thresholds,
 dependencies supplied by a model, or edit-after-execution. Those belong to F13, F13A, F13B and
 later workbench stages.
+
+## Human decisions, clarification and no-action (F13)
+
+F13 adds the human decision boundary on top of the immutable proposal revision. The API inserts
+decisions; clients never send a decision status, role, hash or authority. A decision request binds
+the exact `actionRevisionId` and `planHash`; the server rechecks the current proposal, revision,
+whole-plan hash, required role set and database expiry under a proposal/action-revision row lock.
+
+`GET /api/v1/approvals` lists pending revisions where the current approver still holds an unfilled
+required role and has not already decided. Eligibility is filtered in SQL rather than after paging,
+and the cursor uses the same proposal timestamp ordering as the keyset comparison. `POST /api/v1/proposals/{proposalId}/approve` records one
+server-selected role slot; `reject` records a rejection and supersedes the unexecuted plan. The server
+chooses the slot from the actor's current database roles. Self-approval by the human author, the same
+user filling two slots, an ineligible/revoked role, a wrong hash, a stale revision and an expired
+revision are rejected. An approval does not execute anything and does not write enterprise state or
+an action command.
+
+Only the complete required role set moves the proposal and revision to `approved`. Completion resumes
+any workflow run waiting for that exact proposal/revision with `approval_completed`, resets the
+waiting step and enqueues the next job. The public run-resume path revalidates that the exact revision
+is still current and approved with a complete active decision set before it queues the run. Partial
+approvals remain `pending_approval`. An edit retargets a matching approval wait to the new revision;
+expiry/external invalidation moves it to a recorded `human_input` wait, so a superseded approval
+cannot be resumed. Decisions are
+immutable rows with `active|superseded` lifecycle state; an edit, expiry, clarification, reanalysis
+or no-action resolution supersedes them atomically. A rejection or clarification/reanalysis moves a
+matching approval wait to a recorded `human_input` wait instead of leaving a resumable approval.
+
+`POST /api/v1/proposals/{proposalId}/clarification` records a bounded question without editing the
+revision or its history and invalidates partial approvals. `POST .../reanalyse` records the request,
+supersedes the whole unexecuted proposal/revision and invalidates decisions. Both use the existing
+`human_input` wait type and the current workflow step; no workflow definition or step history is
+rewritten. The `waiting_approval -> waiting_input` transition is limited to this recorded control
+action. The request row keeps the exact old revision ID, plan hash, actor, reason and wait run ID.
+
+`POST /api/v1/cases/{caseId}/resolve-no-action` is operator-only, requires a bounded reason and an
+`Idempotency-Key`, and requires at least one active workflow run so the terminal transition always
+goes through the case reducer and emits `nexus.case.completed.v1`. It locks open
+proposals/revisions, then active runs, then the case in the same order as decisions and later
+dispatch. It supersedes every unstarted plan, cancels active workflow jobs and resolves the case only
+when the execution-state port reports no started/succeeded/unknown effect. A manual case with no run
+returns `NO_ACTIVE_RUN` rather than bypassing the reducer.
+F13's port is empty because execution does not exist; F13A must bind it to real execution rows. The
+reason is stored in `case_resolutions` and audit; the audit/response redact the text from general
+logs while preserving a content hash.
+
+All mutation POSTs require the UUID `Idempotency-Key` replay contract. `action_command_idempotency`
+is scoped by sandbox, actor and route, stores the canonical request hash and original response, and
+returns `IDEMPOTENCY_MISMATCH` for a reused key with a changed body. The API role alone may insert
+human decisions and requests. The worker may read them and may only mark decisions superseded during
+proposal invalidation; it cannot insert a human decision. Preflight for F13A returns the exact
+revision/hash, policy revision/content hash, required/filled/missing roles, expiry and execution
+state, with `none` before executions exist. Decision registration also rejects an approval when the
+revision's policy identity differs from the current validated bundle (`POLICY_CHANGED`). Preflight
+is not an execution grant.

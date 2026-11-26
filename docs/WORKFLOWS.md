@@ -121,7 +121,7 @@ lease is released and no AI/human work is held. A resume requires the exact reco
 | Wait | Accepted resume cause |
 |---|---|
 | `waiting_input` | `human_input` |
-| `waiting_approval` | `approval_completed` with the exact proposal/action revision |
+| `waiting_approval` | `approval_completed` with the exact proposal/action revision; F13 may move it to a recorded `human_input` wait for clarification, rejection or reanalysis |
 | `waiting_dependency` | only a validated child `case.completed` event; no public resume cause |
 | `budget_exhausted` | `budget_extension` is reserved but not enabled in F11A |
 

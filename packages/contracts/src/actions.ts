@@ -289,6 +289,7 @@ export const ActionRevisionSchema = z
     items: z.array(ActionPlanItemSchema).min(1).max(6),
     requiredRoles: z.array(RoleSchema).max(5),
     policyRevision: z.string().min(1).max(100),
+    policyContentHash: HashSchema,
     aggregateImpact: MoneySchema.nullable(),
     createdBy: ActorSchema,
     createdAt: IsoUtcTimestampSchema,
@@ -372,13 +373,148 @@ export const ApprovalDecisionSchema = z
     actionRevisionId: EntityIdSchema,
     planHash: HashSchema,
     decision: z.enum(['approve', 'reject']),
+    role: RoleSchema,
     requiredRoles: z.array(RoleSchema).min(1).max(5),
+    state: z.enum(['active', 'superseded']),
     actor: ActorSchema,
     reason: z.string().min(1).max(2000).nullable(),
+    expiresAt: IsoUtcTimestampSchema,
     decidedAt: IsoUtcTimestampSchema,
   })
   .strict();
 export type ApprovalDecision = z.infer<typeof ApprovalDecisionSchema>;
+
+export const ApprovalDecisionRequestSchema = z
+  .object({
+    actionRevisionId: EntityIdSchema,
+    planHash: HashSchema,
+    reason: z.string().min(1).max(2000).nullable(),
+  })
+  .strict();
+export type ApprovalDecisionRequest = z.infer<
+  typeof ApprovalDecisionRequestSchema
+>;
+
+export const ApprovalDecisionResultSchema = z
+  .object({
+    proposal: ActionProposalDetailSchema,
+    decision: ApprovalDecisionSchema,
+    filledRoles: z.array(RoleSchema).max(5),
+    missingRoles: z.array(RoleSchema).max(5),
+  })
+  .strict();
+export type ApprovalDecisionResult = z.infer<
+  typeof ApprovalDecisionResultSchema
+>;
+
+export const ApprovalQueueItemSchema = z
+  .object({
+    proposal: ActionProposalSchema,
+    revision: ActionRevisionSchema,
+    filledRoles: z.array(RoleSchema).max(5),
+    missingRoles: z.array(RoleSchema).min(1).max(5),
+  })
+  .strict();
+export type ApprovalQueueItem = z.infer<typeof ApprovalQueueItemSchema>;
+
+export const ApprovalQueueResponseSchema = z
+  .object({
+    items: z.array(ApprovalQueueItemSchema).max(50),
+    nextCursor: z.string().max(512).nullable(),
+  })
+  .strict();
+export type ApprovalQueueResponse = z.infer<
+  typeof ApprovalQueueResponseSchema
+>;
+
+export const ACTION_REVISION_REQUEST_KINDS = ['clarification', 'reanalysis'] as const;
+export const ActionRevisionRequestKindSchema = z.enum(
+  ACTION_REVISION_REQUEST_KINDS,
+);
+export type ActionRevisionRequestKind = z.infer<
+  typeof ActionRevisionRequestKindSchema
+>;
+
+export const ActionRevisionRequestSchema = z
+  .object({
+    id: EntityIdSchema,
+    proposalId: EntityIdSchema,
+    actionRevisionId: EntityIdSchema,
+    planHash: HashSchema,
+    kind: ActionRevisionRequestKindSchema,
+    state: z.enum(['recorded', 'completed', 'superseded']),
+    actor: ActorSchema,
+    reason: z.string().min(1).max(2000),
+    waitRunId: EntityIdSchema.nullable(),
+    createdAt: IsoUtcTimestampSchema,
+  })
+  .strict();
+export type ActionRevisionRequest = z.infer<
+  typeof ActionRevisionRequestSchema
+>;
+
+export const ActionRevisionRequestInputSchema = z
+  .object({
+    actionRevisionId: EntityIdSchema,
+    planHash: HashSchema,
+    reason: z.string().min(1).max(2000),
+  })
+  .strict();
+export type ActionRevisionRequestInput = z.infer<
+  typeof ActionRevisionRequestInputSchema
+>;
+
+export const ActionRevisionRequestResponseSchema = z
+  .object({
+    request: ActionRevisionRequestSchema,
+    proposal: ActionProposalDetailSchema,
+  })
+  .strict();
+export type ActionRevisionRequestResponse = z.infer<
+  typeof ActionRevisionRequestResponseSchema
+>;
+
+export const NoActionInputSchema = z
+  .object({
+    reason: z.string().min(1).max(2000),
+  })
+  .strict();
+export type NoActionInput = z.infer<typeof NoActionInputSchema>;
+
+export const NoActionResponseSchema = z
+  .object({
+    caseId: EntityIdSchema,
+    caseVersion: z.number().int().positive(),
+    status: z.literal('resolved'),
+    reason: z.string().min(1).max(2000),
+    actor: ActorSchema,
+    resolvedAt: IsoUtcTimestampSchema,
+  })
+  .strict();
+export type NoActionResponse = z.infer<typeof NoActionResponseSchema>;
+
+export const ApprovalPreflightSchema = z
+  .object({
+    proposalId: EntityIdSchema,
+    actionRevisionId: EntityIdSchema,
+    planHash: HashSchema,
+    status: z.enum([
+      'pending',
+      'approved',
+      'rejected',
+      'expired',
+      'superseded',
+    ]),
+    requiredRoles: z.array(RoleSchema).max(5),
+    filledRoles: z.array(RoleSchema).max(5),
+    missingRoles: z.array(RoleSchema).max(5),
+    policyRevision: z.string().min(1).max(100),
+    policyContentHash: HashSchema,
+    expiresAt: IsoUtcTimestampSchema.nullable(),
+    executionState: z.enum(['none', 'started', 'succeeded', 'unknown']),
+  })
+  .strict();
+export type ApprovalPreflight = z.infer<typeof ApprovalPreflightSchema>;
 
 export const ActionExecutionSchema = z
   .object({

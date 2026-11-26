@@ -23,6 +23,7 @@ export const actionProposals = nexusSchema.table(
   'action_proposals',
   {
     id: uuid('id').primaryKey(),
+    sequence: bigint('sequence', { mode: 'number' }).generatedAlwaysAsIdentity(),
     sandboxId: uuid('sandbox_id')
       .notNull()
       .references(() => sandboxes.id),

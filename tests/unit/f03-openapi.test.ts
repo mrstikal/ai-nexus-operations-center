@@ -20,6 +20,7 @@ describe('F03 OpenAPI fixture parity', () => {
       'x-nexus-implementation-status': Record<string, unknown>;
     };
     expect(Object.keys(document.paths).sort()).toEqual([
+      '/api/v1/approvals',
       '/api/v1/auth/csrf',
       '/api/v1/auth/login',
       '/api/v1/auth/logout',
@@ -28,8 +29,13 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/cases/{caseId}',
       '/api/v1/cases/{caseId}/history',
       '/api/v1/cases/{caseId}/proposals',
+      '/api/v1/cases/{caseId}/resolve-no-action',
       '/api/v1/evidence/{evidenceId}',
       '/api/v1/proposals/{proposalId}',
+      '/api/v1/proposals/{proposalId}/approve',
+      '/api/v1/proposals/{proposalId}/clarification',
+      '/api/v1/proposals/{proposalId}/reanalyse',
+      '/api/v1/proposals/{proposalId}/reject',
       '/api/v1/runs/{runId}',
       '/api/v1/runs/{runId}/cancel',
       '/api/v1/runs/{runId}/events',
@@ -38,8 +44,8 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F12',
-      httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, run control and run read/SSE',
+      stage: 'F13',
+      httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE',
     });
     for (const readPath of [
       '/api/v1/runs/{runId}',

@@ -251,6 +251,44 @@ function controlResponse(
   };
 }
 
+
+async function approvalWaitIsCurrent(
+  tx: DbTransaction,
+  sandboxId: string,
+  proposalId: string,
+  actionRevisionId: string,
+): Promise<boolean> {
+  const result = await tx.execute(sql`
+    SELECT 1
+    FROM nexus.action_proposals AS proposal
+    JOIN nexus.action_revisions AS revision
+      ON revision.sandbox_id = proposal.sandbox_id
+     AND revision.id = proposal.current_revision_id
+    WHERE proposal.sandbox_id = ${sandboxId}
+      AND proposal.id = ${proposalId}
+      AND proposal.current_revision_id = ${actionRevisionId}
+      AND proposal.status = 'approved'
+      AND revision.state = 'approved'
+      AND revision.id = ${actionRevisionId}
+      AND revision.expires_at > clock_timestamp()
+      AND NOT EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements_text(revision.required_roles) AS required_role
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM nexus.approval_decisions AS decision
+          WHERE decision.sandbox_id = proposal.sandbox_id
+            AND decision.action_revision_id = revision.id
+            AND decision.decision = 'approve'
+            AND decision.state = 'active'
+            AND decision.role = required_role
+        )
+      )
+    LIMIT 1
+  `);
+  return (result.rows?.length ?? 0) > 0;
+}
+
 export function createWorkflowControlStore(
   db: NexusDb,
 ): ResumeStore & CancellationStore & {
@@ -327,6 +365,20 @@ export function createWorkflowControlStore(
         const waitReason = asWaitReason(run.waitReason);
         if (!resumeMatches(status, waitReason, input.request)) {
           return { ok: false, code: 'ILLEGAL_WAKE' };
+        }
+        if (
+          input.request.cause === 'approval_completed' &&
+          waitReason?.kind === 'approval'
+        ) {
+          const current = await approvalWaitIsCurrent(
+            tx,
+            run.sandboxId,
+            waitReason.proposalId,
+            waitReason.actionRevisionId,
+          );
+          if (!current) {
+            return { ok: false, code: 'ILLEGAL_WAKE' };
+          }
         }
         await tx
           .update(workflowRuns)

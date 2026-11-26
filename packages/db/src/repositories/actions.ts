@@ -42,6 +42,12 @@ import {
   actionRevisions,
 } from '../schema/actions.js';
 import { policyBundles } from '../schema/policies.js';
+import { approvalDecisions } from '../schema/approvals.js';
+import { workflowRuns } from '../schema/workflows.js';
+import {
+  CaseWorkflowTransitionError,
+  applyCaseTransition,
+} from './workflow-case.js';
 import { appendAuditInTransaction } from './audit.js';
 import type { DbTransaction } from './types.js';
 
@@ -70,7 +76,7 @@ function aggregateImpact(value: number | null): Money | null {
     : { amountMinor: formatMinor(BigInt(value)), currency: 'EUR' };
 }
 
-function detailFromRows(
+export function detailFromRows(
   proposal: typeof actionProposals.$inferSelect,
   revision: typeof actionRevisions.$inferSelect,
 ): ActionProposalDetail {
@@ -93,6 +99,7 @@ function detailFromRows(
       items: actionItems(revision.items),
       requiredRoles: requiredRoles(revision.requiredRoles),
       policyRevision: revision.policyRevision,
+      policyContentHash: revision.policyContentHash,
       aggregateImpact: aggregateImpact(revision.aggregateImpactMinor),
       createdBy: {
         kind: revision.authoredByKind as 'human' | 'workflow' | 'service',
@@ -105,8 +112,8 @@ function detailFromRows(
   });
 }
 
-async function loadProposalDetail(
-  tx: DbTransaction,
+export async function loadProposalDetail(
+  tx: NexusDb | DbTransaction,
   sandboxId: string,
   proposalId: string,
 ): Promise<ActionProposalDetail | null> {
@@ -138,7 +145,7 @@ async function loadProposalDetail(
   return revision ? detailFromRows(proposal, revision) : null;
 }
 
-async function resolveActiveSandbox(
+export async function resolveActiveSandbox(
   tx: DbTransaction,
 ): Promise<{ id: string } | { status: 'sandbox_inactive' | 'sandbox_unavailable' }> {
   const rows = await tx
@@ -164,7 +171,7 @@ async function lock(tx: DbTransaction, key: string): Promise<void> {
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0))`);
 }
 
-function uniqueViolation(error: unknown): string | null {
+export function uniqueViolation(error: unknown): string | null {
   let current: unknown = error;
   for (let depth = 0; depth < 4 && current !== null && typeof current === 'object'; depth += 1) {
     const record = current as { code?: unknown; constraint?: unknown; cause?: unknown };
@@ -696,6 +703,19 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
               updatedAt: sql`clock_timestamp()`,
             })
             .where(eq(actionRevisions.id, current.id));
+          await tx
+            .update(approvalDecisions)
+            .set({
+              state: 'superseded',
+              supersededAt: sql`clock_timestamp()`,
+            })
+            .where(
+              and(
+                eq(approvalDecisions.sandboxId, input.sandboxId),
+                eq(approvalDecisions.actionRevisionId, current.id),
+                eq(approvalDecisions.state, 'active'),
+              ),
+            );
           await tx.insert(actionRevisions).values({
             id: input.revisionId,
             sandboxId: input.sandboxId,
@@ -736,6 +756,30 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
               updatedAt: sql`clock_timestamp()`,
             })
             .where(eq(actionProposals.id, input.proposalId));
+          await tx
+            .update(workflowRuns)
+            .set({
+              waitReason: sql`jsonb_set(
+                jsonb_set(
+                  coalesce(${workflowRuns.waitReason}, '{}'::jsonb),
+                  '{proposalId}',
+                  to_jsonb(${input.proposalId}::text)
+                ),
+                '{actionRevisionId}',
+                to_jsonb(${input.revisionId}::text)
+              )`,
+              version: sql`${workflowRuns.version} + 1`,
+              updatedAt: sql`clock_timestamp()`,
+            })
+            .where(
+              and(
+                eq(workflowRuns.sandboxId, input.sandboxId),
+                eq(workflowRuns.caseId, proposal.caseId),
+                eq(workflowRuns.status, 'waiting_approval'),
+                sql`${workflowRuns.waitReason}->>'proposalId' = ${input.proposalId}`,
+                sql`${workflowRuns.waitReason}->>'actionRevisionId' = ${current.id}`,
+              ),
+            );
           await appendProposalAudit(tx, {
             sandboxId: input.sandboxId,
             actor: input.actor,
@@ -850,6 +894,62 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
           .update(actionRevisions)
           .set({ state: 'expired', updatedAt: sql`clock_timestamp()` })
           .where(eq(actionRevisions.id, input.revisionId));
+        const waitingRuns = await tx
+          .select()
+          .from(workflowRuns)
+          .where(
+            and(
+              eq(workflowRuns.sandboxId, input.sandboxId),
+              eq(workflowRuns.caseId, proposal.caseId),
+              eq(workflowRuns.status, 'waiting_approval'),
+              sql`${workflowRuns.waitReason}->>'proposalId' = ${input.proposalId}`,
+              sql`${workflowRuns.waitReason}->>'actionRevisionId' = ${input.revisionId}`,
+            ),
+          )
+          .for('update');
+        for (const run of waitingRuns) {
+          await tx
+            .update(workflowRuns)
+            .set({
+              status: 'waiting_input',
+              waitReason: {
+                kind: 'human_input',
+                prompt:
+                  'Proposal expired after an external change. Provide new analysis input.',
+              },
+              version: sql`${workflowRuns.version} + 1`,
+              updatedAt: sql`clock_timestamp()`,
+            })
+            .where(eq(workflowRuns.id, run.id));
+          try {
+            await applyCaseTransition(tx, {
+              sandboxId: input.sandboxId,
+              caseId: proposal.caseId,
+              runId: run.id,
+              triggerEventId: run.triggerEventId,
+              targetStatus: 'needs_input',
+              reason: 'proposal_expired',
+              correlationId: input.correlationId,
+            });
+          } catch (error) {
+            if (!(error instanceof CaseWorkflowTransitionError)) {
+              throw error;
+            }
+          }
+        }
+        await tx
+          .update(approvalDecisions)
+          .set({
+            state: 'superseded',
+            supersededAt: sql`clock_timestamp()`,
+          })
+          .where(
+            and(
+              eq(approvalDecisions.sandboxId, input.sandboxId),
+              eq(approvalDecisions.actionRevisionId, input.revisionId),
+              eq(approvalDecisions.state, 'active'),
+            ),
+          );
         await tx
           .update(actionProposals)
           .set({
