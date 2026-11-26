@@ -17,6 +17,10 @@ const {
   ActionKindSchema,
   ActionPayloadSchema,
   ActionPlanItemSchema,
+  ActionProposalCreateInputSchema,
+  ActionProposalDetailSchema,
+  ActionProposalEditInputSchema,
+  ActionProposalListResponseSchema,
   ActionProposalSchema,
   ActionRevisionSchema,
   ActorSchema,
@@ -55,6 +59,7 @@ const {
   ModelRoleSchema,
   MoneySchema,
   PostalAddressSchema,
+  PolicyBundleSchema,
   ProblemSchema,
   RunCancelRequestSchema,
   RunControlResponseSchema,
@@ -66,6 +71,7 @@ const {
   RunStepSummarySchema,
   RequestContextSchema,
   ReviewerOutputSchema,
+  RevisionPreconditionSchema,
   SandboxSummarySchema,
   SseEventSchema,
   StructuredClaimSchema,
@@ -73,6 +79,7 @@ const {
   ToolNameSchema,
   UiDescriptorSchema,
   ValidationIssueSchema,
+  UuidSchema,
   WaitReasonSchema,
   WorkflowRunSchema,
   WorkflowStatusSchema,
@@ -144,6 +151,11 @@ const COMPONENTS = [
   ['ActionPlanItem', ActionPlanItemSchema],
   ['ActionRevision', ActionRevisionSchema],
   ['ActionProposal', ActionProposalSchema],
+  ['ActionProposalCreateInput', ActionProposalCreateInputSchema],
+  ['ActionProposalEditInput', ActionProposalEditInputSchema],
+  ['ActionProposalDetail', ActionProposalDetailSchema],
+  ['ActionProposalListResponse', ActionProposalListResponseSchema],
+  ['PolicyBundle', PolicyBundleSchema],
   ['ApprovalDecision', ApprovalDecisionSchema],
   ['ActionExecution', ActionExecutionSchema],
   ['SandboxSummary', SandboxSummarySchema],
@@ -640,6 +652,169 @@ function registerCasePaths(registry) {
   });
 }
 
+
+function registerProposalPaths(registry) {
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/cases/{caseId}/proposals',
+    tags: ['proposals'],
+    summary: 'Create a manually submitted action proposal revision for a case',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ caseId: z.string() }),
+      headers: z.object({ 'idempotency-key': UuidSchema }),
+      body: {
+        content: { 'application/json': { schema: ActionProposalCreateInputSchema } },
+      },
+    },
+    responses: {
+      201: {
+        description: 'Persisted immutable pending revision or idempotent replay',
+        content: { 'application/json': { schema: ActionProposalDetailSchema } },
+      },
+      400: {
+        description: 'Invalid proposal draft, header or unsupported action kind',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Case not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Idempotency mismatch or an open procurement plan already exists',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Proposal storage or policy bundle unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/cases/{caseId}/proposals',
+    tags: ['proposals'],
+    summary: 'List current proposal revisions for a case',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ caseId: z.string() }),
+      query: z.object({ limit: z.string().optional(), cursor: z.string().optional() }),
+    },
+    responses: {
+      200: {
+        description: 'Bounded newest-first proposal details',
+        content: { 'application/json': { schema: ActionProposalListResponseSchema } },
+      },
+      400: {
+        description: 'Malformed identifier or limit',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Case not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Proposal storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/proposals/{proposalId}',
+    tags: ['proposals'],
+    summary: 'Read the current immutable proposal revision',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ proposalId: z.string() }) },
+    responses: {
+      200: {
+        description: 'Current proposal and revision',
+        content: { 'application/json': { schema: ActionProposalDetailSchema } },
+      },
+      400: {
+        description: 'Malformed identifier',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Proposal not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Proposal storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'patch',
+    path: '/api/v1/proposals/{proposalId}',
+    tags: ['proposals'],
+    summary: 'Supersede the whole pending or approved unexecuted revision',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ proposalId: z.string() }),
+      headers: z.object({ 'if-match': RevisionPreconditionSchema }),
+      body: {
+        content: { 'application/json': { schema: ActionProposalEditInputSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'New revision with a fully recomputed hash and roles',
+        content: { 'application/json': { schema: ActionProposalDetailSchema } },
+      },
+      400: {
+        description: 'Invalid edit or missing If-Match precondition',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Proposal not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Stale revision or open procurement conflict',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Proposal storage or policy bundle unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+}
+
 function registerAuthPaths(registry) {
   registry.registerComponent('securitySchemes', 'sessionCookie', {
     type: 'apiKey',
@@ -766,6 +941,7 @@ export function generateOpenApiDocument() {
 
   registerAuthPaths(registry);
   registerCasePaths(registry);
+  registerProposalPaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -791,10 +967,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F11B',
+    stage: 'F12',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake, run control and run read/SSE',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, run control and run read/SSE',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
   };
 
   return document;

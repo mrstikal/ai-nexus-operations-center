@@ -83,6 +83,18 @@
     "./repositories/run-queries": {
       "types": "./dist/repositories/run-queries.d.ts",
       "default": "./dist/repositories/run-queries.js"
+    },
+    "./schema/actions": {
+      "types": "./dist/schema/actions.d.ts",
+      "default": "./dist/schema/actions.js"
+    },
+    "./schema/policies": {
+      "types": "./dist/schema/policies.d.ts",
+      "default": "./dist/schema/policies.js"
+    },
+    "./repositories/actions": {
+      "types": "./dist/repositories/actions.d.ts",
+      "default": "./dist/repositories/actions.js"
     }
   },
   "scripts": {

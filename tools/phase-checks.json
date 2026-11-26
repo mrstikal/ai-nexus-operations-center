@@ -1574,9 +1574,141 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f12-proposals.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/policies.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/contracts/src/actions.ts",
+          "minBytes": 9000
+        },
+        {
+          "path": "packages/contracts/package.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "config/policies/northstar-v1.json",
+          "minBytes": 300
+        },
+        {
+          "path": "fixtures/knowledge/northstar-v1.md",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/domain/src/policies/action-validation.ts",
+          "minBytes": 7000
+        },
+        {
+          "path": "packages/domain/src/policies/approvals.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/domain/package.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/application/src/actions/proposals.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/application/src/actions/revision-hash.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/actions/invalidation.ts",
+          "minBytes": 2800
+        },
+        {
+          "path": "packages/application/src/actions/policy-source.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/application/package.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/db/src/schema/actions.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/schema/policies.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/db/migrations/0008_actions_policies.sql",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/src/repositories/actions.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "packages/db/package.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "apps/api/src/proposals/controller.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "apps/api/src/proposals/module.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/api/src/proposals/tokens.ts",
+          "minBytes": 50
+        },
+        {
+          "path": "apps/worker/src/proposal-events.module.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "tests/integration/f12-proposals.test.ts",
+          "minBytes": 18000
+        },
+        {
+          "path": "docs/ACTIONS.md",
+          "minBytes": 4000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/adr/005-tools-vs-privileged-commands.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 15000
+        },
+        {
+          "path": "tools/generate-openapi.mjs",
+          "minBytes": 3000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F13",

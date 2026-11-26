@@ -27,7 +27,9 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/cases',
       '/api/v1/cases/{caseId}',
       '/api/v1/cases/{caseId}/history',
+      '/api/v1/cases/{caseId}/proposals',
       '/api/v1/evidence/{evidenceId}',
+      '/api/v1/proposals/{proposalId}',
       '/api/v1/runs/{runId}',
       '/api/v1/runs/{runId}/cancel',
       '/api/v1/runs/{runId}/events',
@@ -36,8 +38,8 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F11B',
-      httpControllers: 'auth, case reads, durable case intake, run control and run read/SSE',
+      stage: 'F12',
+      httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, run control and run read/SSE',
     });
     for (const readPath of [
       '/api/v1/runs/{runId}',

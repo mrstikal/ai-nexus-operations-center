@@ -310,6 +310,61 @@ export const ActionProposalSchema = z
   .strict();
 export type ActionProposal = z.infer<typeof ActionProposalSchema>;
 
+export const ActionProposalCreateInputSchema = z
+  .object({
+    plan: ActionDraftPlanSchema,
+  })
+  .strict();
+export type ActionProposalCreateInput = z.infer<
+  typeof ActionProposalCreateInputSchema
+>;
+
+export const ActionProposalEditItemSchema = z
+  .object({
+    itemId: UuidSchema,
+    target: EntityRefSchema,
+    evidenceIds: z.array(EntityIdSchema).max(20),
+    payload: ActionPayloadSchema,
+  })
+  .strict();
+export type ActionProposalEditItem = z.infer<typeof ActionProposalEditItemSchema>;
+
+export const ActionProposalEditInputSchema = z
+  .object({
+    rationale: plainTextSchema(4000),
+    items: z.array(ActionProposalEditItemSchema).min(1).max(6),
+  })
+  .strict()
+  .refine(
+    (value) => new Set(value.items.map((item) => item.itemId)).size === value.items.length,
+    'Item identifiers must be unique',
+  );
+export type ActionProposalEditInput = z.infer<
+  typeof ActionProposalEditInputSchema
+>;
+
+export const ActionProposalDetailSchema = z
+  .object({
+    proposal: ActionProposalSchema,
+    revision: ActionRevisionSchema,
+  })
+  .strict();
+export type ActionProposalDetail = z.infer<typeof ActionProposalDetailSchema>;
+
+export const ActionProposalListResponseSchema = z
+  .object({
+    items: z.array(ActionProposalDetailSchema).max(50),
+    nextCursor: z.string().max(512).nullable(),
+  })
+  .strict();
+export type ActionProposalListResponse = z.infer<
+  typeof ActionProposalListResponseSchema
+>;
+
+export const RevisionPreconditionSchema = z
+  .string()
+  .regex(/^"?[1-9][0-9]{0,9}"?$/, 'Expected a positive revision precondition');
+
 export const ApprovalDecisionSchema = z
   .object({
     id: EntityIdSchema,

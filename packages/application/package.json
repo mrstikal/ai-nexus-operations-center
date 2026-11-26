@@ -79,6 +79,22 @@
     "./workflows/queries": {
       "types": "./dist/workflows/queries.d.ts",
       "default": "./dist/workflows/queries.js"
+    },
+    "./actions/proposals": {
+      "types": "./dist/actions/proposals.d.ts",
+      "default": "./dist/actions/proposals.js"
+    },
+    "./actions/revision-hash": {
+      "types": "./dist/actions/revision-hash.d.ts",
+      "default": "./dist/actions/revision-hash.js"
+    },
+    "./actions/invalidation": {
+      "types": "./dist/actions/invalidation.d.ts",
+      "default": "./dist/actions/invalidation.js"
+    },
+    "./actions/policy-source": {
+      "types": "./dist/actions/policy-source.d.ts",
+      "default": "./dist/actions/policy-source.js"
     }
   },
   "scripts": {

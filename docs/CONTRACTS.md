@@ -334,3 +334,36 @@ state-machine failures, and verifies that a draft cannot carry approval/executio
 Boundary enforcement: `packages/contracts` may import only Zod; `packages/domain` is pure
 and may not import Nest, ORM/DB or model SDK packages. The checked-in invalid boundary
 fixture covers a domain import of Nest and a domain import of a model SDK.
+
+## Action proposal contracts (F12)
+
+`packages/contracts/src/policies.ts` defines the strict policy bundle document:
+`schemaVersion`, `policyId`, `revision`, canonical text path/hash, supply finance threshold,
+approval TTL, the single low-risk automation entry and the enabled action kind subset. It is a
+closed schema: unknown keys reject. Semantic validation in
+`packages/domain/src/policies/action-validation.ts` additionally enforces the northstar identity,
+canonical file hash, hard threshold/TTL ceilings, supported handlers and the note-only
+automation allowlist. There is no generic policy expression or runtime role grant.
+
+`packages/contracts/src/actions.ts` now also declares:
+
+- `ActionProposalCreateInput`: a closed `ActionDraftPlan`; the case comes from the path. It cannot
+  carry status, roles, decisions, dependencies, expected versions, hashes or aggregate money.
+- `ActionProposalEditInput` and `ActionProposalEditItem`: rationale and every existing item ID
+  plus only target, evidence IDs and payload. Unknown forged fields reject; item IDs must be
+  unique and must match the current revision.
+- `ActionProposalDetail`: the current proposal plus the immutable revision, including required
+  roles, aggregate EUR impact, policy revision, plan hash, author and expiry.
+- `ActionProposalListResponse`: bounded newest-first proposal details for one case plus a
+  nullable `nextCursor` continuation token.
+- `RevisionPreconditionSchema`: the `If-Match` positive integer revision form.
+
+`POST /api/v1/cases/{caseId}/proposals` requires a UUID `Idempotency-Key` header, creates
+revision 1 in `pending_approval`, and replays the original result for the same key/body or
+returns `IDEMPOTENCY_MISMATCH`. `GET /api/v1/cases/{caseId}/proposals` lists current revisions
+with `nextCursor` pagination.
+`PATCH /api/v1/proposals/{proposalId}` requires `If-Match`, supersedes the whole `draft`,
+`pending_approval` or `approved` unexecuted revision and creates the next one; `GET` reads the
+current revision. The OpenAPI paths are generated from these schemas. Stale concurrency returns
+`STALE_STATE`; a second open procurement plan per case returns `CONFLICT`. A pending or approved
+revision is never an execution authorization. See [ACTIONS.md](ACTIONS.md).

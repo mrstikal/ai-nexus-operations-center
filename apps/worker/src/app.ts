@@ -2,6 +2,7 @@ import { Inject, Injectable, Module } from '@nestjs/common';
 import type { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MessagingModule } from './messaging.module.js';
+import { ProposalEventsModule } from './proposal-events.module.js';
 import { WorkflowModule } from './workflow.module.js';
 
 export const WORKER_PROVIDER = 'NEXUS_WORKER_PROVIDER';
@@ -17,7 +18,7 @@ export class WorkerStatus {
 }
 
 @Module({
-  imports: [MessagingModule, WorkflowModule],
+  imports: [MessagingModule, WorkflowModule, ProposalEventsModule],
   providers: [
     {
       provide: WORKER_PROVIDER,

@@ -239,3 +239,35 @@ effects. F08 messages are simulation records, not email. F05 does not create wor
 proposals, approvals, executions, documents, blobs, knowledge, enterprise tables, model calls
 or a public event-driven case POST. The initial sandbox is a foundation seed, not a complete
 demo scenario.
+
+## Action proposals and policy bundles (F12)
+
+Migration `packages/db/migrations/0008_actions_policies.sql` adds four Nexus tables.
+
+- `policy_bundles` is keyed by the reviewed policy revision. It stores the strict validated
+  bundle JSON, the canonical bundle SHA-256, the canonical text path and SHA-256 and an
+  `active|superseded` status. Reusing a revision with different content is rejected in the
+  application instead of overwriting the row. The API may insert/select; the worker may select.
+- `action_proposals` stores the sandbox and case, the current immutable revision, the
+  `draft|pending_approval|approved|rejected|superseded|expired|cancelled` lifecycle status, a
+  server-derived procurement flag, the creator and a row version. Composite foreign keys bind
+  the sandbox/case and the current revision. A partial unique index permits at most one open
+  (`draft`/`pending_approval`) procurement proposal per case.
+- `action_revisions` stores immutable revision content: revision number, lifecycle state, plan
+  hash, bounded item JSON, required role JSON, typed bigint aggregate impact in EUR minor units,
+  procurement flag, policy revision/content hash, rationale, author actor fields, expiry and
+  timestamps. A unique `(proposal_id,revision_number)` and a composite sandbox foreign key
+  preserve identity. Only lifecycle `state`/`updated_at` are mutable for supersede or expiry.
+- `action_revision_evidence` is a typed join keyed by `(sandbox_id,revision_id,evidence_id)` with
+  scoped foreign keys to the immutable revision and evidence rows. It is not a JSON evidence
+  list and cannot cross the sandbox.
+- `action_proposal_idempotency` keys creation replay by sandbox, actor, route and
+  `Idempotency-Key`, stores the canonical request hash and original response, and references the
+  created proposal. A reused key with a different body is a conflict.
+
+The partial procurement index includes `approved` because approval precedes execution. The
+policy bundle is reviewed configuration paired with compiled rules; no generic policy
+scripting, role grant, threshold widening or future-table prior-execution query is introduced.
+The worker consumes enterprise change inbox rows and expires affected open proposals in place.
+Approval decisions, role slots, executions, enterprise receipts and enterprise effects remain
+absent until F13/F13A. See [ACTIONS.md](ACTIONS.md) for the derivation and hash rules.

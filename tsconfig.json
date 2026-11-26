@@ -197,6 +197,36 @@
       ],
       "@nexus/db/repositories/run-queries": [
         "./packages/db/src/repositories/run-queries.ts"
+      ],
+      "@nexus/contracts/policies": [
+        "./packages/contracts/src/policies.ts"
+      ],
+      "@nexus/domain/policies/action-validation": [
+        "./packages/domain/src/policies/action-validation.ts"
+      ],
+      "@nexus/domain/policies/approvals": [
+        "./packages/domain/src/policies/approvals.ts"
+      ],
+      "@nexus/application/actions/proposals": [
+        "./packages/application/src/actions/proposals.ts"
+      ],
+      "@nexus/application/actions/revision-hash": [
+        "./packages/application/src/actions/revision-hash.ts"
+      ],
+      "@nexus/application/actions/invalidation": [
+        "./packages/application/src/actions/invalidation.ts"
+      ],
+      "@nexus/application/actions/policy-source": [
+        "./packages/application/src/actions/policy-source.ts"
+      ],
+      "@nexus/db/schema/actions": [
+        "./packages/db/src/schema/actions.ts"
+      ],
+      "@nexus/db/schema/policies": [
+        "./packages/db/src/schema/policies.ts"
+      ],
+      "@nexus/db/repositories/actions": [
+        "./packages/db/src/repositories/actions.ts"
       ]
     },
     "skipLibCheck": true

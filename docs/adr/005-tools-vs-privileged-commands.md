@@ -49,3 +49,18 @@ would bypass the executor's approval, idempotency and recovery checks.
   command token.
 - Any future command kind requires an explicit contract, authorizing stage and simulator handler;
   it does not become available merely by adding a tool name or a payload schema.
+
+## F12 extension: proposals are not commands
+
+F12 keeps the boundary by inserting an application-owned proposal stage before any command
+transport. A manually submitted draft becomes an immutable action revision with server-derived
+item identifiers, dependencies, base expected versions, required approval roles, aggregate money
+impact, policy identity and a canonical whole-plan hash. The policy bundle is reviewed data that
+may only tighten compiled thresholds, disable the single internal-note automation or narrow the
+enabled action catalog; compiled code owns the finite handler catalog, role mapping, ceilings,
+graph validation and hashing. Migration `0008_actions_policies.sql` stores policy bundles,
+proposals, immutable revisions and scoped evidence links; neither runtime role can write enterprise
+tables. A pending revision is not an approval and not an execution. F13 will bind decisions to the
+proposal, revision, whole-plan hash, role slots and expiry, and F13A will add the proven
+own-execution invalidation exemption on top of this boundary. See
+[ACTIONS.md](../ACTIONS.md).

@@ -23,11 +23,22 @@
     "./canonical-json": {
       "types": "./dist/canonical-json.d.ts",
       "default": "./dist/canonical-json.js"
+    },
+    "./policies/action-validation": {
+      "types": "./dist/policies/action-validation.d.ts",
+      "default": "./dist/policies/action-validation.js"
+    },
+    "./policies/approvals": {
+      "types": "./dist/policies/approvals.d.ts",
+      "default": "./dist/policies/approvals.js"
     }
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nexus/contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.11"

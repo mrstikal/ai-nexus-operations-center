@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "policyId": "northstar",
+  "revision": "northstar-v1",
+  "canonicalText": {
+    "path": "fixtures/knowledge/northstar-v1.md",
+    "sha256": "6bc4bc56ba0c793f4b0fec98f8806e78cba96a420c5b5a51da33c98e29e3fa94"
+  },
+  "supplyApproval": {
+    "financeThresholdMinor": "50000"
+  },
+  "approval": {
+    "ttlHours": 24
+  },
+  "lowRiskAutomation": {
+    "enabled": true,
+    "actionKinds": [
+      "case.add_internal_note"
+    ]
+  },
+  "enabledActionKinds": [
+    "case.add_internal_note",
+    "enterprise.create_purchase_order",
+    "enterprise.send_message"
+  ]
+}
