@@ -1,10 +1,11 @@
 # Workflow Journal, Jobs and Leases
 
 Status: F11 implements the durable journal, database job queue, fencing leases, a bounded runner
-and a deterministic test definition. F11A owns human/dependency waits, resume and cancellation;
-F11B owns run queries and persisted SSE. F11 does not implement a business AI flow, a proposal or
-an action executor. The test workflow is registered only when
-`NEXUS_WORKFLOW_TEST_DEFINITION=1`; it is not a product demo.
+and a deterministic test definition. F11A adds typed waits, explicit resume/cancel control,
+dependency linkage/timeout, the case reducer and the terminal case-completed event. F11B owns run
+queries and persisted SSE. F11A does not implement a business AI flow, a proposal or an action
+executor. The test workflow is registered only when `NEXUS_WORKFLOW_TEST_DEFINITION=1`; it is not a
+product demo.
 
 ## Tables
 
@@ -110,6 +111,77 @@ A stuck `leased` job after a worker death is expected until lease expiry. A grow
 set means the workflow loop is not running. A `blocked` run with `UNKNOWN_DEFINITION` needs a
 registered version; do not edit the run definition in place. `waiting_*` rows are intentional;
 F11A adds the resume/cancel controls. F11 has no automatic job deletion.
+
+## Waits, resume and cancellation (F11A)
+
+A step returns a typed `WaitReason`: `human_input`, `approval` with proposal/action-revision IDs,
+`dependency` with child case/trigger IDs, or `budget`. The waiting step and run are persisted, the
+lease is released and no AI/human work is held. A resume requires the exact recorded cause:
+
+| Wait | Accepted resume cause |
+|---|---|
+| `waiting_input` | `human_input` |
+| `waiting_approval` | `approval_completed` with the exact proposal/action revision |
+| `waiting_dependency` | only a validated child `case.completed` event; no public resume cause |
+| `budget_exhausted` | `budget_extension` is reserved but not enabled in F11A |
+
+A terminal, duplicate or unrelated wake returns `CONFLICT`; it never releases the wait. The public
+API accepts only `human_input`, `approval_completed` and the reserved `budget_extension` (rejected).
+`dependency_retry` is not a public cause: a dependency is released only by the validated child
+completion path. Resume transactionally clears the wait, resets the waiting step to pending, sets
+`resume_cause`, creates a pending job and applies the case reducer. The handler sees `resumeCause`
+in its step context.
+
+Dependency waits insert `workflow_dependencies` with the parent run/case, root case, child case and
+exact child trigger event, the child case version at linkage, `expires_at = now + 48 real hours`
+and `state='waiting'`. The child run must exist in the same sandbox for that exact case/trigger;
+the parent case must not itself be a child, the child must not already be a parent, and a case
+cannot wait on itself; dependency creation takes a per-sandbox advisory transaction lock so
+concurrent reciprocal links cannot both insert. This enforces maximum depth one. A duplicate
+active dependency for a run rejects.
+
+A child `case.completed` event wakes waiting parents only when the event's sandbox, child case and
+trigger generation match, the current child case is terminal, its current version equals the
+event's terminal version, and the event version is at least the linked version. Expiry is checked
+against database time in both the event and sweep paths; an expired dependency escalates even if a
+late resolved event arrives. A stale/wrong child, version or sandbox event is marked processed
+without a wake. A resolved child transactionally
+resolves the dependency, queues the parent and resets its waiting step. A child `escalated` or
+`cancelled` event, or the 48-hour dependency expiry, sets the dependency `escalated`/`expired` and
+escalates the parent: the run becomes cancelled with `dependency_failure`/`dependency_timeout`, the
+case becomes `escalated`, and the terminal event is emitted. Duplicate completion events do not
+create a second job.
+
+Cancellation accepts a typed cause (`operator_request`, `dependency_failure`, `dependency_timeout`,
+`test`). It rejects terminal and duplicate cancellation, cancels active/waiting jobs and waiting
+dependency rows, marks pending/running/waiting steps cancelled, and applies the case reducer to
+`cancelled` in one transaction. F11A has no side-effect executor, so the partial-effect list is
+empty. The typed `CancellationReconciler` hook is reserved for F13B; it records partial effects;
+F11A never fabricates a rollback. The runner also checks `cancel_requested`/closed runs between
+steps and refuses to commit a cancelled run.
+
+## Case reducer and terminal event
+
+Only `packages/application/src/cases/state.ts` decides case status. It maps `queued`/`running`/
+`waiting_dependency` to `investigating`, human waits to `needs_input`, approval waits to
+`needs_approval`, completed to `resolved`, failed/budget exhaustion to `escalated`, and
+cancellation to `cancelled`; `blocked` stays `investigating` until a control/case decision. It uses
+the domain case transition graph, including a valid intermediate path (for example `new` ->
+`investigating` -> `resolved`). A terminal case cannot be resurrected.
+
+A terminal case transition (`resolved`, `escalated`, `cancelled`) appends the case audit and inserts
+`nexus.case.completed.v1` in the same transaction. The payload carries the terminal run, trigger
+event, case version/status and up to 100 outcome evidence IDs; the envelope carries the correlation.
+No event is emitted for a repeated same-status update. The event publisher and inbox are the F10
+transport.
+
+## Control routes
+
+`POST /api/v1/runs/:runId/resume` and `POST /api/v1/runs/:runId/cancel` require a session,
+same-origin CSRF and the operator role. The server resolves the active sandbox; the body contains
+only the typed cause/reference. They return the run/case status, or `CONFLICT` for a terminal,
+duplicate, illegal or unsupported wake. The browser never supplies an approval, hash, status or
+sandbox identity.
 
 ## Test-only definition
 

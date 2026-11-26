@@ -1,4 +1,4 @@
-import type { WaitReason } from '@nexus/contracts';
+import type { RunResumeCause, WaitReason } from '@nexus/contracts';
 
 export type WorkflowStepKind = 'pure' | 'read' | 'external';
 export type RedactedValue = string | number | boolean | null;
@@ -36,6 +36,7 @@ export interface WorkflowStepContext {
   readonly stepKey: string;
   readonly attempt: number;
   readonly inputHash: string;
+  readonly resumeCause: RunResumeCause | null;
   readonly ingress: Record<string, unknown>;
   readonly dependencies: Readonly<Record<string, RedactedOutput>>;
   readonly signal?: AbortSignal;
@@ -317,12 +318,19 @@ function waitDefinition(): WorkflowDefinition {
         key: 'wait',
         kind: 'pure',
         dependsOn: [],
-        execute: async () => ({
-          status: 'waiting',
-          wait: { kind: 'human_input', prompt: 'Deterministic test wait' },
-          output: { waiting: true },
-          evidenceRefs: [],
-        }),
+        execute: async (context) =>
+          context.resumeCause === 'human_input'
+            ? {
+                status: 'succeeded',
+                output: { resumed: true },
+                evidenceRefs: [],
+              }
+            : {
+                status: 'waiting',
+                wait: { kind: 'human_input', prompt: 'Deterministic test wait' },
+                output: { waiting: true },
+                evidenceRefs: [],
+              },
       },
     ],
   };

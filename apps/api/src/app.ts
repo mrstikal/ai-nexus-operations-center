@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth/module.js';
 import { CasesModule } from './cases/module.js';
 import { IngressModule } from './ingress/module.js';
+import { RunsModule } from './runs/module.js';
 import { ProblemFilter } from './errors.js';
 
 export const HEALTH_PROVIDER = 'NEXUS_HEALTH_PROVIDER';
@@ -38,7 +39,7 @@ export class HealthController {
 }
 
 @Module({
-  imports: [AuthModule, CasesModule, IngressModule],
+  imports: [AuthModule, CasesModule, IngressModule, RunsModule],
   controllers: [HealthController],
   providers: [
     {

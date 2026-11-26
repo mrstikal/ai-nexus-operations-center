@@ -56,6 +56,9 @@ const {
   MoneySchema,
   PostalAddressSchema,
   ProblemSchema,
+  RunCancelRequestSchema,
+  RunControlResponseSchema,
+  RunResumeRequestSchema,
   RequestContextSchema,
   ReviewerOutputSchema,
   SandboxSummarySchema,
@@ -110,6 +113,9 @@ const COMPONENTS = [
   ['CaseIntakeRequest', CaseIntakeRequestSchema],
   ['CaseIntakeResponse', CaseIntakeResponseSchema],
   ['IdempotencyKey', IdempotencyKeySchema],
+  ['RunResumeRequest', RunResumeRequestSchema],
+  ['RunCancelRequest', RunCancelRequestSchema],
+  ['RunControlResponse', RunControlResponseSchema],
   ['WorkflowStatus', WorkflowStatusSchema],
   ['WaitReason', WaitReasonSchema],
   ['WorkflowRun', WorkflowRunSchema],
@@ -322,6 +328,94 @@ function registerCasePaths(registry) {
       },
       503: {
         description: 'Case intake storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/runs/{runId}/resume',
+    tags: ['runs'],
+    summary: 'Resume a persisted workflow wait with an explicit cause',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ runId: z.string().uuid() }),
+      body: {
+        required: true,
+        content: { 'application/json': { schema: RunResumeRequestSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Run queued from the matching wait',
+        content: { 'application/json': { schema: RunControlResponseSchema } },
+      },
+      400: {
+        description: 'Invalid run ID or resume request',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Run not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Terminal, illegal, duplicate or unsupported wake',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Run control storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/runs/{runId}/cancel',
+    tags: ['runs'],
+    summary: 'Cancel a non-terminal workflow run',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ runId: z.string().uuid() }),
+      body: {
+        required: true,
+        content: { 'application/json': { schema: RunCancelRequestSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Run and case cancelled',
+        content: { 'application/json': { schema: RunControlResponseSchema } },
+      },
+      400: {
+        description: 'Invalid run ID or cancel cause',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Run not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Terminal or duplicate cancellation',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Run control storage unavailable',
         content: { 'application/problem+json': { schema: ProblemSchema } },
       },
     },
@@ -577,10 +671,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F10',
+    stage: 'F11A',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads and durable case intake',
-    openapiPaths: 'auth, sandbox, case/evidence reads and case intake; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake and run control',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, and run resume/cancel; later controllers are declared in their owner stages',
   };
 
   return document;

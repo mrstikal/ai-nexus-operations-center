@@ -63,6 +63,10 @@
     "./ingress": {
       "types": "./dist/ingress.d.ts",
       "default": "./dist/ingress.js"
+    },
+    "./run-control": {
+      "types": "./dist/run-control.d.ts",
+      "default": "./dist/run-control.js"
     }
   },
   "scripts": {

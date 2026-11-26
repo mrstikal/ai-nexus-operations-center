@@ -1373,10 +1373,92 @@
         "F11"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f11a-control.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f11a-control.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/migrations/0007_workflow_waits.sql",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/db/src/schema/workflow-dependencies.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/db/src/repositories/workflow-case.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/repositories/workflow-control.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/application/src/cases/state.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/workflows/waits.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/application/src/workflows/resume.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/workflows/cancellation.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/workflows/dependency-events.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/api/src/runs/controller.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "apps/api/src/runs/module.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "tests/integration/f11a-control.test.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "tests/unit/f11a-control.test.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "docs/WORKFLOWS.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/EVENTS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F11B",

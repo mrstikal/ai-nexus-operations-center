@@ -28,11 +28,13 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/cases/{caseId}',
       '/api/v1/cases/{caseId}/history',
       '/api/v1/evidence/{evidenceId}',
+      '/api/v1/runs/{runId}/cancel',
+      '/api/v1/runs/{runId}/resume',
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F10',
-      httpControllers: 'auth, case reads and durable case intake',
+      stage: 'F11A',
+      httpControllers: 'auth, case reads, durable case intake and run control',
     });
     expect(Object.keys(document.components.schemas)).toEqual(
       expect.arrayContaining([

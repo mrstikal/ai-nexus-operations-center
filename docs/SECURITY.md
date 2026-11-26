@@ -225,3 +225,34 @@ The deterministic test definitions are registered only when
 test workflow cannot appear as a product workflow. Unknown definition versions create a blocked
 run without a job; a trigger without a case link marks the inbox row dead. Neither path executes a
 step. F11 exposes no run/SSE HTTP route; F11B owns authenticated run queries and bounded SSE.
+
+## Workflow waits, resume and cancellation (F11A)
+
+Resume and cancel routes require a session, same-origin CSRF and the operator role. The server
+resolves the active sandbox and never accepts an actor, sandbox, approval, hash or status from the
+body. Resume requires the exact typed cause and reference for the recorded wait: human input,
+the matching approval proposal/action revision. A dependency wait has no public resume cause; only
+a validated child completion can release it. A terminal, duplicate, unrelated or unsupported wake
+returns `CONFLICT`; it never releases the wait. Budget
+extension is reserved but not enabled in F11A.
+
+Dependency rows are same-sandbox, unique per parent run and child trigger, and limited to depth
+one: the parent case cannot itself be a waiting child, the child cannot already be a waiting
+parent, self-links reject, and a per-sandbox advisory transaction lock serializes creation. The
+child run must exist for the exact case/trigger. The 48-real-hour expiry is checked in database
+time in both the event and sweep paths; a late resolved event cannot bypass an expired wait. A case-completed event wakes only when the event sandbox, child case, trigger
+generation, current terminal status and terminal version match; stale, wrong-child, wrong-sandbox
+and duplicate events are consumed without a wake or second job.
+
+The application case reducer is the only writer of case workflow status; the adapter applies its
+target through the domain transition graph. A terminal case transition writes the case status,
+audit and one `nexus.case.completed.v1` outbox row in the same transaction. A terminal case cannot
+resurrect. Cancellation rejects terminal/duplicate requests, cancels waiting jobs and dependencies,
+marks pending/running/waiting steps cancelled, and records a typed partial-effect list. F11A has no
+side-effect executor, so the list is empty; the `CancellationReconciler` hook is reserved for F13B
+and no fake rollback is reported. The runner also refuses to commit a closed/cancel-requested run.
+
+The API receives only column-scoped control grants for workflow runs/jobs/steps/dependencies plus
+read access; it cannot claim jobs or write step inputs/outputs. The worker keeps the broader
+journal and dependency updates. Case-completed events are not workflow root triggers and the
+transport does not expose a replay or control bypass.

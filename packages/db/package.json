@@ -67,6 +67,18 @@
     "./repositories/workflows": {
       "types": "./dist/repositories/workflows.d.ts",
       "default": "./dist/repositories/workflows.js"
+    },
+    "./schema/workflow-dependencies": {
+      "types": "./dist/schema/workflow-dependencies.d.ts",
+      "default": "./dist/schema/workflow-dependencies.js"
+    },
+    "./repositories/workflow-control": {
+      "types": "./dist/repositories/workflow-control.d.ts",
+      "default": "./dist/repositories/workflow-control.js"
+    },
+    "./repositories/workflow-case": {
+      "types": "./dist/repositories/workflow-case.d.ts",
+      "default": "./dist/repositories/workflow-case.js"
     }
   },
   "scripts": {
@@ -78,7 +90,8 @@
     "@nexus/contracts": "workspace:*",
     "@nexus/observability": "workspace:*",
     "drizzle-orm": "0.45.4",
-    "pg": "8.23.1"
+    "pg": "8.23.1",
+    "@nexus/domain": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.11",

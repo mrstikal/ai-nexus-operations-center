@@ -434,6 +434,9 @@ importers:
       '@nexus/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@nexus/domain':
+        specifier: workspace:*
+        version: link:../domain
       '@nexus/observability':
         specifier: workspace:*
         version: link:../observability

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import type {
+  RunResumeCause,
   WorkflowStatus,
   WorkflowStepStatus,
   WaitReason,
@@ -34,7 +35,9 @@ import {
   workflowSteps,
   workflowStepAttempts,
 } from '../schema/workflows.js';
+import { workflowDependencies } from '../schema/workflow-dependencies.js';
 import { appendTraceEventInTransaction } from './trace.js';
+import { applyCaseTransition } from './workflow-case.js';
 import type { DbTransaction } from './types.js';
 
 const CONSUMER_NAME = 'nexus.worker.events.v1';
@@ -75,6 +78,9 @@ function runSnapshot(row: typeof workflowRuns.$inferSelect): WorkflowRunSnapshot
     id: row.id,
     sandboxId: row.sandboxId,
     caseId: row.caseId,
+    triggerEventId: row.triggerEventId,
+    correlationId: runCorrelation(row),
+    resumeCause: (row.resumeCause as RunResumeCause | null) ?? null,
     definitionName: row.definitionName,
     definitionVersion: row.definitionVersion,
     status: row.status as WorkflowStatus,
@@ -217,6 +223,106 @@ function traceErrorClass(errorClass: string | null): string | null {
   return errorClass === null ? null : errorClass.slice(0, 100);
 }
 
+function runCorrelation(run: typeof workflowRuns.$inferSelect): string {
+  const value = asRecord(run.ingress)['correlationId'];
+  return typeof value === 'string' && value.length <= 128 ? value : run.id;
+}
+
+interface DependencyValidation {
+  readonly ok: boolean;
+  readonly errorClass?: string;
+}
+
+async function validateAndCreateDependency(
+  tx: DbTransaction,
+  run: typeof workflowRuns.$inferSelect,
+  wait: WaitReason,
+): Promise<DependencyValidation> {
+  if (wait.kind !== 'dependency') {
+    return { ok: true };
+  }
+  if (wait.childCaseId === run.caseId) {
+    return { ok: false, errorClass: 'DEPENDENCY_SELF_LINK' };
+  }
+  const child = await tx.execute(sql`
+    SELECT status, version
+    FROM nexus.cases
+    WHERE sandbox_id = ${run.sandboxId} AND id = ${wait.childCaseId}
+    FOR SHARE
+  `);
+  const childRow = child.rows[0];
+  if (!childRow) {
+    return { ok: false, errorClass: 'DEPENDENCY_CHILD_NOT_FOUND' };
+  }
+  const childStatus = String(childRow['status']);
+  if (
+    childStatus === 'resolved' ||
+    childStatus === 'escalated' ||
+    childStatus === 'cancelled'
+  ) {
+    return { ok: false, errorClass: 'DEPENDENCY_CHILD_TERMINAL' };
+  }
+  const childRun = await tx.execute(sql`
+    SELECT id
+    FROM nexus.workflow_runs
+    WHERE sandbox_id = ${run.sandboxId}
+      AND case_id = ${wait.childCaseId}
+      AND trigger_event_id = ${wait.childTriggerEventId}
+    LIMIT 1
+  `);
+  if (childRun.rows.length !== 1) {
+    return { ok: false, errorClass: 'DEPENDENCY_TRIGGER_NOT_FOUND' };
+  }
+  const parentIsChild = await tx.execute(sql`
+    SELECT 1
+    FROM nexus.workflow_dependencies
+    WHERE sandbox_id = ${run.sandboxId}
+      AND child_case_id = ${run.caseId}
+      AND state = 'waiting'
+    LIMIT 1
+  `);
+  if (parentIsChild.rows.length > 0) {
+    return { ok: false, errorClass: 'DEPENDENCY_DEPTH_EXCEEDED' };
+  }
+  const childIsParent = await tx.execute(sql`
+    SELECT 1
+    FROM nexus.workflow_dependencies
+    WHERE sandbox_id = ${run.sandboxId}
+      AND parent_case_id = ${wait.childCaseId}
+      AND state = 'waiting'
+    LIMIT 1
+  `);
+  if (childIsParent.rows.length > 0) {
+    return { ok: false, errorClass: 'DEPENDENCY_DEPTH_EXCEEDED' };
+  }
+  const active = await tx.execute(sql`
+    SELECT 1
+    FROM nexus.workflow_dependencies
+    WHERE parent_run_id = ${run.id} AND state = 'waiting'
+    LIMIT 1
+  `);
+  if (active.rows.length > 0) {
+    return { ok: false, errorClass: 'DEPENDENCY_ACTIVE_EXISTS' };
+  }
+  const linkedVersion = Number(childRow['version']);
+  await tx.insert(workflowDependencies).values({
+    id: randomUUID(),
+    sandboxId: run.sandboxId,
+    parentRunId: run.id,
+    parentCaseId: run.caseId,
+    rootCaseId: run.caseId,
+    childCaseId: wait.childCaseId,
+    childTriggerEventId: wait.childTriggerEventId,
+    linkedCaseVersion: Number.isInteger(linkedVersion) ? linkedVersion : 0,
+    state: 'waiting',
+    expiresAt: sql`clock_timestamp() + interval '48 hours'`,
+    resolvedAt: null,
+  createdAt: sql`clock_timestamp()`,
+    updatedAt: sql`clock_timestamp()`,
+  });
+  return { ok: true };
+}
+
 export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
   return {
     async currentTime(): Promise<Date> {
@@ -333,6 +439,9 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
               activeMsUsed: 0,
               deadlineAt: new Date(Date.now() + DEFAULT_DEADLINE_MS),
               cancelRequested: false,
+              resumeCause: null,
+              cancelCause: null,
+              partialEffects: [],
               lastError: 'UNKNOWN_DEFINITION',
               version: 0,
               createdAt: sql`clock_timestamp()`,
@@ -382,6 +491,9 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             activeMsUsed: 0,
             deadlineAt: new Date(Date.now() + (definition.deadlineMs ?? DEFAULT_DEADLINE_MS)),
             cancelRequested: false,
+            resumeCause: null,
+            cancelCause: null,
+            partialEffects: [],
             lastError: null,
             version: 0,
             createdAt: sql`clock_timestamp()`,
@@ -490,7 +602,7 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
       return result.rows.length === 1;
     },
 
-    async markRunning(claim): Promise<WorkflowRunContext> {
+    async markRunning(claim, caseStatusAfter): Promise<WorkflowRunContext> {
       return db.transaction(async (tx) => {
         await assertClaim(tx, claim);
         const run = await loadRun(tx, claim);
@@ -504,6 +616,15 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             })
             .where(eq(workflowRuns.id, run.id));
         }
+        await applyCaseTransition(tx, {
+          sandboxId: run.sandboxId,
+          caseId: run.caseId,
+          runId: run.id,
+          triggerEventId: run.triggerEventId,
+          targetStatus: caseStatusAfter,
+          reason: 'workflow_running',
+          correlationId: runCorrelation(run),
+        });
         return loadContextTx(tx, claim);
       });
     },
@@ -517,6 +638,19 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
 
     async commitStep(input): Promise<CommitStepResult> {
       return db.transaction(async (tx) => {
+        if (
+          input.outcomeStatus === 'waiting' &&
+          input.waitReason?.kind === 'dependency'
+        ) {
+          await tx.execute(sql`
+            SELECT pg_advisory_xact_lock(
+              hashtextextended(
+                ${`workflow-dependencies:${input.claim.sandboxId}`},
+                0
+              )
+            )
+          `);
+        }
         await assertClaim(tx, input.claim);
         const runRow = await loadRun(tx, input.claim);
         const now = await tx.execute(sql`SELECT clock_timestamp() AS now`);
@@ -666,7 +800,7 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             );
           evidenceInvalid = existingEvidence.length !== uniqueEvidenceRefs.length;
         }
-        const outcome = evidenceInvalid
+        let outcome = evidenceInvalid
           ? {
               ...input,
               outcomeStatus: 'permanent_failure' as const,
@@ -678,8 +812,34 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
               runStatusAfter: 'failed' as const,
               jobAction: 'fail' as const,
               retryAt: null,
+              caseStatusAfter: 'escalated' as const,
             }
           : input;
+        if (
+          outcome.outcomeStatus === 'waiting' &&
+          outcome.waitReason?.kind === 'dependency'
+        ) {
+          const dependency = await validateAndCreateDependency(
+            tx,
+            runRow,
+            outcome.waitReason,
+          );
+          if (!dependency.ok) {
+            outcome = {
+              ...outcome,
+              outcomeStatus: 'permanent_failure',
+              output: null,
+              outputHash: null,
+              evidenceRefs: [],
+              errorClass: dependency.errorClass ?? 'DEPENDENCY_INVALID',
+              waitReason: null,
+              runStatusAfter: 'failed',
+              jobAction: 'fail',
+              retryAt: null,
+              caseStatusAfter: 'escalated',
+            };
+          }
+        }
 
         const attemptId = randomUUID();
         await tx.insert(workflowStepAttempts).values({
@@ -738,12 +898,22 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
           .set({
             status: outcome.runStatusAfter,
             waitReason: outcome.waitReason,
+            resumeCause: null,
             activeMsUsed: sql`${workflowRuns.activeMsUsed} + ${input.activeMs}`,
             lastError: traceErrorClass(outcome.errorClass),
             version: sql`${workflowRuns.version} + 1`,
             updatedAt: sql`clock_timestamp()`,
           })
           .where(eq(workflowRuns.id, runRow.id));
+        await applyCaseTransition(tx, {
+          sandboxId: runRow.sandboxId,
+          caseId: runRow.caseId,
+          runId: runRow.id,
+          triggerEventId: runRow.triggerEventId,
+          targetStatus: outcome.caseStatusAfter,
+          reason: outcome.errorClass ?? outcome.outcomeStatus,
+          correlationId: runCorrelation(runRow),
+        });
 
         if (outcome.jobAction !== 'continue') {
           await tx
@@ -836,6 +1006,15 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             updatedAt: sql`clock_timestamp()`,
           })
           .where(eq(workflowJobs.id, input.claim.jobId));
+        await applyCaseTransition(tx, {
+          sandboxId: runRow.sandboxId,
+          caseId: runRow.caseId,
+          runId: runRow.id,
+          triggerEventId: runRow.triggerEventId,
+          targetStatus: input.caseStatusAfter,
+          reason: input.errorClass ?? finalStatus,
+          correlationId: runCorrelation(runRow),
+        });
         await appendTraceEventInTransaction(tx, {
           sandboxId: runRow.sandboxId,
           runId: runRow.id,
@@ -850,7 +1029,7 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
       });
     },
 
-    async markBudgetExhausted(claim, context, errorClass): Promise<void> {
+    async markBudgetExhausted(claim, context, errorClass, caseStatusAfter): Promise<void> {
       await db.transaction(async (tx) => {
         await assertClaim(tx, claim);
         await loadRun(tx, claim);
@@ -875,6 +1054,15 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             updatedAt: sql`clock_timestamp()`,
           })
           .where(eq(workflowJobs.id, claim.jobId));
+        await applyCaseTransition(tx, {
+          sandboxId: context.run.sandboxId,
+          caseId: context.run.caseId,
+          runId: context.run.id,
+          triggerEventId: context.run.triggerEventId,
+          targetStatus: caseStatusAfter,
+          reason: errorClass,
+          correlationId: context.run.correlationId,
+        });
         await appendTraceEventInTransaction(tx, {
           sandboxId: context.run.sandboxId,
           runId: context.run.id,
@@ -885,7 +1073,7 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
       });
     },
 
-    async markBlocked(claim, context, errorClass): Promise<void> {
+    async markBlocked(claim, context, errorClass, caseStatusAfter): Promise<void> {
       await db.transaction(async (tx) => {
         await assertClaim(tx, claim);
         await loadRun(tx, claim);
@@ -910,6 +1098,15 @@ export function createWorkflowJournal(db: NexusDb): WorkflowJournal {
             updatedAt: sql`clock_timestamp()`,
           })
           .where(eq(workflowJobs.id, claim.jobId));
+        await applyCaseTransition(tx, {
+          sandboxId: context.run.sandboxId,
+          caseId: context.run.caseId,
+          runId: context.run.id,
+          triggerEventId: context.run.triggerEventId,
+          targetStatus: caseStatusAfter,
+          reason: errorClass,
+          correlationId: context.run.correlationId,
+        });
         await appendTraceEventInTransaction(tx, {
           sandboxId: context.run.sandboxId,
           runId: context.run.id,

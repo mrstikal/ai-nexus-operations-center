@@ -167,6 +167,30 @@
       ],
       "@nexus/db/repositories/workflows": [
         "./packages/db/src/repositories/workflows.ts"
+      ],
+      "@nexus/application/workflows/waits": [
+        "./packages/application/src/workflows/waits.ts"
+      ],
+      "@nexus/application/workflows/resume": [
+        "./packages/application/src/workflows/resume.ts"
+      ],
+      "@nexus/application/workflows/cancellation": [
+        "./packages/application/src/workflows/cancellation.ts"
+      ],
+      "@nexus/application/workflows/dependency-events": [
+        "./packages/application/src/workflows/dependency-events.ts"
+      ],
+      "@nexus/application/cases/state": [
+        "./packages/application/src/cases/state.ts"
+      ],
+      "@nexus/db/schema/workflow-dependencies": [
+        "./packages/db/src/schema/workflow-dependencies.ts"
+      ],
+      "@nexus/db/repositories/workflow-control": [
+        "./packages/db/src/repositories/workflow-control.ts"
+      ],
+      "@nexus/db/repositories/workflow-case": [
+        "./packages/db/src/repositories/workflow-case.ts"
       ]
     },
     "skipLibCheck": true

@@ -1,4 +1,6 @@
 import type {
+  CaseStatus,
+  RunResumeCause,
   WaitReason,
   WorkflowStatus,
   WorkflowStepStatus,
@@ -18,6 +20,9 @@ export interface WorkflowRunSnapshot {
   readonly id: string;
   readonly sandboxId: string;
   readonly caseId: string;
+  readonly triggerEventId: string;
+  readonly correlationId: string;
+  readonly resumeCause: RunResumeCause | null;
   readonly definitionName: string;
   readonly definitionVersion: string;
   readonly status: WorkflowStatus;
@@ -86,6 +91,7 @@ export interface CommitStepInput {
   readonly runStatusAfter: WorkflowStatus;
   readonly jobAction: JobAction;
   readonly retryAt: Date | null;
+  readonly caseStatusAfter: CaseStatus;
   readonly dependencyKeys: readonly string[];
   readonly startedAt: Date;
   readonly finishedAt: Date;
@@ -104,6 +110,7 @@ export interface CompleteJobInput {
   readonly runStatus: WorkflowStatus;
   readonly jobState: 'succeeded' | 'failed' | 'cancelled';
   readonly errorClass?: string | null;
+  readonly caseStatusAfter: CaseStatus;
 }
 
 export interface CompleteJobResult {
@@ -116,7 +123,7 @@ export interface WorkflowJournal {
   schedulePendingInbox(input: SchedulePendingInput): Promise<ScheduleOutcome[]>;
   claimJob(ownerId: string, leaseMs: number): Promise<WorkflowJobClaim | null>;
   heartbeat(claim: WorkflowJobClaim, leaseMs: number): Promise<boolean>;
-  markRunning(claim: WorkflowJobClaim): Promise<WorkflowRunContext>;
+  markRunning(claim: WorkflowJobClaim, caseStatusAfter: CaseStatus): Promise<WorkflowRunContext>;
   loadContext(claim: WorkflowJobClaim): Promise<WorkflowRunContext>;
   commitStep(input: CommitStepInput): Promise<CommitStepResult>;
   completeJob(input: CompleteJobInput): Promise<CompleteJobResult>;
@@ -124,11 +131,13 @@ export interface WorkflowJournal {
     claim: WorkflowJobClaim,
     context: WorkflowRunContext,
     errorClass: string,
+    caseStatusAfter: CaseStatus,
   ): Promise<void>;
   markBlocked(
     claim: WorkflowJobClaim,
     context: WorkflowRunContext,
     errorClass: string,
+    caseStatusAfter: CaseStatus,
   ): Promise<void>;
 }
 

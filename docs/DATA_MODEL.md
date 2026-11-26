@@ -209,6 +209,28 @@ definition identity and attempts are immutable. `nexus_api` has read access for 
 inbox row, run, initial job and pending step rows are created in one transaction. F11 does not add
 approval/proposal/action/execution/SSE tables; F11A/B and F12/F13 own those.
 
+## Workflow waits and dependency linkage (F11A)
+
+Migration `packages/db/migrations/0007_workflow_waits.sql` adds `resume_cause`, `cancel_cause` and
+`partial_effects` to `workflow_runs`, a unique child identity on runs
+`(sandbox_id,case_id,trigger_event_id)`, and the `workflow_dependencies` table.
+
+`workflow_dependencies` stores the parent run/case, root case, child case and exact child trigger
+event, the child case version at linkage, a `waiting|resolved|escalated|expired|cancelled` state,
+a database-time 48-real-hour expiry and resolution time. Composite sandbox foreign keys bind the parent run,
+parent/root/child cases and the child run identity; a partial unique index allows one active
+(waiting) dependency per parent run. Maximum depth one is enforced by the application before
+insert: the parent case cannot itself be a waiting child, the child case cannot already be a
+waiting parent, self-links reject, and a per-sandbox advisory transaction lock serializes
+dependency creation.
+
+The worker and API may update only dependency state/resolution time. The API receives column-scoped
+control updates for run status/resume/cancel/partial effects, job insert/state and waiting-step
+status; it does not receive the worker's broader journal update grants. A terminal case transition
+writes the case status/audit and one `nexus.case.completed.v1` outbox row in the same transaction.
+The dependency coordinator consumes matching case-completed inbox rows and marks them processed;
+it never creates a workflow run from a terminal event.
+
 ## F05/F07/F08 boundaries
 
 F07/F08 do not implement the application executor, approvals, automatic outbox publishing,

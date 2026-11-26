@@ -55,6 +55,26 @@
     "./workflows/transitions": {
       "types": "./dist/workflows/transitions.d.ts",
       "default": "./dist/workflows/transitions.js"
+    },
+    "./cases/state": {
+      "types": "./dist/cases/state.d.ts",
+      "default": "./dist/cases/state.js"
+    },
+    "./workflows/waits": {
+      "types": "./dist/workflows/waits.d.ts",
+      "default": "./dist/workflows/waits.js"
+    },
+    "./workflows/resume": {
+      "types": "./dist/workflows/resume.d.ts",
+      "default": "./dist/workflows/resume.js"
+    },
+    "./workflows/cancellation": {
+      "types": "./dist/workflows/cancellation.d.ts",
+      "default": "./dist/workflows/cancellation.js"
+    },
+    "./workflows/dependency-events": {
+      "types": "./dist/workflows/dependency-events.d.ts",
+      "default": "./dist/workflows/dependency-events.js"
     }
   },
   "scripts": {

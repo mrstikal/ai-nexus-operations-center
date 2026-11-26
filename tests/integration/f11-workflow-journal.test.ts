@@ -528,6 +528,7 @@ describe('F11 workflow journal, jobs and leases', () => {
       waitReason: null,
       runStatusAfter: 'running',
       jobAction: 'continue',
+      caseStatusAfter: 'investigating',
       retryAt: null,
       dependencyKeys: [],
       startedAt: new Date(),
@@ -835,6 +836,7 @@ describe('F11 workflow journal, jobs and leases', () => {
       claim,
       runStatus: 'completed',
       jobState: 'succeeded',
+      caseStatusAfter: 'resolved',
     });
     expect(completed).toMatchObject({
       runStatus: 'budget_exhausted',

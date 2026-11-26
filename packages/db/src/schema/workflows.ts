@@ -48,6 +48,9 @@ export const workflowRuns = nexusSchema.table(
     activeMsUsed: integer('active_ms_used').notNull(),
     deadlineAt: timestamp('deadline_at', { withTimezone: true }).notNull(),
     cancelRequested: boolean('cancel_requested').notNull(),
+    resumeCause: text('resume_cause'),
+    cancelCause: text('cancel_cause'),
+    partialEffects: jsonb('partial_effects').$type<unknown[]>().notNull(),
     lastError: text('last_error'),
     version: integer('version').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
@@ -57,6 +60,11 @@ export const workflowRuns = nexusSchema.table(
     uniqueIndex('workflow_runs_sandbox_id_key').on(table.sandboxId, table.id),
     uniqueIndex('workflow_runs_sandbox_trigger_key').on(
       table.sandboxId,
+      table.triggerEventId,
+    ),
+    uniqueIndex('workflow_runs_child_identity_key').on(
+      table.sandboxId,
+      table.caseId,
       table.triggerEventId,
     ),
     index('workflow_runs_status_idx').on(
@@ -74,6 +82,18 @@ export const workflowRuns = nexusSchema.table(
     ),
     check('workflow_runs_ingress_hash_check', sql`${table.ingressHash} ~ '^[a-f0-9]{64}$'`),
     check('workflow_runs_active_ms_check', sql`${table.activeMsUsed} >= 0 AND ${table.activeMsLimit} > 0`),
+    check(
+      'workflow_runs_resume_cause_check',
+      sql`${table.resumeCause} IS NULL OR ${table.resumeCause} IN ('human_input','approval_completed','dependency_retry','budget_extension')`,
+    ),
+    check(
+      'workflow_runs_cancel_cause_check',
+      sql`${table.cancelCause} IS NULL OR ${table.cancelCause} IN ('operator_request','dependency_failure','dependency_timeout','test')`,
+    ),
+    check(
+      'workflow_runs_partial_effects_check',
+      sql`jsonb_typeof(${table.partialEffects}) = 'array'`,
+    ),
   ],
 );
 

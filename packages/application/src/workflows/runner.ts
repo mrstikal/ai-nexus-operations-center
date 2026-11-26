@@ -1,3 +1,4 @@
+import { caseStatusForWorkflowStatus } from '../cases/state.js';
 import {
   WorkflowDefinitionError,
   assertRedactedOutput,
@@ -171,6 +172,11 @@ function failureInput(
       retryAllowedForKind(step.kind) && attemptNo < maxAttempts
         ? new Date(Date.now() + workflowRetryDelayMs(attemptNo))
         : null,
+    caseStatusAfter: caseStatusForRun(
+      retryAllowedForKind(step.kind) && attemptNo < maxAttempts
+        ? 'running'
+        : 'failed',
+    ) ?? 'investigating',
     dependencyKeys: dependencies.map((dependency) => dependency.key),
     startedAt,
     finishedAt,
@@ -224,6 +230,7 @@ function normalizeExecution(
       runStatusAfter: 'failed',
       jobAction: 'fail',
       retryAt: null,
+      caseStatusAfter: caseStatusForRun('failed') ?? 'escalated',
       dependencyKeys: dependencies.map((dependency) => dependency.key),
       startedAt,
       finishedAt,
@@ -249,6 +256,11 @@ function normalizeExecution(
       runStatusAfter: workflowStatusForWait(execution.wait),
       jobAction: 'wait',
       retryAt: null,
+      caseStatusAfter: caseStatusForRun(execution.wait.kind === 'approval'
+        ? 'waiting_approval'
+        : execution.wait.kind === 'dependency'
+          ? 'waiting_dependency'
+          : 'waiting_input') ?? 'investigating',
       dependencyKeys: dependencies.map((dependency) => dependency.key),
       startedAt,
       finishedAt,
@@ -272,6 +284,7 @@ function normalizeExecution(
     runStatusAfter: 'running',
     jobAction: 'continue',
     retryAt: null,
+    caseStatusAfter: caseStatusForRun('running') ?? 'investigating',
     dependencyKeys: dependencies.map((dependency) => dependency.key),
     startedAt,
     finishedAt,
@@ -320,6 +333,7 @@ async function executeStep(
       stepKey: step.key,
       attempt: attemptNo,
       inputHash,
+      resumeCause: context.run.resumeCause,
       ingress: context.run.ingress,
       dependencies: dependencyOutputs(definition, step.key, context.steps),
       signal: controller.signal,
@@ -425,6 +439,10 @@ async function executeStep(
       finishedAt,
     ),
   };
+}
+
+function caseStatusForRun(status: string): ReturnType<typeof caseStatusForWorkflowStatus> {
+  return caseStatusForWorkflowStatus(status as Parameters<typeof caseStatusForWorkflowStatus>[0]) ?? 'investigating';
 }
 
 function resultForRunStatus(status: string): WorkflowRunResultStatus {
@@ -535,7 +553,10 @@ export class WorkflowRunner {
     let stepsExecuted = 0;
     try {
       await this.#options.faults?.at({ point: 'after_claim', claim });
-      let context = await this.#options.journal.markRunning(claim);
+      let context = await this.#options.journal.markRunning(
+        claim,
+        caseStatusForRun('running') ?? 'investigating',
+      );
       const definition = this.#options.registry.get(
         context.run.definitionName,
         context.run.definitionVersion,
@@ -545,6 +566,7 @@ export class WorkflowRunner {
           claim,
           context,
           'UNKNOWN_DEFINITION',
+          caseStatusForRun('blocked') ?? 'investigating',
         );
         return { status: 'blocked', runId: claim.runId, stepsExecuted };
       }
@@ -563,6 +585,7 @@ export class WorkflowRunner {
             claim,
             context,
             `STEP_INPUT_CHANGED:${mismatch}`.slice(0, 100),
+            caseStatusForRun('blocked') ?? 'investigating',
           );
           return { status: 'blocked', runId: claim.runId, stepsExecuted };
         }
@@ -584,10 +607,17 @@ export class WorkflowRunner {
               runStatus: 'failed',
               jobState: 'failed',
               errorClass: failed.errorClass,
+              caseStatusAfter:
+                caseStatusForWorkflowStatus('failed') ?? 'escalated',
             });
             return { status: 'failed', runId: claim.runId, stepsExecuted };
           }
-          await this.#options.journal.markBlocked(claim, context, 'NO_READY_STEP');
+          await this.#options.journal.markBlocked(
+            claim,
+            context,
+            'NO_READY_STEP',
+            caseStatusForRun('blocked') ?? 'investigating',
+          );
           return { status: 'blocked', runId: claim.runId, stepsExecuted };
         }
         if (await this.#budgetExhausted(claim, context)) {
@@ -696,6 +726,7 @@ export class WorkflowRunner {
         claim,
         context,
         deadlineExceeded ? 'DEADLINE_EXCEEDED' : 'ACTIVE_LIMIT_EXCEEDED',
+        caseStatusForRun('budget_exhausted') ?? 'escalated',
       );
       return true;
     }
@@ -715,6 +746,7 @@ export class WorkflowRunner {
         claim,
         runStatus: context.run.status,
         jobState: 'succeeded',
+        caseStatusAfter: caseStatusForRun(context.run.status) ?? 'investigating',
       });
       return { status: resultForRunStatus(completed.runStatus), runId: claim.runId };
     }
@@ -724,6 +756,7 @@ export class WorkflowRunner {
         runStatus: context.run.status,
         jobState:
           context.run.status === 'completed' ? 'succeeded' : 'failed',
+        caseStatusAfter: caseStatusForRun(context.run.status) ?? 'escalated',
       });
       return { status: resultForRunStatus(completed.runStatus), runId: claim.runId };
     }
@@ -732,6 +765,7 @@ export class WorkflowRunner {
         claim,
         context,
         'DEFINITION_BLOCKED',
+        caseStatusForRun('blocked') ?? 'investigating',
       );
       return { status: 'blocked', runId: claim.runId };
     }
@@ -744,6 +778,7 @@ export class WorkflowRunner {
         claim,
         runStatus: 'cancelled',
         jobState: 'cancelled',
+        caseStatusAfter: caseStatusForRun('cancelled') ?? 'cancelled',
       });
       return { status: resultForRunStatus(completed.runStatus), runId: claim.runId };
     }
@@ -758,6 +793,7 @@ export class WorkflowRunner {
         claim,
         runStatus: 'completed',
         jobState: 'succeeded',
+        caseStatusAfter: caseStatusForRun('completed') ?? 'resolved',
       });
       await this.#options.faults?.at({ point: 'after_run_complete', claim });
       return { status: resultForRunStatus(completed.runStatus), runId: claim.runId };

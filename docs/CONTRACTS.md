@@ -211,6 +211,29 @@ generic retry path. A persistent wait stores a `WaitReason` and releases the lea
 workflow definition versions create a `blocked` run without a job; they do not silently fall back
 to an older definition.
 
+## Workflow control and terminal events (F11A)
+
+`packages/contracts/src/run-control.ts` defines the control bodies. `RunResumeRequest` is a
+discriminated union: `human_input`; `approval_completed` with the exact proposal/action revision;
+and reserved `budget_extension` (not enabled in F11A). A dependency wait has no public resume
+cause: only a validated child `case.completed` event with the exact trigger/version/sandbox can
+release it. `RunCancelRequest` carries `operator_request`, `dependency_failure`,
+`dependency_timeout` or `test`. `RunControlResponse` returns the run status, case status and a
+deduplicated flag. Extra fields reject.
+
+`POST /api/v1/runs/{runId}/resume` and `POST /api/v1/runs/{runId}/cancel` require a session,
+same-origin CSRF and the operator role. Invalid bodies return validation errors; terminal,
+duplicate, unrelated or unsupported wakes return `CONFLICT`; a missing run or active sandbox
+returns not found/stale. The server derives actor and sandbox.
+
+`nexus.case.completed.v1` uses the declared `CaseCompletedPayload`: case ID, terminal run ID,
+terminal trigger event ID, terminal case version, terminal status (`resolved|escalated|cancelled`)
+and up to 100 outcome evidence IDs; the envelope carries the correlation. It is emitted by the
+worker only when the case reducer makes a real terminal transition, in the same transaction as the
+case update and audit. Dependency matching uses the event sandbox, child case, trigger generation
+and terminal version/status; stale or duplicate events do not wake. The event is not a workflow
+root trigger and is marked processed by the dependency coordinator.
+
 ## Durable case intake and events (F10)
 
 F10 adds `packages/contracts/src/ingress.ts`. `CaseIntakeRequest` carries a title, nullable

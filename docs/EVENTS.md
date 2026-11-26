@@ -128,6 +128,26 @@ Replay a dead letter only after correcting the cause and only through a controll
 procedure. Re-publish or requeue the original event ID; the inbox uniqueness makes replay
 idempotent. Do not edit an inbox row into `pending` by hand without an audited runbook.
 
+## Terminal case event and dependency wake (F11A)
+
+F11A emits `nexus.case.completed.v1` only when the case reducer makes a real transition into a
+terminal status (`resolved`, `escalated`, `cancelled`). The case status update, workflow journal
+change in the same operation, audit row and outbox insert share one transaction. The payload is the
+declared case-completed schema: terminal run ID, trigger event ID, terminal case version/status and
+up to 100 outcome evidence IDs. The envelope carries the correlation. A repeated same-status update
+emits nothing; a terminal case cannot be resurrected.
+
+The worker's dependency coordinator consumes pending `case.completed` inbox rows. It validates the
+event sandbox, child case, trigger generation and terminal version against the current case; only
+an exact matching waiting dependency wakes. A resolved child queues the parent; an escalated or
+cancelled child, or the 48-real-hour dependency expiry, escalates the parent and cancels its run.
+Wrong child/version/sandbox or duplicate events are marked processed without a second job. The
+dependency wake, parent job, inbox state and terminal parent event are transactional.
+
+Case-completed events are not workflow root triggers; the workflow scheduler ignores them and the
+dependency coordinator marks them processed after handling. Do not map them to a business
+definition or create a second run from them.
+
 ## Runbook queries
 
 ```sql
