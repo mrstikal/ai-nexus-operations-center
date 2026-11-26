@@ -1,0 +1,122 @@
+{
+  "money": {
+    "amountMinor": "123456",
+    "currency": "EUR"
+  },
+  "cost": {
+    "amountMicrousd": "120000",
+    "basis": "reported"
+  },
+  "requestContext": {
+    "requestId": "req-f03-example",
+    "correlationId": "corr-f03-example",
+    "sandboxId": "22222222-2222-4222-8222-222222222222",
+    "actor": {
+      "kind": "human",
+      "id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "roles": ["operator", "approver_ops"]
+    }
+  },
+  "problem": {
+    "code": "VALIDATION_FAILED",
+    "message": "The request is invalid.",
+    "requestId": "req-f03-example",
+    "issues": [
+      {
+        "path": ["items", 0, "payload", "quantity"],
+        "message": "must be positive"
+      }
+    ],
+    "retryAfterMs": 1000
+  },
+  "caseDetail": {
+    "id": "11111111-1111-4111-8111-111111111111",
+    "sandboxId": "22222222-2222-4222-8222-222222222222",
+    "title": "Supplier delay on PO-1001",
+    "status": "investigating",
+    "version": 3,
+    "terminalReason": null,
+    "createdAt": "2026-11-02T09:00:00Z",
+    "updatedAt": "2026-11-02T09:05:00Z",
+    "summary": null,
+    "entityRefs": [
+      {
+        "system": "enterprise",
+        "type": "purchase_order",
+        "id": "77777777-7777-4777-8777-777777777777",
+        "version": 4
+      }
+    ]
+  },
+  "actionDraft": {
+    "items": [
+      {
+        "target": {
+          "system": "nexus",
+          "type": "case",
+          "id": "11111111-1111-4111-8111-111111111111",
+          "version": 3
+        },
+        "evidenceIds": ["66666666-6666-4666-8666-666666666666"],
+        "payload": {
+          "kind": "case.add_internal_note",
+          "caseId": "11111111-1111-4111-8111-111111111111",
+          "text": "Supplier notice reviewed; waiting for revised delivery date."
+        }
+      }
+    ],
+    "rationale": "Record the reviewed supplier notice without executing a business command."
+  },
+  "uiDescriptor": {
+    "kind": "evidence_list",
+    "title": "Evidence",
+    "items": [
+      {
+        "evidenceId": "66666666-6666-4666-8666-666666666666",
+        "label": "Supplier notice page 1",
+        "action": null
+      }
+    ]
+  },
+  "gatewayRequest": {
+    "role": "analyse",
+    "capabilities": ["structured_json"],
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "kind": "text",
+            "text": "Analyse the supplied shortage using only the provided facts."
+          }
+        ]
+      }
+    ],
+    "outputSchemaId": "supply-recommendation-v1",
+    "allowedToolNames": ["knowledge.search"],
+    "workflowRunId": null,
+    "budgetAccountId": null,
+    "maxOutputTokens": 2000,
+    "stream": false
+  },
+  "reviewerOutput": {
+    "verdict": "supported",
+    "findings": [
+      {
+        "code": "ARITHMETIC_MATCH",
+        "evidenceIds": ["66666666-6666-4666-8666-666666666666"],
+        "message": "The calculated penalty matches the recorded terms."
+      }
+    ],
+    "missingFields": []
+  },
+  "authMe": {
+    "user": {
+      "id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "username": "operator.local",
+      "displayName": "Local Operator",
+      "roles": ["operator"]
+    },
+    "expiresAt": "2026-11-02T17:00:00Z"
+  }
+}

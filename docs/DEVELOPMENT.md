@@ -51,6 +51,7 @@ pnpm exec playwright install chromium
 | `pnpm verify:phase F01` | Full phase gate for the selected phase or range |
 | `pnpm docs:check` | Local documentation links, required files, plan/manifest order |
 | `pnpm licenses:check` | Installed license inventory and direct-dependency notices |
+| `pnpm openapi:generate` | Regenerate `docs/openapi.json` from the shared contracts |
 | `pnpm dev` | Foreground API, worker, and web development processes |
 
 Phase selectors accept exact IDs such as `F11A` or manifest-order ranges such as
@@ -75,6 +76,15 @@ path or artifact assertion in the owning phase; an empty selector never passes.
   development, start, and E2E commands.
 - No model, font CDN, telemetry collector, database, broker, or cache connection is
   made in F01.
+
+## Shared contracts and OpenAPI
+
+`packages/contracts` owns the stable Zod wire schemas and the event registry;
+`packages/domain` owns pure money, clock, canonical-JSON and state-machine helpers. Run
+`pnpm openapi:generate` to regenerate `docs/openapi.json` from the same contracts, and
+`pnpm docs:check` to verify drift. F03 unit suites cover money/tax vectors, canonical
+hashing, state transitions, privileged-field rejection and OpenAPI/example parity. See the
+[contracts guide](CONTRACTS.md).
 
 ## Local infrastructure
 

@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { loadManifest } from './lib/phase.mjs';
@@ -6,7 +7,11 @@ const ROOT = process.cwd();
 const REQUIRED_FILES = [
   'docs/PROGRESS.md',
   'docs/DEVELOPMENT.md',
+  'docs/OPERATIONS.md',
+  'docs/CONTRACTS.md',
   'docs/adr/001-workspace.md',
+  'docs/adr/002-data-ownership.md',
+  'docs/adr/004-transport-roles.md',
   'LICENSE',
   'THIRD_PARTY_NOTICES.md',
 ];
@@ -144,7 +149,7 @@ function checkOpenApi() {
   const generatedPath = path.join(ROOT, 'docs/openapi.json');
   const generatorPath = path.join(ROOT, 'tools/generate-openapi.mjs');
   if (!fs.existsSync(generatedPath)) {
-    return 'OpenAPI drift check: not applicable until F03 generates docs/openapi.json.';
+    throw new Error('docs/openapi.json is missing; run pnpm openapi:generate');
   }
   if (!fs.existsSync(generatorPath)) {
     throw new Error('docs/openapi.json exists but tools/generate-openapi.mjs is missing');
@@ -153,7 +158,19 @@ function checkOpenApi() {
   if (typeof document !== 'object' || document === null || !('openapi' in document) || !('paths' in document)) {
     throw new Error('docs/openapi.json is not a valid OpenAPI document');
   }
-  return 'OpenAPI document present; drift verification is owned by the F03 generator.';
+  const result = spawnSync(process.execPath, [generatorPath, '--check'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  });
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    throw new Error(
+      (result.stderr || result.stdout || 'OpenAPI drift check failed').trim(),
+    );
+  }
+  return result.stdout.trim();
 }
 
 function main() {

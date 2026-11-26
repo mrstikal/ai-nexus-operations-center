@@ -28,6 +28,15 @@ const SERVER_ONLY_EXTERNALS = [
   'ioredis',
   'pg',
 ];
+const MODEL_SDK_EXTERNALS = [
+  'openai',
+  '@openrouter/',
+  '@ai-sdk/',
+  '@anthropic-ai/',
+  '@google/generative-ai',
+  'langchain',
+  '@langchain/',
+];
 
 function normalizeRelative(value) {
   return value.split(path.sep).join('/');
@@ -248,9 +257,13 @@ function checkImport({ from, specifier, typeOnly, workspaces }) {
     }
     if (
       isWorkspaceRelative(from.workspace, 'packages/domain') &&
-      (external.startsWith('@nestjs/') || ['drizzle-orm', 'pg', '@nexus/ai', '@nexus/db'].includes(external))
+      (external.startsWith('@nestjs/') ||
+        ['drizzle-orm', 'pg', '@nexus/ai', '@nexus/db'].includes(external) ||
+        MODEL_SDK_EXTERNALS.some(
+          (prefix) => external === prefix || external.startsWith(prefix),
+        ))
     ) {
-      return 'packages/domain must not depend on Nest, DB, or AI packages';
+      return 'packages/domain must not depend on Nest, DB, or model SDK packages';
     }
     if (
       ['packages/ai', 'packages/integrations', 'packages/messaging', 'packages/observability'].includes(

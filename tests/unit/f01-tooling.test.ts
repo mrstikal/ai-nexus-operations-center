@@ -202,6 +202,7 @@ describe('F01 dependency boundary checker', () => {
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain('packages/contracts may depend only on Zod');
+    expect(result.stderr).toContain('packages/domain must not depend on Nest, DB, or model SDK packages');
     expect(result.stderr).toContain('apps/web must not import DB');
   });
 

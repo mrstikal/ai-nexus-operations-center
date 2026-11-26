@@ -20,11 +20,13 @@ Original project source is licensed under the MIT License in `LICENSE`.
 | `react-dom` | 19.3.1 | MIT |
 | `reflect-metadata` | 0.2.2 | Apache-2.0 |
 | `rxjs` | 7.8.2 | Apache-2.0 |
+| `zod` | 4.6.7 | MIT |
 
 ## Development dependencies
 
 | Package | Version | License |
 |---|---|---|
+| `@asteasolutions/zod-to-openapi` | 9.1.0 | MIT |
 | `@eslint/js` | 10.0.1 | MIT |
 | `@nestjs/cli` | 12.0.15 | MIT |
 | `@playwright/test` | 1.65.1 | Apache-2.0 |

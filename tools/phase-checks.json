@@ -255,10 +255,158 @@
         "F02"
       ],
       "checkpoint": false,
-      "unitTests": [],
+      "unitTests": [
+        "tests/unit/f03-money.test.ts",
+        "tests/unit/f03-canonical-json.test.ts",
+        "tests/unit/f03-state-machines.test.ts",
+        "tests/unit/f03-contracts.test.ts",
+        "tests/unit/f03-openapi.test.ts"
+      ],
       "integrationTests": [],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/common.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/errors.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/auth.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/cases.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/evidence.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/workflows.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/actions.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/models.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/ui.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/index.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/events/envelope.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/events/payloads.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/events/registry.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/contracts/src/events/index.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/src/money.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/src/clock.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/src/state-machines.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/src/canonical-json.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/domain/src/index.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/generate-openapi.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f03-money.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f03-canonical-json.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f03-state-machines.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f03-contracts.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f03-openapi.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/fixtures/f03/api-examples.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/fixtures/f03/events.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/fixtures/boundaries/invalid/packages/domain/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/fixtures/boundaries/invalid/packages/domain/src/index.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 1
+        }
+      ],
+      "requiresInfrastructure": false
     },
     {
       "id": "F04",

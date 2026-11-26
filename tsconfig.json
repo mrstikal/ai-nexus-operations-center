@@ -4,13 +4,44 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": false,
-    "lib": ["ES2023", "DOM"],
-    "types": ["node"],
+    "lib": [
+      "ES2023",
+      "DOM"
+    ],
+    "types": [
+      "node"
+    ],
     "paths": {
-      "@nexus/db/connection": ["./packages/db/src/connection.ts"],
-      "@nexus/db/migrate": ["./packages/db/src/migrate.ts"],
-      "@nexus/enterprise-db/connection": ["./packages/enterprise-db/src/connection.ts"],
-      "@nexus/enterprise-db/migrate": ["./packages/enterprise-db/src/migrate.ts"]
+      "@nexus/db/connection": [
+        "./packages/db/src/connection.ts"
+      ],
+      "@nexus/db/migrate": [
+        "./packages/db/src/migrate.ts"
+      ],
+      "@nexus/enterprise-db/connection": [
+        "./packages/enterprise-db/src/connection.ts"
+      ],
+      "@nexus/enterprise-db/migrate": [
+        "./packages/enterprise-db/src/migrate.ts"
+      ],
+      "@nexus/contracts": [
+        "./packages/contracts/src/index.ts"
+      ],
+      "@nexus/contracts/events": [
+        "./packages/contracts/src/events/index.ts"
+      ],
+      "@nexus/contracts/events/*": [
+        "./packages/contracts/src/events/*.ts"
+      ],
+      "@nexus/contracts/*": [
+        "./packages/contracts/src/*.ts"
+      ],
+      "@nexus/domain": [
+        "./packages/domain/src/index.ts"
+      ],
+      "@nexus/domain/*": [
+        "./packages/domain/src/*.ts"
+      ]
     }
   },
   "include": [
