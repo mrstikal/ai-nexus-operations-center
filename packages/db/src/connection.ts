@@ -95,9 +95,16 @@ export function createNexusPool(
   env: NodeJS.ProcessEnv = process.env,
   overrides: Partial<DatabaseTarget> = {},
 ): PgPool {
-  return new Pool(
+  const pool = new Pool(
     poolConfig({ ...nexusDatabaseFromEnv(role, env), ...overrides }, 'nexus', 'nexus', env),
   );
+  pool.on('error', (error) => {
+    const code = (error as Error & { code?: unknown }).code;
+    console.error(
+      `Nexus PostgreSQL pool idle client error${typeof code === 'string' ? ` (${code})` : ''}`,
+    );
+  });
+  return pool;
 }
 
 export function describeDatabaseTarget(target: DatabaseTarget): string {

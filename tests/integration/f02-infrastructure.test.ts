@@ -208,7 +208,7 @@ describe('F02 infrastructure', () => {
       const ledger = await client.query<{ count: number }>(
         'SELECT count(*)::int AS count FROM nexus.schema_migrations',
       );
-      expect(ledger.rows[0]?.count).toBe(1);
+      expect(ledger.rows[0]?.count).toBe(initialNexus.applied.length);
       const metadata = await client.query<{ metadata_value: string }>(
         "SELECT metadata_value FROM nexus.infrastructure_metadata WHERE metadata_key = 'bootstrap'",
       );

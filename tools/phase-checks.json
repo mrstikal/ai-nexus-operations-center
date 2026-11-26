@@ -694,10 +694,69 @@
         "F05"
       ],
       "checkpoint": false,
-      "unitTests": [],
+      "unitTests": [
+        "tests/unit/f06-session-messages.test.ts",
+        "tests/unit/f06-db-pool.test.ts"
+      ],
       "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
+      "e2eTests": [
+        "tests/e2e/f06-shell.spec.ts"
+      ],
+      "artifacts": [
+        {
+          "path": "apps/web/app/layout.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/app/page.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/app/login/page.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/app/api/[...path]/route.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/app/globals.css",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/src/lib/api.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/src/lib/session.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "apps/web/src/lib/session-messages.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/connection.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/ui/src/shell.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/ui/src/status-badge.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/ui/src/feedback.tsx",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/UI.md",
+          "minBytes": 1
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F07",

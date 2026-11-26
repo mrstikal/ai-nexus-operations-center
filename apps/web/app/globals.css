@@ -1,10 +1,28 @@
 :root {
   color-scheme: light;
-  --ink: #172033;
-  --muted: #5a6577;
-  --line: #d7dde7;
-  --surface: #f5f7fa;
-  --accent: #1f5fbf;
+  --nexus-ink: #172033;
+  --nexus-muted: #5c6779;
+  --nexus-line: #d8dee8;
+  --nexus-line-strong: #b9c3d2;
+  --nexus-surface: #f4f6f9;
+  --nexus-panel: #ffffff;
+  --nexus-panel-soft: #eef2f7;
+  --nexus-rail: #101827;
+  --nexus-rail-soft: #1a2435;
+  --nexus-rail-line: #2c3a50;
+  --nexus-rail-text: #e8edf5;
+  --nexus-rail-muted: #9eabc0;
+  --nexus-accent: #1f5fbf;
+  --nexus-accent-soft: #e7effb;
+  --nexus-review: #9a5b00;
+  --nexus-review-soft: #fff1d6;
+  --nexus-danger: #b3261e;
+  --nexus-danger-soft: #fbe9e7;
+  --nexus-success: #1f6b3a;
+  --nexus-success-soft: #e5f3ea;
+  --nexus-focus: #7db2ff;
+  --nexus-radius: 10px;
+  --nexus-shadow: 0 10px 30px rgb(16 24 39 / 8%);
 }
 
 * {
@@ -18,46 +36,903 @@ body {
 }
 
 body {
-  background: var(--surface);
-  color: var(--ink);
+  background: var(--nexus-surface);
+  color: var(--nexus-ink);
   font-family:
     system-ui,
     -apple-system,
     "Segoe UI",
     sans-serif;
+  font-size: 15px;
   line-height: 1.5;
 }
 
-.shell {
-  margin: 0 auto;
-  max-width: 960px;
-  padding: 4rem 1.5rem;
+a {
+  color: var(--nexus-accent);
 }
 
-.eyebrow {
-  color: var(--accent);
+code {
+  background: var(--nexus-panel-soft);
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--nexus-focus);
+  outline-offset: 2px;
+}
+
+.nexus-skip-link {
+  background: var(--nexus-panel);
+  border-radius: 0 0 8px 0;
+  color: var(--nexus-ink);
+  left: 0;
+  padding: 10px 16px;
+  position: absolute;
+  top: 0;
+  transform: translateY(-140%);
+  z-index: 100;
+}
+
+.nexus-skip-link:focus {
+  transform: translateY(0);
+}
+
+.nexus-shell {
+  display: grid;
+  grid-template-columns: 256px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.nexus-rail {
+  background: var(--nexus-rail);
+  color: var(--nexus-rail-text);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 22px 18px;
+  position: sticky;
+  top: 0;
+}
+
+.nexus-brand {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.nexus-brand__mark {
+  align-items: center;
+  background: var(--nexus-accent);
+  border-radius: 8px;
+  color: #fff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 800;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.nexus-brand__text {
+  display: flex;
+  flex-direction: column;
   font-size: 0.75rem;
-  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.nexus-brand__text strong {
+  font-size: 0.95rem;
   letter-spacing: 0.18em;
-  margin: 0 0 0.75rem;
 }
 
-h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1.1;
-  margin: 0 0 1rem;
+.nexus-brand__text span {
+  color: var(--nexus-rail-muted);
 }
 
-.lede {
-  color: var(--muted);
-  max-width: 46rem;
+.nexus-brand--large .nexus-brand__mark {
+  height: 46px;
+  width: 46px;
 }
 
-.badge {
-  border: 1px solid var(--line);
+.nexus-mode {
+  align-items: flex-start;
+  background: var(--nexus-rail-soft);
+  border: 1px solid var(--nexus-rail-line);
+  border-radius: var(--nexus-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+}
+
+.nexus-mode__detail {
+  color: var(--nexus-rail-muted);
+  font-size: 0.75rem;
+}
+
+.nexus-rail-label {
+  color: var(--nexus-rail-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.nexus-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nexus-nav__link {
+  align-items: center;
+  border-radius: 8px;
+  color: var(--nexus-rail-text);
+  display: flex;
+  gap: 10px;
+  padding: 9px 11px;
+  text-decoration: none;
+}
+
+.nexus-nav__link:hover {
+  background: var(--nexus-rail-soft);
+}
+
+.nexus-nav__link[aria-current="page"] {
+  background: var(--nexus-accent-soft);
+  color: #12365f;
+  font-weight: 650;
+}
+
+.nexus-nav__marker {
+  background: currentColor;
   border-radius: 999px;
-  display: inline-block;
-  font-size: 0.875rem;
-  margin-top: 1.5rem;
-  padding: 0.375rem 0.75rem;
+  height: 6px;
+  opacity: 0.55;
+  width: 6px;
+}
+
+.nexus-rail__spacer {
+  flex: 1 1 auto;
+}
+
+.nexus-account,
+.nexus-sandbox {
+  border-top: 1px solid var(--nexus-rail-line);
+  padding-top: 16px;
+}
+
+.nexus-account__name,
+.nexus-sandbox__name {
+  font-weight: 650;
+  margin: 0;
+}
+
+.nexus-account__username,
+.nexus-account__expiry,
+.nexus-sandbox__date,
+.nexus-sandbox__missing {
+  color: var(--nexus-rail-muted);
+  font-size: 0.78rem;
+  margin: 2px 0 0;
+}
+
+.nexus-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  list-style: none;
+  margin: 9px 0 0;
+  padding: 0;
+}
+
+.nexus-roles li {
+  background: var(--nexus-rail-soft);
+  border: 1px solid var(--nexus-rail-line);
+  border-radius: 999px;
+  color: var(--nexus-rail-text);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+}
+
+.nexus-roles__empty {
+  background: transparent;
+  border-style: dashed;
+  color: var(--nexus-rail-muted);
+}
+
+.nexus-roles--inline li {
+  background: var(--nexus-accent-soft);
+  border-color: #c8d8f3;
+  color: #12365f;
+}
+
+.nexus-roles--inline li.nexus-roles__empty {
+  background: transparent;
+  border-color: var(--nexus-line-strong);
+  color: var(--nexus-muted);
+}
+
+.nexus-sandbox__meta {
+  margin-top: 7px;
+}
+
+.nexus-rail__footer {
+  border-top: 1px solid var(--nexus-rail-line);
+  padding-top: 14px;
+}
+
+.nexus-main {
+  min-width: 0;
+}
+
+.nexus-topbar {
+  align-items: center;
+  background: rgb(255 255 255 / 92%);
+  border-bottom: 1px solid var(--nexus-line);
+  display: flex;
+  gap: 9px;
+  min-height: 54px;
+  padding: 10px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nexus-topbar__company {
+  font-weight: 650;
+}
+
+.nexus-topbar__divider,
+.nexus-topbar__context {
+  color: var(--nexus-muted);
+}
+
+.nexus-topbar .nexus-status {
+  margin-left: auto;
+}
+
+.nexus-content {
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 30px 28px 56px;
+}
+
+.nexus-page-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.nexus-page-heading h1 {
+  font-size: clamp(1.65rem, 2.5vw, 2.15rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 8px;
+}
+
+.nexus-eyebrow {
+  color: var(--nexus-accent);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.15em;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+
+.nexus-lede {
+  color: var(--nexus-muted);
+  margin: 0;
+  max-width: 62ch;
+}
+
+.nexus-card-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+
+.nexus-card {
+  background: var(--nexus-panel);
+  border: 1px solid var(--nexus-line);
+  border-radius: var(--nexus-radius);
+  box-shadow: var(--nexus-shadow);
+  min-width: 0;
+  padding: 18px 20px;
+}
+
+.nexus-card__header {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.nexus-card__header h2 {
+  font-size: 1.02rem;
+  margin: 0;
+}
+
+.nexus-detail-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.nexus-detail-list > div {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: minmax(110px, 0.38fr) minmax(0, 1fr);
+}
+
+.nexus-detail-list dt {
+  color: var(--nexus-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nexus-detail-list dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.nexus-detail-list .nexus-roles {
+  margin-top: 0;
+}
+
+.nexus-status {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  gap: 6px;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.nexus-status__icon {
+  align-items: center;
+  display: inline-flex;
+  height: 0.85em;
+  justify-content: center;
+  width: 0.85em;
+}
+
+.nexus-status__dot {
+  background: currentColor;
+  border-radius: 999px;
+  height: 7px;
+  width: 7px;
+}
+
+.nexus-status--info {
+  background: var(--nexus-accent-soft);
+  border-color: #c7d8f4;
+  color: #164a94;
+}
+
+.nexus-status--review {
+  background: var(--nexus-review-soft);
+  border-color: #ecd29b;
+  color: var(--nexus-review);
+}
+
+.nexus-status--danger {
+  background: var(--nexus-danger-soft);
+  border-color: #f0c1bc;
+  color: var(--nexus-danger);
+}
+
+.nexus-status--success {
+  background: var(--nexus-success-soft);
+  border-color: #bfdcc9;
+  color: var(--nexus-success);
+}
+
+.nexus-status--neutral {
+  background: var(--nexus-panel-soft);
+  border-color: var(--nexus-line-strong);
+  color: #3f4b5e;
+}
+
+.nexus-feedback {
+  align-items: flex-start;
+  background: var(--nexus-panel);
+  border: 1px solid var(--nexus-line);
+  border-left-width: 5px;
+  border-radius: var(--nexus-radius);
+  display: flex;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.nexus-feedback--loading {
+  border-left-color: var(--nexus-accent);
+}
+
+.nexus-feedback--empty {
+  border-left-color: var(--nexus-line-strong);
+}
+
+.nexus-feedback--error {
+  border-left-color: var(--nexus-danger);
+}
+
+.nexus-feedback--read-only {
+  border-left-color: var(--nexus-review);
+}
+
+.nexus-feedback--notice {
+  border-left-color: var(--nexus-accent);
+}
+
+.nexus-feedback__icon {
+  align-items: center;
+  background: var(--nexus-panel-soft);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 800;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.nexus-feedback--error .nexus-feedback__icon {
+  background: var(--nexus-danger-soft);
+  color: var(--nexus-danger);
+}
+
+.nexus-feedback--read-only .nexus-feedback__icon {
+  background: var(--nexus-review-soft);
+  color: var(--nexus-review);
+}
+
+.nexus-feedback__title {
+  font-size: 0.98rem;
+  margin: 2px 0 4px;
+}
+
+.nexus-feedback__text {
+  color: var(--nexus-muted);
+}
+
+.nexus-feedback__action {
+  margin-top: 12px;
+}
+
+.nexus-feedback__hint {
+  color: var(--nexus-muted);
+  font-size: 0.82rem;
+}
+
+.nexus-button {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 650;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  text-decoration: none;
+}
+
+.nexus-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.nexus-button--primary {
+  background: var(--nexus-accent);
+  color: #fff;
+}
+
+.nexus-button--primary:hover:not(:disabled) {
+  background: #184c9a;
+}
+
+.nexus-button--quiet {
+  background: transparent;
+  border-color: var(--nexus-rail-line);
+  color: var(--nexus-rail-text);
+  width: 100%;
+}
+
+.nexus-button--quiet:hover:not(:disabled) {
+  background: var(--nexus-rail-soft);
+}
+
+.nexus-signout {
+  display: grid;
+  gap: 10px;
+}
+
+.nexus-signout .nexus-feedback {
+  background: var(--nexus-rail-soft);
+  border-color: var(--nexus-rail-line);
+  gap: 9px;
+  padding: 10px;
+}
+
+.nexus-signout .nexus-feedback__title {
+  color: var(--nexus-rail-text);
+  font-size: 0.8rem;
+}
+
+.nexus-signout .nexus-feedback__text {
+  color: var(--nexus-rail-muted);
+  font-size: 0.74rem;
+}
+
+.nexus-signout .nexus-feedback__icon {
+  background: #3c2f17;
+  color: #f2c879;
+  font-size: 0.8rem;
+  height: 20px;
+  width: 20px;
+}
+
+.nexus-signout__error {
+  color: #ffb4ad;
+  font-size: 0.76rem;
+  margin: 0;
+}
+
+.nexus-login {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
+  min-height: 100vh;
+}
+
+.nexus-login__intro {
+  background:
+    radial-gradient(circle at 18% 12%, rgb(49 96 173 / 38%), transparent 34%),
+    var(--nexus-rail);
+  color: var(--nexus-rail-text);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+  padding: 56px clamp(28px, 6vw, 88px);
+}
+
+.nexus-login__intro h1 {
+  font-size: clamp(1.8rem, 3.2vw, 2.9rem);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin: 8px 0 0;
+  max-width: 14ch;
+}
+
+.nexus-login__intro p {
+  color: #c5cfdf;
+  margin: 0;
+  max-width: 44ch;
+}
+
+.nexus-login__facts {
+  color: #c5cfdf;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.nexus-login__facts li {
+  padding-left: 18px;
+  position: relative;
+}
+
+.nexus-login__facts li::before {
+  background: var(--nexus-focus);
+  border-radius: 999px;
+  content: "";
+  height: 7px;
+  left: 0;
+  position: absolute;
+  top: 0.48em;
+  width: 7px;
+}
+
+.nexus-login__panel {
+  align-self: center;
+  background: var(--nexus-panel);
+  border: 1px solid var(--nexus-line);
+  border-radius: 14px;
+  box-shadow: var(--nexus-shadow);
+  margin: 40px auto;
+  max-width: 460px;
+  padding: clamp(24px, 4vw, 38px);
+  width: calc(100% - 40px);
+}
+
+.nexus-login__panel h2 {
+  font-size: 1.7rem;
+  margin: 0 0 6px;
+}
+
+.nexus-login__lede {
+  color: var(--nexus-muted);
+  margin: 0 0 20px;
+}
+
+.nexus-login__footnote {
+  color: var(--nexus-muted);
+  font-size: 0.76rem;
+  margin: 18px 0 0;
+}
+
+.nexus-login-form {
+  display: grid;
+  gap: 15px;
+}
+
+.nexus-field {
+  display: grid;
+  gap: 6px;
+}
+
+.nexus-field__label {
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.nexus-field__input {
+  background: var(--nexus-panel);
+  border: 1px solid var(--nexus-line-strong);
+  border-radius: 8px;
+  color: var(--nexus-ink);
+  font: inherit;
+  min-height: 42px;
+  padding: 8px 11px;
+  width: 100%;
+}
+
+.nexus-field__input:hover {
+  border-color: #96a4b8;
+}
+
+.nexus-field__input:focus-visible {
+  border-color: var(--nexus-accent);
+}
+
+.nexus-login-form .nexus-feedback {
+  padding: 12px 14px;
+}
+
+.nexus-login-form .nexus-feedback__title {
+  font-size: 0.9rem;
+}
+
+.nexus-login-form .nexus-feedback__text {
+  font-size: 0.84rem;
+}
+
+.nexus-standalone {
+  align-content: center;
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+  margin: 0 auto;
+  min-height: 100vh;
+  max-width: 640px;
+  padding: 40px 24px;
+}
+
+.nexus-standalone__brand {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.nexus-standalone .nexus-feedback {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .nexus-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nexus-rail {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    height: auto;
+    overflow: visible;
+    padding: 12px 16px;
+    position: sticky;
+    z-index: 30;
+  }
+
+  .nexus-rail__spacer {
+    display: none;
+  }
+
+  .nexus-mode {
+    flex-direction: row;
+    gap: 8px;
+    padding: 6px 9px;
+  }
+
+  .nexus-mode__detail {
+    display: none;
+  }
+
+  .nexus-nav {
+    order: 2;
+    width: 100%;
+  }
+
+  .nexus-nav .nexus-rail-label {
+    display: none;
+  }
+
+  .nexus-nav__list {
+    flex-direction: row;
+  }
+
+  .nexus-nav__link {
+    padding: 6px 10px;
+  }
+
+  .nexus-account,
+  .nexus-sandbox {
+    border-top: 0;
+    flex: 1 1 170px;
+    min-width: 0;
+    order: 3;
+    padding-top: 0;
+  }
+
+  .nexus-account .nexus-rail-label,
+  .nexus-sandbox .nexus-rail-label {
+    display: none;
+  }
+
+  .nexus-account__username,
+  .nexus-account__expiry {
+    display: none;
+  }
+
+  .nexus-rail__footer {
+    border-top: 0;
+    margin-left: auto;
+    order: 3;
+    padding-top: 0;
+  }
+
+  .nexus-button--quiet {
+    width: auto;
+  }
+
+  .nexus-topbar {
+    padding: 10px 18px;
+    position: static;
+  }
+
+  .nexus-login {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nexus-login__intro {
+    gap: 12px;
+    padding: 34px 24px;
+  }
+
+  .nexus-login__intro h1 {
+    font-size: 1.8rem;
+    max-width: 24ch;
+  }
+
+  .nexus-login__facts {
+    display: none;
+  }
+
+  .nexus-login__panel {
+    margin: 24px auto 40px;
+  }
+
+  .nexus-content {
+    padding: 24px 18px 48px;
+  }
+}
+
+@media (max-width: 640px) {
+  .nexus-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nexus-page-heading {
+    flex-direction: column;
+  }
+
+  .nexus-detail-list > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  body {
+    font-size: 14px;
+  }
+
+  .nexus-rail {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .nexus-brand__text span {
+    display: none;
+  }
+
+  .nexus-account,
+  .nexus-sandbox {
+    flex: 1 1 130px;
+  }
+
+  .nexus-sandbox__date {
+    font-size: 0.72rem;
+  }
+
+  .nexus-roles li {
+    padding: 1px 6px;
+  }
+
+  .nexus-topbar {
+    flex-wrap: wrap;
+    padding: 9px 12px;
+  }
+
+  .nexus-topbar__context {
+    display: none;
+  }
+
+  .nexus-content {
+    padding: 20px 12px 40px;
+  }
+
+  .nexus-login__intro {
+    padding: 26px 18px;
+  }
+
+  .nexus-login__panel {
+    width: calc(100% - 24px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
 }

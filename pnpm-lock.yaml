@@ -291,6 +291,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@nexus/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@nexus/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: 16.4.6
         version: 16.4.6(@playwright/test@1.65.1)(@types/node@26.6.11)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -421,6 +427,15 @@ importers:
       '@types/node':
         specifier: 26.6.11
         version: 26.6.11
+
+  packages/ui:
+    devDependencies:
+      '@types/react':
+        specifier: 19.3.3
+        version: 19.3.3
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
 
 packages:
 

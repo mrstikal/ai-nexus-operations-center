@@ -64,18 +64,28 @@ path or artifact assertion in the owning phase; an empty selector never passes.
 
 ## Local runtime behavior
 
+- The browser uses one public origin, the Next.js web application on
+  `http://127.0.0.1:3000` in development. The web app calls `/api/v1/...` on that same
+  origin; its route handler proxies to the fixed internal API origin
+  (`NEXUS_API_ORIGIN`, default `http://127.0.0.1:3001`). The API is never the browser's
+  origin, and the proxy rejects arbitrary upstreams. See [UI.md](UI.md) and
+  [SECURITY.md](SECURITY.md).
 - The API listens on `127.0.0.1`; F01 uses `PORT=3001` by default and `PORT=0` for
   an ephemeral integration-test port.
 - The worker is a Nest application context without an HTTP listener.
-- The web application renders the F01 shell on port 3000 in development. The E2E
-  runner allocates a free loopback port at startup and passes it to the Playwright
-  web server; `NEXUS_E2E_PORT` overrides the allocation for a controlled local run.
-  The fixed workspace decision is recorded in [ADR 001](adr/001-workspace.md), and the
-  canonical stage contract is [the final implementation plan](../NEXUS_IMPLEMENTATION_PLAN_final.md).
-- F01 tests use only loopback connections. Next telemetry is disabled in build,
+- The web application serves the authenticated F06 shell on port 3000 in development.
+  Anonymous visits go to `/login`; a seeded account signs in through the real API. The
+  E2E runner allocates free loopback ports for the web app and isolated API at startup,
+  passes them through `NEXUS_E2E_PORT`/`NEXUS_E2E_API_PORT`, and starts isolated
+  PostgreSQL/Valkey resources for stages that require them.
+- Set `NEXUS_ALLOWED_ORIGINS` to the exact browser origin. Local defaults are
+  `http://localhost:3000` and `http://127.0.0.1:3000`; an E2E run uses its allocated
+  `http://127.0.0.1:<port>` origin.
+- F01/F06 tests use only loopback connections. Next telemetry is disabled in build,
   development, start, and E2E commands.
-- No model, font CDN, telemetry collector, database, broker, or cache connection is
-  made in F01.
+- No model, font CDN, telemetry collector, or external asset connection is made. The
+  web app uses the system font stack and stores no bearer or session token in browser
+  storage.
 
 ## Shared contracts and OpenAPI
 
@@ -105,8 +115,8 @@ loads the root `.env` through Nest CLI `--env-file`, so `pnpm dev` and
 `pnpm --filter @nexus/api dev` receive the generated database/cache settings; a bare
 `node dist/main.js` needs the environment supplied explicitly. See the
 [security guide](SECURITY.md) for sessions, CSRF, cookie attributes, role permissions and
-rate limits. `/auth/me` intentionally returns identity/roles only until F05 adds sandbox
-context.
+rate limits. `/auth/me` intentionally returns identity/roles only; the F05
+`/api/v1/sandbox` read supplies sandbox context to the shell.
 
 ## Local infrastructure
 
