@@ -19,6 +19,10 @@
     "./schema/supply": {
       "types": "./dist/schema/supply.d.ts",
       "default": "./dist/schema/supply.js"
+    },
+    "./schema/commands": {
+      "types": "./dist/schema/commands.d.ts",
+      "default": "./dist/schema/commands.js"
     }
   },
   "scripts": {

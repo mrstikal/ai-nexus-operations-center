@@ -246,7 +246,11 @@ function checkImport({ from, specifier, typeOnly, workspaces }) {
     return `workspace code must not import an application (${targetRelative})`;
   }
 
-  if (targetRelative === 'packages/enterprise-db' && fromRelative !== 'apps/enterprise-sim') {
+  if (
+    targetRelative === 'packages/enterprise-db' &&
+    targetWorkspace !== from.workspace &&
+    fromRelative !== 'apps/enterprise-sim'
+  ) {
     return 'only apps/enterprise-sim may import packages/enterprise-db';
   }
 

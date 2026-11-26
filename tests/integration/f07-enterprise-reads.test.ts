@@ -420,6 +420,7 @@ beforeAll(async () => {
     ENTERPRISE_APP_DB_USER: requiredEnv('NEXUS_TEST_ENTERPRISE_APP_USER'),
     ENTERPRISE_APP_DB_PASSWORD: requiredEnv('NEXUS_TEST_ENTERPRISE_APP_PASSWORD'),
     ENTERPRISE_SIM_READ_TOKEN: requiredEnv('NEXUS_TEST_ENTERPRISE_READ_TOKEN'),
+    ENTERPRISE_SIM_COMMAND_TOKEN: requiredEnv('NEXUS_TEST_ENTERPRISE_COMMAND_TOKEN'),
   });
   app = spawned;
   const ready = await spawned.waitForOutput(/ENTERPRISE_SIM_READY port=(\d+)/);

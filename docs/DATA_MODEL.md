@@ -1,7 +1,8 @@
 # NEXUS Data Model
 
-Status: F05 implements the shared case/evidence foundation and F07 implements the enterprise
-supply/sales read model. Identity tables are in F04; workflow, action, model, document,
+Status: F05 implements the shared case/evidence foundation; F07 implements the enterprise
+supply/sales read model and F08 adds command receipts, simulated communications and the
+enterprise outbox. Identity tables are in F04; workflow, action, model, document,
 knowledge, memory, assistant and evaluation tables belong to their later owning stages and
 are not created here.
 
@@ -12,6 +13,7 @@ are not created here.
 | Identity | `users`, `user_roles`, `sessions`, `preauth_challenges`, readonly `approver_role_view` | F04 |
 | Case foundation | `sandboxes`, `active_sandbox`, `cases`, `case_entity_links`, `sequence_counters`, `evidence`, `audit_events`, `trace_events` | F05 |
 | Enterprise supply/sales | `sandboxes`, `suppliers`, `products`, `customers`, `agreements`, `purchase_orders`, `purchase_order_lines`, `sales_orders`, `sales_order_lines`, `inventory`, `inventory_reservations` | F07 |
+| Enterprise commands | `command_receipts`, `command_receipt_base_versions`, `command_receipt_entity_changes`, `communications`, `communication_parts`, `event_outbox` | F08 |
 | Events/workflows/actions/documents/knowledge/etc. | their own migrations | later stages |
 
 Migrations are monotonically numbered SQL files under `packages/db/migrations/` and
@@ -96,7 +98,7 @@ read/insert evidence, read/insert audit/trace and update sequence counters. `nex
 has the same case/evidence/audit/trace append/read grants for its future work. Neither role
 may update/delete evidence, audit or trace. Public access is revoked.
 
-## Enterprise supply and sales (F07)
+## Enterprise supply, sales and commands (F07-F08)
 
 `enterprise.sandboxes` is the simulator-local sandbox boundary. Its accepted initial row uses
 the same sandbox ID and business clock (`2026-11-02T09:00:00Z`) as `nexus.sandboxes`; the
@@ -123,16 +125,35 @@ the integer range. No JSON blob substitutes for identifiers, money, status or ro
 Nested inventory reservation/inbound reads and supplier offers are bounded to 1000 visible rows
 per product; aggregates and truncation flags keep the totals honest.
 
-`enterprise_app` has `SELECT` only on all F07 tables; it has no INSERT, UPDATE or DELETE.
-`nexus_api` and `nexus_worker` have no access to the enterprise schema. The migration revokes
-public access. Reads are implemented by the private `apps/enterprise-sim` service, not by the
-Nexus API or worker. See [ENTERPRISE_API.md](ENTERPRISE_API.md) for the read routes, headers and
-response fields.
+Migration `0004_commands.sql` adds `purchase_orders.source_purchase_order_id` and
+`expedite_charge_minor`, `purchase_order_lines.agreement_id`, the immutable command receipt
+tables (`command_receipts`, `command_receipt_base_versions`,
+`command_receipt_entity_changes`), simulated communication tables (`communications`,
+`communication_parts`) and the origin-tagged `event_outbox`. A receipt key is unique per
+sandbox and equals `sandbox_id:action_revision_id:item_id:command_kind`. Receipt base versions
+and before/after entity changes are typed rows, not JSON. Outbox rows keep the originating
+action revision, item, receipt id and receipt key. F08 writes `pending` rows and emits inventory/
+communication events. Migration `0005_outbox_lifecycle.sql` admits the plan's five enterprise
+event types and publisher statuses; `0006_outbox_scope.sql` admits
+`inventory/communication/purchase_order/supplier/invoice` aggregate types and narrows outbox
+`UPDATE` to the publisher columns.
 
-## F05/F07 boundaries
+`enterprise_app` has `SELECT` on the F07 read tables and scoped command DML: INSERT/UPDATE on
+purchase orders, INSERT on purchase-order lines, UPDATE on inventory versions, and
+SELECT/INSERT on receipts, base versions, entity changes, communications, communication parts
+and the outbox, including column-scoped outbox status/attempt/next-attempt/version `UPDATE` for
+the later publisher. It has no DELETE and no write access to suppliers, products, customers or
+agreements. `nexus_api` and `nexus_worker` have no access to the enterprise schema. The
+migrations revoke public access. Reads and commands are implemented by the private
+`apps/enterprise-sim` service, not by the Nexus API or worker. See
+[ENTERPRISE_API.md](ENTERPRISE_API.md) for routes, headers, receipts and retry semantics, and
+[ADR 005](adr/005-tools-vs-privileged-commands.md) for the tool-versus-command boundary.
 
-F07 does not implement supplier messages, purchase-order commands, receipts, invoices,
-returns, financial effects or customer-address commands. F05 does not create workflow runs,
+## F05/F07/F08 boundaries
+
+F07/F08 do not implement the application executor, approvals, automatic outbox publishing,
+goods receipts, invoices, returns, customer-address commands, chosen alternatives or financial
+effects. F08 messages are simulation records, not email. F05 does not create workflow runs,
 proposals, approvals, executions, documents, blobs, knowledge, enterprise tables, model calls
 or a public event-driven case POST. The initial sandbox is a foundation seed, not a complete
 demo scenario.

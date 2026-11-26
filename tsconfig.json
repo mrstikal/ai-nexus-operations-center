@@ -30,6 +30,9 @@
       "@nexus/enterprise-db/schema/supply": [
         "./packages/enterprise-db/src/schema/supply.ts"
       ],
+      "@nexus/enterprise-db/schema/commands": [
+        "./packages/enterprise-db/src/schema/commands.ts"
+      ],
       "@nexus/contracts": [
         "./packages/contracts/src/index.ts"
       ],

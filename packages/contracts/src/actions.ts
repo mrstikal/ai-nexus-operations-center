@@ -124,6 +124,10 @@ export const CreatePurchaseOrderPayloadSchema = z
   })
   .strict();
 
+export type CreatePurchaseOrderPayload = z.infer<
+  typeof CreatePurchaseOrderPayloadSchema
+>;
+
 export const SendMessagePayloadSchema = z
   .object({
     kind: z.literal('enterprise.send_message'),
@@ -142,6 +146,8 @@ export const SendMessagePayloadSchema = z
       }, 0) <= 5000,
     'Rendered message parts exceed 5,000 characters',
   );
+
+export type SendMessagePayload = z.infer<typeof SendMessagePayloadSchema>;
 
 export const MarkInvoiceReconciledPayloadSchema = z
   .object({

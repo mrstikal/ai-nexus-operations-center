@@ -209,8 +209,8 @@ async function main() {
           `${enterpriseSeed.inserted.purchaseOrders ?? 0} new purchase orders, ` +
           `${enterpriseSeed.inserted.salesOrders ?? 0} new sales orders.`,
       );
-      console.log('Initial demo initialization is complete. Local identity accounts and the F07 enterprise supply seed are ready.');
-      console.log('Scenario records and replay asset validation start with later fixture phases; they are NOT RUN in F07.');
+      console.log('Initial demo initialization is complete. Local identity accounts, the F07 enterprise supply seed and the F08 command schema are ready.');
+      console.log('Scenario records and replay asset validation start with later fixture phases; they are NOT RUN in F08.');
     }
   } finally {
     if (infrastructure) {

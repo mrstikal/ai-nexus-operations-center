@@ -3,12 +3,14 @@ import {
   bigint,
   check,
   foreignKey,
+  index,
   integer,
   pgSchema,
   text,
   timestamp,
   uniqueIndex,
   uuid,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 
 export const enterpriseSchema = pgSchema('enterprise');
@@ -178,6 +180,10 @@ export const purchaseOrders = enterpriseSchema.table(
     reference: text('reference').notNull(),
     supplierReference: text('supplier_reference'),
     supplierId: uuid('supplier_id').notNull(),
+    sourcePurchaseOrderId: uuid('source_purchase_order_id').references(
+      (): AnyPgColumn => purchaseOrders.id,
+    ),
+    expediteChargeMinor: bigint('expedite_charge_minor', { mode: 'bigint' }).notNull(),
     status: text('status').notNull(),
     paymentTerms: text('payment_terms').notNull(),
     deliveryTerms: text('delivery_terms').notNull(),
@@ -190,6 +196,10 @@ export const purchaseOrders = enterpriseSchema.table(
   (table) => [
     uniqueIndex('purchase_orders_sandbox_id_id_key').on(table.sandboxId, table.id),
     uniqueIndex('purchase_orders_sandbox_id_reference_key').on(table.sandboxId, table.reference),
+    index('purchase_orders_sandbox_source_idx').on(
+      table.sandboxId,
+      table.sourcePurchaseOrderId,
+    ),
     foreignKey({
       columns: [table.sandboxId, table.supplierId],
       foreignColumns: [suppliers.sandboxId, suppliers.id],
@@ -205,6 +215,14 @@ export const purchaseOrders = enterpriseSchema.table(
     ),
     check('purchase_orders_payment_terms_check', sql`char_length(${table.paymentTerms}) BETWEEN 1 AND 200`),
     check('purchase_orders_delivery_terms_check', sql`char_length(${table.deliveryTerms}) BETWEEN 1 AND 200`),
+    check(
+      'purchase_orders_expedite_charge_check',
+      sql`${table.expediteChargeMinor} >= 0 AND ${table.expediteChargeMinor} <= ${sql.raw(String(moneyCeiling))}`,
+    ),
+    check(
+      'purchase_orders_source_not_self_check',
+      sql`${table.sourcePurchaseOrderId} IS NULL OR ${table.sourcePurchaseOrderId} <> ${table.id}`,
+    ),
     check('purchase_orders_version_check', sql`${table.version} >= 0`),
   ],
 );
@@ -219,6 +237,7 @@ export const purchaseOrderLines = enterpriseSchema.table(
     purchaseOrderId: uuid('purchase_order_id').notNull(),
     lineNumber: integer('line_number').notNull(),
     productId: uuid('product_id').notNull(),
+    agreementId: uuid('agreement_id'),
     orderedQuantity: integer('ordered_quantity').notNull(),
     receivedQuantity: integer('received_quantity').notNull(),
     unitPriceMinor: bigint('unit_price_minor', { mode: 'bigint' }).notNull(),
@@ -243,6 +262,14 @@ export const purchaseOrderLines = enterpriseSchema.table(
       columns: [table.sandboxId, table.productId],
       foreignColumns: [products.sandboxId, products.id],
     }),
+    foreignKey({
+      columns: [table.sandboxId, table.agreementId],
+      foreignColumns: [agreements.sandboxId, agreements.id],
+    }),
+    index('purchase_order_lines_sandbox_agreement_idx').on(
+      table.sandboxId,
+      table.agreementId,
+    ),
     check('purchase_order_lines_line_number_check', sql`${table.lineNumber} >= 1 AND ${table.lineNumber} <= 999`),
     check(
       'purchase_order_lines_ordered_quantity_check',

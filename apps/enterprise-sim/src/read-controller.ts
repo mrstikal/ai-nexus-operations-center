@@ -78,6 +78,9 @@ const PurchaseOrderLineSchema = z
     id: UuidSchema,
     lineNumber: z.number().int().min(1).max(999),
     product: ProductSummarySchema,
+    agreementId: UuidSchema.nullable(),
+    agreementReference: IdentifierSchema.nullable(),
+    agreementVersion: VersionSchema.nullable(),
     orderedQuantity: QuantitySchema,
     receivedQuantity: QuantitySchema,
     unreceivedQuantity: QuantitySchema,
@@ -106,6 +109,9 @@ const PurchaseOrderSchema = z
     version: VersionSchema,
     orderedAt: IsoUtcTimestampSchema,
     expectedAt: IsoUtcTimestampSchema,
+    sourcePurchaseOrderId: UuidSchema.nullable(),
+    sourcePurchaseOrderReference: IdentifierSchema.nullable(),
+    expediteChargeMinor: NonNegativeMoneyMinorSchema,
     paymentTerms: z.string().min(1).max(200),
     deliveryTerms: z.string().min(1).max(200),
     supplier: SupplierSummarySchema,
@@ -310,6 +316,9 @@ interface PurchaseOrderRow {
   version: number;
   ordered_at: Date;
   expected_at: Date;
+  source_purchase_order_id: string | null;
+  source_reference: string | null;
+  expedite_charge_minor: string;
   payment_terms: string;
   delivery_terms: string;
   created_at: Date;
@@ -343,6 +352,9 @@ interface PurchaseOrderLineRow {
   product_version: number;
   product_created_at: Date;
   product_updated_at: Date;
+  agreement_id: string | null;
+  agreement_reference: string | null;
+  agreement_version: number | null;
 }
 
 interface InventoryRow {
@@ -727,14 +739,18 @@ export class ReadController {
     const rows = await queryRows<PurchaseOrderRow>(
       this.pool,
       `SELECT p.id, p.reference, p.supplier_reference, p.status, p.version,
-              p.ordered_at, p.expected_at, p.payment_terms, p.delivery_terms,
+              p.ordered_at, p.expected_at, p.source_purchase_order_id,
+              p.expedite_charge_minor, p.payment_terms, p.delivery_terms,
               p.created_at, p.updated_at,
+              src.reference AS source_reference,
               s.id AS supplier_id, s.reference AS supplier_code, s.name AS supplier_name,
               s.status AS supplier_status, s.version AS supplier_version,
               s.created_at AS supplier_created_at, s.updated_at AS supplier_updated_at
        FROM enterprise.purchase_orders p
        JOIN enterprise.suppliers s
          ON s.sandbox_id = p.sandbox_id AND s.id = p.supplier_id
+       LEFT JOIN enterprise.purchase_orders src
+         ON src.sandbox_id = p.sandbox_id AND src.id = p.source_purchase_order_id
        WHERE p.sandbox_id = $1
          AND (
            p.reference = $2
@@ -761,12 +777,16 @@ export class ReadController {
       `SELECT l.id, l.purchase_order_id, l.line_number, l.ordered_quantity,
               l.received_quantity, l.unit_price_minor, l.currency,
               l.confirmed_arrival_at, l.version, l.created_at, l.updated_at,
+              l.agreement_id, a.reference AS agreement_reference,
+              a.version AS agreement_version,
               pr.id AS product_id, pr.sku, pr.name AS product_name, pr.category,
               pr.status AS product_status, pr.version AS product_version,
               pr.created_at AS product_created_at, pr.updated_at AS product_updated_at
        FROM enterprise.purchase_order_lines l
        JOIN enterprise.products pr
          ON pr.sandbox_id = l.sandbox_id AND pr.id = l.product_id
+       LEFT JOIN enterprise.agreements a
+         ON a.sandbox_id = l.sandbox_id AND a.id = l.agreement_id
        WHERE l.sandbox_id = $1 AND l.purchase_order_id = ANY($2::uuid[])
        ORDER BY l.purchase_order_id, l.line_number`,
       [context.sandboxId, ids],
@@ -792,6 +812,12 @@ export class ReadController {
         id: asText(line.id),
         lineNumber: asInteger(line.line_number),
         product: purchaseOrderProduct(line),
+        agreementId: line.agreement_id,
+        agreementReference: line.agreement_reference,
+        agreementVersion:
+          line.agreement_version === null
+            ? null
+            : asInteger(line.agreement_version),
         orderedQuantity: asInteger(line.ordered_quantity),
         receivedQuantity: asInteger(line.received_quantity),
         unreceivedQuantity:
@@ -811,6 +837,9 @@ export class ReadController {
         version: asInteger(row.version),
         orderedAt: asIso(row.ordered_at),
         expectedAt: asIso(row.expected_at),
+        sourcePurchaseOrderId: row.source_purchase_order_id,
+        sourcePurchaseOrderReference: row.source_reference,
+        expediteChargeMinor: asMoney(row.expedite_charge_minor),
         paymentTerms: asText(row.payment_terms),
         deliveryTerms: asText(row.delivery_terms),
         supplier: mapSupplier(supplier),

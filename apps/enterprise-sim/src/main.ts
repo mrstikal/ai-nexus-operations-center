@@ -5,21 +5,26 @@ import { NestFactory } from '@nestjs/core';
 import { createEnterprisePool } from '@nexus/enterprise-db/connection';
 import type { Pool } from 'pg';
 import {
+  configuredCommandToken,
   configuredReadToken,
   ENTERPRISE_DB_POOL,
+  EnterpriseCommandGuard,
   EnterpriseReadGuard,
   ProblemFilter,
 } from './auth.js';
+import { CommandController } from './command-controller.js';
 import { ReadController } from './read-controller.js';
+import { ReceiptController } from './receipt-controller.js';
 
 @Module({
-  controllers: [ReadController],
+  controllers: [ReadController, CommandController, ReceiptController],
   providers: [
     {
       provide: ENTERPRISE_DB_POOL,
       useFactory: (): Pool => createEnterprisePool(),
     },
     EnterpriseReadGuard,
+    EnterpriseCommandGuard,
   ],
 })
 class EnterpriseSimulatorModule {}
@@ -30,7 +35,11 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
   throw new Error(`Invalid PORT value: ${process.env['PORT'] ?? ''}`);
 }
 
-configuredReadToken();
+const readToken = configuredReadToken();
+const commandToken = configuredCommandToken();
+if (readToken === commandToken) {
+  throw new Error('Read and command tokens must be different');
+}
 
 const app = await NestFactory.create(EnterpriseSimulatorModule, { logger: false });
 app.useGlobalFilters(new ProblemFilter());

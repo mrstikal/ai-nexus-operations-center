@@ -887,10 +887,140 @@
         "F07"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f08-enterprise-commands.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f08-command-receipts.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": ".env.example",
+          "minBytes": 300
+        },
+        {
+          "path": "apps/enterprise-sim/src/auth.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "apps/enterprise-sim/src/main.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "apps/enterprise-sim/src/read-controller.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "apps/enterprise-sim/src/command-controller.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "apps/enterprise-sim/src/receipt-controller.ts",
+          "minBytes": 1200
+        },
+        {
+          "path": "apps/enterprise-sim/src/commands/transaction.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "apps/enterprise-sim/src/commands/create-purchase-order.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "apps/enterprise-sim/src/commands/send-message.ts",
+          "minBytes": 3500
+        },
+        {
+          "path": "packages/contracts/src/enterprise-commands.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/contracts/src/index.ts",
+          "minBytes": 300
+        },
+        {
+          "path": "packages/contracts/package.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0004_commands.sql",
+          "minBytes": 8000
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0005_outbox_lifecycle.sql",
+          "minBytes": 200
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0006_outbox_scope.sql",
+          "minBytes": 100
+        },
+        {
+          "path": "packages/enterprise-db/src/schema/commands.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/enterprise-db/src/schema/supply.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "packages/enterprise-db/package.json",
+          "minBytes": 900
+        },
+        {
+          "path": "tests/integration/f08-command-receipts.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "tests/integration/f07-enterprise-reads.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "docs/ENTERPRISE_API.md",
+          "minBytes": 5000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 6000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 8000
+        },
+        {
+          "path": "docs/adr/005-tools-vs-privileged-commands.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "tools/demo-init.mjs",
+          "minBytes": 1500
+        },
+        {
+          "path": "tools/lib/infra.mjs",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/check-boundaries.mjs",
+          "minBytes": 1000
+        },
+        {
+          "path": "tests/fixtures/boundaries/valid/packages/enterprise-db/src/index.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/unit/f08-enterprise-commands.test.ts",
+          "minBytes": 500
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F09",

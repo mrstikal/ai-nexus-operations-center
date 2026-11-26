@@ -36,6 +36,10 @@
       "types": "./dist/actions.d.ts",
       "default": "./dist/actions.js"
     },
+    "./enterprise-commands": {
+      "types": "./dist/enterprise-commands.d.ts",
+      "default": "./dist/enterprise-commands.js"
+    },
     "./models": {
       "types": "./dist/models.d.ts",
       "default": "./dist/models.js"
