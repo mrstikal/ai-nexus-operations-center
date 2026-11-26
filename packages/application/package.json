@@ -23,6 +23,14 @@
     "./cases/context": {
       "types": "./dist/cases/context.d.ts",
       "default": "./dist/cases/context.js"
+    },
+    "./ports/enterprise": {
+      "types": "./dist/ports/enterprise.d.ts",
+      "default": "./dist/ports/enterprise.js"
+    },
+    "./ports/tools": {
+      "types": "./dist/ports/tools.d.ts",
+      "default": "./dist/ports/tools.js"
     }
   },
   "scripts": {

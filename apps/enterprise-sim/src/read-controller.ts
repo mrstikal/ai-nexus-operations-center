@@ -8,7 +8,23 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { IsoUtcTimestampSchema, UuidSchema } from '@nexus/contracts';
+import {
+  EnterpriseAffectedOrdersResponseSchema as AffectedOrdersResponseSchema,
+  EnterpriseAlternativesResponseSchema as AlternativesResponseSchema,
+  EnterpriseIdentifierSchema as IdentifierSchema,
+  EnterpriseInventoryResponseSchema as InventoryResponseSchema,
+  EnterprisePurchaseOrderResponseSchema as PurchaseOrderResponseSchema,
+  IsoUtcTimestampSchema,
+  UuidSchema,
+  type EnterpriseAffectedOrderSchema as AffectedOrderSchema,
+  type EnterpriseCustomerSummarySchema as CustomerSummarySchema,
+  type EnterpriseInboundLineSchema as InboundLineSchema,
+  type EnterpriseProductSummarySchema as ProductSummarySchema,
+  type EnterprisePurchaseOrderSchema as PurchaseOrderSchema,
+  type EnterpriseReservationSchema as ReservationSchema,
+  type EnterpriseSupplierOfferSchema as SupplierOfferSchema,
+  type EnterpriseSupplierSummarySchema as SupplierSummarySchema,
+} from '@nexus/contracts';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import {
@@ -18,264 +34,6 @@ import {
   type EnterpriseReadContext,
   type EnterpriseRequest,
 } from './auth.js';
-
-const IdentifierSchema = z
-  .string()
-  .regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/, 'Expected an exact identifier');
-const NonNegativeMoneyMinorSchema = z
-  .string()
-  .regex(/^(?:0|[1-9]\d{0,11}|1000000000000)$/, 'Expected a non-negative money string');
-const ComputedMoneyMinorSchema = z
-  .string()
-  .regex(
-    /^(?:0|[1-9]\d{0,14}|999000000000000)$/,
-    'Expected a non-negative aggregate money string',
-  );
-const QuantitySchema = z.number().int().min(0).max(1_000_000);
-const TotalQuantitySchema = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
-const VersionSchema = z.number().int().min(0).max(2_147_483_647);
-const StatusSchema = (values: readonly [string, ...string[]]) => z.enum(values);
-
-const ProductSummarySchema = z
-  .object({
-    id: UuidSchema,
-    sku: IdentifierSchema,
-    name: z.string().min(1).max(200),
-    category: z.string().min(1).max(100),
-    status: StatusSchema(['active', 'discontinued']),
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const SupplierSummarySchema = z
-  .object({
-    id: UuidSchema,
-    reference: IdentifierSchema,
-    name: z.string().min(1).max(200),
-    status: StatusSchema(['active', 'inactive', 'suspended']),
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const CustomerSummarySchema = z
-  .object({
-    id: UuidSchema,
-    reference: IdentifierSchema,
-    name: z.string().min(1).max(200),
-    status: StatusSchema(['active', 'inactive']),
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const PurchaseOrderLineSchema = z
-  .object({
-    id: UuidSchema,
-    lineNumber: z.number().int().min(1).max(999),
-    product: ProductSummarySchema,
-    agreementId: UuidSchema.nullable(),
-    agreementReference: IdentifierSchema.nullable(),
-    agreementVersion: VersionSchema.nullable(),
-    orderedQuantity: QuantitySchema,
-    receivedQuantity: QuantitySchema,
-    unreceivedQuantity: QuantitySchema,
-    unitPriceMinor: NonNegativeMoneyMinorSchema,
-    currency: z.literal('EUR'),
-    confirmedArrivalAt: IsoUtcTimestampSchema,
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const PurchaseOrderSchema = z
-  .object({
-    id: UuidSchema,
-    reference: IdentifierSchema,
-    supplierReference: IdentifierSchema.nullable(),
-    status: StatusSchema([
-      'open',
-      'acknowledged',
-      'delayed',
-      'partially_received',
-      'received',
-      'cancelled',
-    ]),
-    version: VersionSchema,
-    orderedAt: IsoUtcTimestampSchema,
-    expectedAt: IsoUtcTimestampSchema,
-    sourcePurchaseOrderId: UuidSchema.nullable(),
-    sourcePurchaseOrderReference: IdentifierSchema.nullable(),
-    expediteChargeMinor: NonNegativeMoneyMinorSchema,
-    paymentTerms: z.string().min(1).max(200),
-    deliveryTerms: z.string().min(1).max(200),
-    supplier: SupplierSummarySchema,
-    lines: z.array(PurchaseOrderLineSchema).max(999),
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const PurchaseOrderResponseSchema = z
-  .object({
-    sandboxId: UuidSchema,
-    businessEffectiveAt: IsoUtcTimestampSchema,
-    purchaseOrders: z.array(PurchaseOrderSchema).max(10),
-  })
-  .strict();
-
-const ReservationSchema = z
-  .object({
-    id: UuidSchema,
-    salesOrderId: UuidSchema.nullable(),
-    status: StatusSchema(['active', 'released', 'fulfilled']),
-    quantity: QuantitySchema,
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const InboundLineSchema = z
-  .object({
-    purchaseOrderId: UuidSchema,
-    purchaseOrderReference: IdentifierSchema,
-    purchaseOrderStatus: StatusSchema([
-      'open',
-      'acknowledged',
-      'delayed',
-      'partially_received',
-      'received',
-      'cancelled',
-    ]),
-    lineId: UuidSchema,
-    lineNumber: z.number().int().min(1).max(999),
-    unreceivedQuantity: QuantitySchema,
-    confirmedArrivalAt: IsoUtcTimestampSchema,
-    version: VersionSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const InventoryItemSchema = z
-  .object({
-    product: ProductSummarySchema,
-    onHandQuantity: QuantitySchema,
-    activeReservations: TotalQuantitySchema,
-    availableForAllocation: TotalQuantitySchema,
-    reservations: z.array(ReservationSchema).max(1000),
-    reservationsTruncated: z.boolean(),
-    confirmedInboundQuantity: TotalQuantitySchema,
-    confirmedInbound: z.array(InboundLineSchema).max(1000),
-    confirmedInboundTruncated: z.boolean(),
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const InventoryResponseSchema = z
-  .object({
-    sandboxId: UuidSchema,
-    businessEffectiveAt: IsoUtcTimestampSchema,
-    items: z.array(InventoryItemSchema).max(20),
-  })
-  .strict();
-
-const SalesOrderLineSchema = z
-  .object({
-    id: UuidSchema,
-    lineNumber: z.number().int().min(1).max(999),
-    product: ProductSummarySchema,
-    quantity: QuantitySchema,
-    unitPriceMinor: NonNegativeMoneyMinorSchema,
-    currency: z.literal('EUR'),
-    version: VersionSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const AffectedOrderSchema = z
-  .object({
-    id: UuidSchema,
-    reference: IdentifierSchema,
-    status: StatusSchema(['confirmed', 'allocated', 'shipped', 'delivered', 'cancelled']),
-    version: VersionSchema,
-    orderedAt: IsoUtcTimestampSchema,
-    promisedDeliveryAt: IsoUtcTimestampSchema,
-    shippedAt: IsoUtcTimestampSchema.nullable(),
-    deliveredAt: IsoUtcTimestampSchema.nullable(),
-    exposedValueMinor: ComputedMoneyMinorSchema,
-    currency: z.literal('EUR'),
-    contractualPenaltyDailyMinor: NonNegativeMoneyMinorSchema.nullable(),
-    contractualPenaltyCapMinor: NonNegativeMoneyMinorSchema.nullable(),
-    customer: CustomerSummarySchema,
-    lines: z.array(SalesOrderLineSchema).max(999),
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const AffectedOrdersResponseSchema = z
-  .object({
-    sandboxId: UuidSchema,
-    businessEffectiveAt: IsoUtcTimestampSchema,
-    requestedProductIds: z.array(UuidSchema).max(999),
-    horizon: z
-      .object({
-        from: IsoUtcTimestampSchema,
-        to: IsoUtcTimestampSchema,
-        days: z.number().int().min(1).max(365),
-      })
-      .strict(),
-    orders: z.array(AffectedOrderSchema).max(100),
-    truncated: z.boolean(),
-  })
-  .strict();
-
-const SupplierOfferSchema = z
-  .object({
-    agreementId: UuidSchema,
-    agreementReference: IdentifierSchema,
-    agreementVersion: VersionSchema,
-    agreementStatus: StatusSchema(['pending', 'approved', 'expired', 'revoked']),
-    currentlyValid: z.boolean(),
-    supplier: SupplierSummarySchema,
-    unitPriceMinor: NonNegativeMoneyMinorSchema,
-    currency: z.literal('EUR'),
-    capacityQuantity: QuantitySchema,
-    leadTimeDays: z.number().int().min(0).max(365),
-    latestArrivalAt: IsoUtcTimestampSchema,
-    validFrom: IsoUtcTimestampSchema,
-    validTo: IsoUtcTimestampSchema,
-    createdAt: IsoUtcTimestampSchema,
-    updatedAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-
-const ProductAlternativesSchema = z
-  .object({
-    product: ProductSummarySchema,
-    requestedQuantity: z.number().int().min(1).max(1_000_000),
-    offers: z.array(SupplierOfferSchema).max(1000),
-    offersTruncated: z.boolean(),
-  })
-  .strict();
-
-const AlternativesResponseSchema = z
-  .object({
-    sandboxId: UuidSchema,
-    businessEffectiveAt: IsoUtcTimestampSchema,
-    deadline: IsoUtcTimestampSchema,
-    products: z.array(ProductAlternativesSchema).max(20),
-  })
-  .strict();
 
 interface ProductRow {
   id: string;

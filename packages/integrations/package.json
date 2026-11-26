@@ -7,6 +7,22 @@
     "./rate-limits": {
       "types": "./dist/rate-limits.d.ts",
       "default": "./dist/rate-limits.js"
+    },
+    "./enterprise/client": {
+      "types": "./dist/enterprise/client.d.ts",
+      "default": "./dist/enterprise/client.js"
+    },
+    "./enterprise/errors": {
+      "types": "./dist/enterprise/errors.d.ts",
+      "default": "./dist/enterprise/errors.js"
+    },
+    "./tools/registry": {
+      "types": "./dist/tools/registry.d.ts",
+      "default": "./dist/tools/registry.js"
+    },
+    "./tools/enterprise-reads": {
+      "types": "./dist/tools/enterprise-reads.d.ts",
+      "default": "./dist/tools/enterprise-reads.js"
     }
   },
   "scripts": {
@@ -14,7 +30,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "ioredis": "6.1.0"
+    "@nexus/application": "workspace:*",
+    "@nexus/contracts": "workspace:*",
+    "ioredis": "6.1.0",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "26.6.11",

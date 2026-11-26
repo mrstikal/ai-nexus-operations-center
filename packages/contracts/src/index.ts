@@ -6,6 +6,7 @@ export * from './evidence.js';
 export * from './workflows.js';
 export * from './actions.js';
 export * from './enterprise-commands.js';
+export * from './tools.js';
 export * from './models.js';
 export * from './ui.js';
 export * from './events/index.js';

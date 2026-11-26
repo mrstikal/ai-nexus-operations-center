@@ -189,6 +189,38 @@ result/timeout/retry/budget values and a redaction mode with an allowlist. Gatew
 carry the workflow and budget context; failures carry provider/model, attempt IDs, cost,
 prompt/config revisions and redacted diagnostics alongside success responses.
 
+## Enterprise reads and the tool registry
+
+F09 adds `packages/contracts/src/tools.ts` as the single source of the enterprise read wire
+shapes and the registry invocation context. The purchase-order, inventory, affected-order
+and supplier-alternative response schemas are shared by the private simulator and the
+application client; they are not duplicated in the adapter. Exact identifiers are
+reference-shaped, money is a decimal string, versions are non-negative integers and every
+nested list has a schema cap. Unknown fields reject.
+
+The four registered read tools are `enterprise.get_purchase_order`,
+`enterprise.get_inventory`, `enterprise.get_affected_orders` and
+`enterprise.list_alternatives`. Each registry entry declares the existing closed tool name,
+schema version, permission roles, read class, supported scenarios, maximum results,
+timeout, retry flag, redaction allowlist and budget weight, plus argument/result schema
+identifiers and byte bounds. Tool metadata is code-owned; callers cannot add a tool or
+change a bound at runtime.
+
+`ToolInvocationContext` carries the request and correlation IDs, sandbox ID, actor,
+scenario, registered workflow step and the workflow-step tool allowlist. The registry
+enforces the intersection of role permission, scenario support and allowlist before
+executing. It then validates strict argument schema and byte bounds, executes through the
+enterprise read port, validates the untrusted result schema, byte and item bounds, and
+requires the result sandbox to equal the invocation sandbox. Rejections and successes emit
+a bounded trace containing identifiers, tool class, outcome, error/cause code, retry
+classification, duration, byte counts and item count only; argument values and result
+payloads are not traced. Registry errors use the closed `TOOL_*` codes with generic
+messages and never include arguments, result payloads or credentials.
+
+The executor-only command client is declared separately from the read port and is not a
+tool. No `enterprise.create_*`, `enterprise.send_*` or other write action can enter the AI
+registry; unknown and side-effect names reject.
+
 ## UI and SSE
 
 `UiDescriptor` is closed to `clarification_form`, `alternatives_table`,

@@ -126,3 +126,38 @@ diagnostic policy without becoming a workflow journal. Trace must not contain ra
 secrets or personal data. Application roles can append/read trace but cannot alter existing
 audit or trace rows. Audit/decision/receipt/spend records are retained longer than traces;
 retention jobs arrive in F46A and must never purge approval/audit history silently.
+
+## Enterprise read client and tool registry
+
+F09 connects application reads to the private simulator through a typed port and a strict
+client. The read token and the executor-only command token remain separate. Both are
+configured only in the adapter constructors, are stored in private fields, never enter
+tool metadata, argument/result schemas, traces, prompts, browser code or logs, and are not
+serialized with the client.
+
+The HTTP client accepts only an HTTP(S) base URL without credentials, path, query or
+fragment. It sets the read token, sandbox and correlation headers itself, rejects
+redirects, applies a bounded timeout and enforces a response byte cap while reading the
+stream, so an oversized body is cancelled before it is fully accumulated. It requires a
+JSON content type, validates the response against the shared untrusted schema and verifies
+that the returned sandbox equals the requested sandbox. Timeouts, network failures,
+`RATE_LIMITED` and `DEPENDENCY_UNAVAILABLE` are retryable; validation, authentication,
+conflict, malformed or oversized responses, sandbox mismatches and unrecognized problem
+codes are not. Problem bodies are reduced to a typed code and request ID; server text is
+not copied into errors, and an unrecognized code is preserved only as a bounded trace cause
+while the error itself remains non-retryable.
+
+The AI registry exposes only read tools. It checks role permission, scenario support and
+the workflow-step allowlist before execution, rejects unknown and write-action names, and
+after execution re-validates the untrusted result schema, byte and item bounds and sandbox
+identity. The trace is a redacted summary; it does not contain argument values, result
+payloads, prompts or credentials. Registering a tool that matches a privileged action name
+fails registry construction. Later stages may register compute or propose tools only in
+their owner stages; no stage may register the command client, a business-write tool or an
+arbitrary SQL/HTTP/file tool.
+
+Application code depends only on `EnterpriseReadPort` and the registry port. It must not
+import `@nexus/enterprise-db`, call the simulator with ad hoc `fetch`, hold simulator
+tokens or derive permissions from tool input. F09 contract tests run a fake HTTP server,
+not mocked application repositories, and replace the read adapter with a test port without
+changing tool definitions or domain code.

@@ -104,6 +104,24 @@
       ],
       "@nexus/application/cases/context": [
         "./packages/application/src/cases/context.ts"
+      ],
+      "@nexus/application/ports/enterprise": [
+        "./packages/application/src/ports/enterprise.ts"
+      ],
+      "@nexus/application/ports/tools": [
+        "./packages/application/src/ports/tools.ts"
+      ],
+      "@nexus/integrations/enterprise/client": [
+        "./packages/integrations/src/enterprise/client.ts"
+      ],
+      "@nexus/integrations/enterprise/errors": [
+        "./packages/integrations/src/enterprise/errors.ts"
+      ],
+      "@nexus/integrations/tools/registry": [
+        "./packages/integrations/src/tools/registry.ts"
+      ],
+      "@nexus/integrations/tools/enterprise-reads": [
+        "./packages/integrations/src/tools/enterprise-reads.ts"
       ]
     },
     "skipLibCheck": true

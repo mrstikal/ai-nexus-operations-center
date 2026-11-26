@@ -1033,9 +1033,86 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f07-enterprise-reads.test.ts",
+        "tests/integration/f09-tools.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/tools.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/contracts/src/index.ts",
+          "minBytes": 300
+        },
+        {
+          "path": "packages/contracts/package.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/ports/enterprise.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/application/src/ports/tools.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/application/package.json",
+          "minBytes": 700
+        },
+        {
+          "path": "packages/integrations/src/enterprise/errors.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/integrations/src/enterprise/client.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/integrations/src/tools/registry.ts",
+          "minBytes": 7000
+        },
+        {
+          "path": "packages/integrations/src/tools/enterprise-reads.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/integrations/package.json",
+          "minBytes": 800
+        },
+        {
+          "path": "tests/integration/f09-tools.test.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "apps/enterprise-sim/src/read-controller.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F10",

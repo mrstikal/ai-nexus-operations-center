@@ -40,6 +40,10 @@
       "types": "./dist/enterprise-commands.d.ts",
       "default": "./dist/enterprise-commands.js"
     },
+    "./tools": {
+      "types": "./dist/tools.d.ts",
+      "default": "./dist/tools.js"
+    },
     "./models": {
       "types": "./dist/models.d.ts",
       "default": "./dist/models.js"
