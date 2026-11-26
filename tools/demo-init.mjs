@@ -125,6 +125,38 @@ async function seedLocalIdentity({ port, env }) {
   }
 }
 
+async function seedEnterpriseSupply({ port, env }) {
+  let seedModule;
+  try {
+    seedModule = await import('@nexus/enterprise-db/seed');
+  } catch (error) {
+    throw new Error(
+      `Compiled enterprise seed module is missing. Run pnpm build first.\n${
+        error instanceof Error ? error.message : String(error)
+      }`,
+      { cause: error },
+    );
+  }
+
+  const client = new pg.Client({
+    host: '127.0.0.1',
+    port,
+    database: 'nexus',
+    user: 'enterprise_migrator',
+    password: env.ENTERPRISE_MIGRATOR_PASSWORD,
+    application_name: 'nexus-demo-seed-enterprise',
+    connectionTimeoutMillis: 5000,
+  });
+  await client.connect();
+  try {
+    return await seedModule.seedEnterpriseSupply(client, {
+      fixturesDirectory: path.join(REPO_ROOT, 'fixtures/company'),
+    });
+  } finally {
+    await client.end();
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   let migrateOnly = false;
@@ -165,8 +197,20 @@ async function main() {
     );
     if (!migrateOnly) {
       await seedLocalIdentity({ port, env: infrastructure.env });
-      console.log('Initial demo initialization is complete. F04 seeds local identity accounts only.');
-      console.log('Scenario and replay asset validation starts with later fixture phases; it is NOT RUN in F04.');
+      const enterpriseSeed = await seedEnterpriseSupply({
+        port,
+        env: infrastructure.env,
+      });
+      console.log(
+        `Enterprise supply seed complete for sandbox ${enterpriseSeed.sandboxId}: ` +
+          `${enterpriseSeed.inserted.products ?? 0} new products, ` +
+          `${enterpriseSeed.inserted.suppliers ?? 0} new suppliers, ` +
+          `${enterpriseSeed.inserted.customers ?? 0} new customers, ` +
+          `${enterpriseSeed.inserted.purchaseOrders ?? 0} new purchase orders, ` +
+          `${enterpriseSeed.inserted.salesOrders ?? 0} new sales orders.`,
+      );
+      console.log('Initial demo initialization is complete. Local identity accounts and the F07 enterprise supply seed are ready.');
+      console.log('Scenario records and replay asset validation start with later fixture phases; they are NOT RUN in F07.');
     }
   } finally {
     if (infrastructure) {

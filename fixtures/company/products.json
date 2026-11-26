@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "20000000-0000-4000-8000-000000000001",
+      "sku": "NS-MON-27-A1",
+      "name": "Aurora 27-inch Monitor",
+      "category": "Displays",
+      "status": "active",
+      "version": 4,
+      "createdAt": "2026-01-05T08:00:00Z",
+      "updatedAt": "2026-10-18T10:00:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000002",
+      "sku": "NS-MON-32-A1",
+      "name": "Aurora 32-inch Monitor",
+      "category": "Displays",
+      "status": "active",
+      "version": 3,
+      "createdAt": "2026-01-05T08:05:00Z",
+      "updatedAt": "2026-10-12T09:30:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000003",
+      "sku": "NS-DOCK-01",
+      "name": "Nimbus Laptop Dock",
+      "category": "Accessories",
+      "status": "active",
+      "version": 5,
+      "createdAt": "2026-01-05T08:10:00Z",
+      "updatedAt": "2026-10-25T12:45:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000004",
+      "sku": "NS-HUB-07",
+      "name": "Nimbus USB-C Hub",
+      "category": "Accessories",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-05T08:15:00Z",
+      "updatedAt": "2026-09-22T14:00:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000005",
+      "sku": "NS-KEY-11",
+      "name": "Orbit Wireless Keyboard",
+      "category": "Peripherals",
+      "status": "active",
+      "version": 3,
+      "createdAt": "2026-01-05T08:20:00Z",
+      "updatedAt": "2026-10-02T11:25:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000006",
+      "sku": "NS-MSE-12",
+      "name": "Orbit Wireless Mouse",
+      "category": "Peripherals",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-05T08:25:00Z",
+      "updatedAt": "2026-09-29T16:35:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000007",
+      "sku": "NS-CHR-01",
+      "name": "Vertex Office Chair",
+      "category": "Furniture",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-05T08:30:00Z",
+      "updatedAt": "2026-10-08T08:50:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000008",
+      "sku": "NS-DSK-02",
+      "name": "Vertex Standing Desk",
+      "category": "Furniture",
+      "status": "active",
+      "version": 1,
+      "createdAt": "2026-01-05T08:35:00Z",
+      "updatedAt": "2026-06-17T10:10:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000009",
+      "sku": "NS-CAM-4K",
+      "name": "Pulse 4K Webcam",
+      "category": "Peripherals",
+      "status": "discontinued",
+      "version": 4,
+      "createdAt": "2026-01-05T08:40:00Z",
+      "updatedAt": "2026-08-30T09:00:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000010",
+      "sku": "NS-HST-PRO",
+      "name": "Pulse Headset Pro",
+      "category": "Peripherals",
+      "status": "active",
+      "version": 3,
+      "createdAt": "2026-01-05T08:45:00Z",
+      "updatedAt": "2026-10-14T15:05:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000011",
+      "sku": "NS-SSD-1T",
+      "name": "Atlas 1TB SSD",
+      "category": "Storage",
+      "status": "active",
+      "version": 4,
+      "createdAt": "2026-01-05T08:50:00Z",
+      "updatedAt": "2026-10-21T13:20:00Z"
+    },
+    {
+      "id": "20000000-0000-4000-8000-000000000012",
+      "sku": "NS-SSD-2T",
+      "name": "Atlas 2TB SSD",
+      "category": "Storage",
+      "status": "discontinued",
+      "version": 3,
+      "createdAt": "2026-01-05T08:55:00Z",
+      "updatedAt": "2026-07-11T12:00:00Z"
+    }
+  ]
+}

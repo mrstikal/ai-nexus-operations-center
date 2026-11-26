@@ -768,9 +768,117 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f07-enterprise-reads.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": ".env.example",
+          "minBytes": 300
+        },
+        {
+          "path": "apps/enterprise-sim/package.json",
+          "minBytes": 300
+        },
+        {
+          "path": "apps/enterprise-sim/tsconfig.json",
+          "minBytes": 200
+        },
+        {
+          "path": "apps/enterprise-sim/src/main.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/enterprise-sim/src/auth.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "apps/enterprise-sim/src/read-controller.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/enterprise-db/package.json",
+          "minBytes": 300
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0002_supply.sql",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0003_supply_total_bounds.sql",
+          "minBytes": 100
+        },
+        {
+          "path": "packages/enterprise-db/src/schema/supply.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/enterprise-db/src/seed.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "fixtures/company/products.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "fixtures/company/suppliers.json",
+          "minBytes": 500
+        },
+        {
+          "path": "fixtures/company/customers.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "fixtures/company/agreements.json",
+          "minBytes": 3000
+        },
+        {
+          "path": "fixtures/company/purchase-orders.json",
+          "minBytes": 3000
+        },
+        {
+          "path": "fixtures/company/sales-orders.json",
+          "minBytes": 5000
+        },
+        {
+          "path": "fixtures/company/inventory.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "tests/integration/f07-enterprise-reads.test.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "docs/ENTERPRISE_API.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/demo-init.mjs",
+          "minBytes": 1500
+        },
+        {
+          "path": "tools/lib/infra.mjs",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F08",

@@ -1,0 +1,712 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "60000000-0000-4000-8000-000000000001",
+      "reference": "SO-2026-2001",
+      "customerId": "30000000-0000-4000-8000-000000000001",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-25T09:00:00Z",
+      "promisedDeliveryAt": "2026-11-05T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "15000",
+      "contractualPenaltyCapMinor": "120000",
+      "version": 2,
+      "createdAt": "2026-10-25T09:00:00Z",
+      "updatedAt": "2026-10-30T10:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000001",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 40,
+          "unitPriceMinor": "34900",
+          "currency": "EUR",
+          "version": 2,
+          "createdAt": "2026-10-25T09:00:00Z",
+          "updatedAt": "2026-10-30T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000002",
+      "reference": "SO-2026-2002",
+      "customerId": "30000000-0000-4000-8000-000000000002",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-26T10:00:00Z",
+      "promisedDeliveryAt": "2026-11-06T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "9000",
+      "contractualPenaltyCapMinor": "90000",
+      "version": 1,
+      "createdAt": "2026-10-26T10:00:00Z",
+      "updatedAt": "2026-10-31T09:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000002",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 30,
+          "unitPriceMinor": "33900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-26T10:00:00Z",
+          "updatedAt": "2026-10-31T09:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000003",
+      "reference": "SO-2026-2003",
+      "customerId": "30000000-0000-4000-8000-000000000003",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-27T11:00:00Z",
+      "promisedDeliveryAt": "2026-11-09T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 2,
+      "createdAt": "2026-10-27T11:00:00Z",
+      "updatedAt": "2026-11-01T12:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000003",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 25,
+          "unitPriceMinor": "35900",
+          "currency": "EUR",
+          "version": 2,
+          "createdAt": "2026-10-27T11:00:00Z",
+          "updatedAt": "2026-11-01T12:00:00Z"
+        },
+        {
+          "id": "61000000-0000-4000-8000-000000000004",
+          "lineNumber": 2,
+          "productId": "20000000-0000-4000-8000-000000000003",
+          "quantity": 10,
+          "unitPriceMinor": "18900",
+          "currency": "EUR",
+          "version": 2,
+          "createdAt": "2026-10-27T11:00:00Z",
+          "updatedAt": "2026-11-01T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000004",
+      "reference": "SO-2026-2004",
+      "customerId": "30000000-0000-4000-8000-000000000004",
+      "status": "allocated",
+      "currency": "EUR",
+      "orderedAt": "2026-10-28T12:00:00Z",
+      "promisedDeliveryAt": "2026-11-12T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "12000",
+      "contractualPenaltyCapMinor": "96000",
+      "version": 3,
+      "createdAt": "2026-10-28T12:00:00Z",
+      "updatedAt": "2026-11-01T15:30:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000005",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000002",
+          "quantity": 20,
+          "unitPriceMinor": "44900",
+          "currency": "EUR",
+          "version": 3,
+          "createdAt": "2026-10-28T12:00:00Z",
+          "updatedAt": "2026-11-01T15:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000005",
+      "reference": "SO-2026-2005",
+      "customerId": "30000000-0000-4000-8000-000000000005",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-29T13:00:00Z",
+      "promisedDeliveryAt": "2026-11-20T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 1,
+      "createdAt": "2026-10-29T13:00:00Z",
+      "updatedAt": "2026-10-29T13:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000006",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000002",
+          "quantity": 15,
+          "unitPriceMinor": "43900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-29T13:00:00Z",
+          "updatedAt": "2026-10-29T13:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000006",
+      "reference": "SO-2026-2006",
+      "customerId": "30000000-0000-4000-8000-000000000006",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-30T14:00:00Z",
+      "promisedDeliveryAt": "2026-11-07T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "11000",
+      "contractualPenaltyCapMinor": "88000",
+      "version": 1,
+      "createdAt": "2026-10-30T14:00:00Z",
+      "updatedAt": "2026-10-30T14:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000007",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000003",
+          "quantity": 35,
+          "unitPriceMinor": "17900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-30T14:00:00Z",
+          "updatedAt": "2026-10-30T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000007",
+      "reference": "SO-2026-2007",
+      "customerId": "30000000-0000-4000-8000-000000000007",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-30T15:00:00Z",
+      "promisedDeliveryAt": "2026-11-18T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "8000",
+      "contractualPenaltyCapMinor": "64000",
+      "version": 1,
+      "createdAt": "2026-10-30T15:00:00Z",
+      "updatedAt": "2026-10-30T15:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000008",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000003",
+          "quantity": 20,
+          "unitPriceMinor": "18400",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-30T15:00:00Z",
+          "updatedAt": "2026-10-30T15:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000008",
+      "reference": "SO-2026-2008",
+      "customerId": "30000000-0000-4000-8000-000000000008",
+      "status": "delivered",
+      "currency": "EUR",
+      "orderedAt": "2026-10-01T08:00:00Z",
+      "promisedDeliveryAt": "2026-11-03T17:00:00Z",
+      "shippedAt": "2026-11-01T10:00:00Z",
+      "deliveredAt": "2026-11-02T09:00:00Z",
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 4,
+      "createdAt": "2026-10-01T08:00:00Z",
+      "updatedAt": "2026-11-02T09:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000009",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000002",
+          "quantity": 10,
+          "unitPriceMinor": "44900",
+          "currency": "EUR",
+          "version": 4,
+          "createdAt": "2026-10-01T08:00:00Z",
+          "updatedAt": "2026-11-02T09:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000009",
+      "reference": "SO-2026-2009",
+      "customerId": "30000000-0000-4000-8000-000000000009",
+      "status": "allocated",
+      "currency": "EUR",
+      "orderedAt": "2026-10-20T09:30:00Z",
+      "promisedDeliveryAt": "2026-11-14T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "20000",
+      "contractualPenaltyCapMinor": "160000",
+      "version": 3,
+      "createdAt": "2026-10-20T09:30:00Z",
+      "updatedAt": "2026-10-31T16:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000010",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 50,
+          "unitPriceMinor": "32900",
+          "currency": "EUR",
+          "version": 3,
+          "createdAt": "2026-10-20T09:30:00Z",
+          "updatedAt": "2026-10-31T16:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000010",
+      "reference": "SO-2026-2010",
+      "customerId": "30000000-0000-4000-8000-000000000010",
+      "status": "cancelled",
+      "currency": "EUR",
+      "orderedAt": "2026-10-22T10:30:00Z",
+      "promisedDeliveryAt": "2026-11-10T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 2,
+      "createdAt": "2026-10-22T10:30:00Z",
+      "updatedAt": "2026-10-25T09:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000011",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 12,
+          "unitPriceMinor": "34900",
+          "currency": "EUR",
+          "version": 2,
+          "createdAt": "2026-10-22T10:30:00Z",
+          "updatedAt": "2026-10-25T09:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000011",
+      "reference": "SO-2026-2011",
+      "customerId": "30000000-0000-4000-8000-000000000011",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-24T11:30:00Z",
+      "promisedDeliveryAt": "2026-11-16T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "7000",
+      "contractualPenaltyCapMinor": "56000",
+      "version": 1,
+      "createdAt": "2026-10-24T11:30:00Z",
+      "updatedAt": "2026-10-27T10:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000012",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000004",
+          "quantity": 100,
+          "unitPriceMinor": "13900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-24T11:30:00Z",
+          "updatedAt": "2026-10-27T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000012",
+      "reference": "SO-2026-2012",
+      "customerId": "30000000-0000-4000-8000-000000000012",
+      "status": "delivered",
+      "currency": "EUR",
+      "orderedAt": "2026-09-20T08:00:00Z",
+      "promisedDeliveryAt": "2026-10-28T17:00:00Z",
+      "shippedAt": "2026-10-25T09:00:00Z",
+      "deliveredAt": "2026-10-27T10:00:00Z",
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 3,
+      "createdAt": "2026-09-20T08:00:00Z",
+      "updatedAt": "2026-10-27T10:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000013",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000005",
+          "quantity": 80,
+          "unitPriceMinor": "7900",
+          "currency": "EUR",
+          "version": 3,
+          "createdAt": "2026-09-20T08:00:00Z",
+          "updatedAt": "2026-10-27T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000013",
+      "reference": "SO-2026-2013",
+      "customerId": "30000000-0000-4000-8000-000000000001",
+      "status": "shipped",
+      "currency": "EUR",
+      "orderedAt": "2026-10-15T09:00:00Z",
+      "promisedDeliveryAt": "2026-11-11T17:00:00Z",
+      "shippedAt": "2026-11-01T08:30:00Z",
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "5000",
+      "contractualPenaltyCapMinor": "40000",
+      "version": 2,
+      "createdAt": "2026-10-15T09:00:00Z",
+      "updatedAt": "2026-11-01T08:30:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000014",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000006",
+          "quantity": 60,
+          "unitPriceMinor": "4900",
+          "currency": "EUR",
+          "version": 2,
+          "createdAt": "2026-10-15T09:00:00Z",
+          "updatedAt": "2026-11-01T08:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000014",
+      "reference": "SO-2026-2014",
+      "customerId": "30000000-0000-4000-8000-000000000002",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-18T10:00:00Z",
+      "promisedDeliveryAt": "2026-11-13T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "25000",
+      "contractualPenaltyCapMinor": "200000",
+      "version": 1,
+      "createdAt": "2026-10-18T10:00:00Z",
+      "updatedAt": "2026-10-18T10:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000015",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000007",
+          "quantity": 8,
+          "unitPriceMinor": "79900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-18T10:00:00Z",
+          "updatedAt": "2026-10-18T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000015",
+      "reference": "SO-2026-2015",
+      "customerId": "30000000-0000-4000-8000-000000000003",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-19T11:00:00Z",
+      "promisedDeliveryAt": "2026-11-19T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 1,
+      "createdAt": "2026-10-19T11:00:00Z",
+      "updatedAt": "2026-10-19T11:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000016",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000008",
+          "quantity": 5,
+          "unitPriceMinor": "149900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-19T11:00:00Z",
+          "updatedAt": "2026-10-19T11:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000016",
+      "reference": "SO-2026-2016",
+      "customerId": "30000000-0000-4000-8000-000000000004",
+      "status": "delivered",
+      "currency": "EUR",
+      "orderedAt": "2026-10-02T12:00:00Z",
+      "promisedDeliveryAt": "2026-10-30T17:00:00Z",
+      "shippedAt": "2026-10-27T08:00:00Z",
+      "deliveredAt": "2026-10-29T09:30:00Z",
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 3,
+      "createdAt": "2026-10-02T12:00:00Z",
+      "updatedAt": "2026-10-29T09:30:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000017",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000009",
+          "quantity": 15,
+          "unitPriceMinor": "16900",
+          "currency": "EUR",
+          "version": 3,
+          "createdAt": "2026-10-02T12:00:00Z",
+          "updatedAt": "2026-10-29T09:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000017",
+      "reference": "SO-2026-2017",
+      "customerId": "30000000-0000-4000-8000-000000000005",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-23T13:00:00Z",
+      "promisedDeliveryAt": "2026-11-15T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "5000",
+      "contractualPenaltyCapMinor": "40000",
+      "version": 1,
+      "createdAt": "2026-10-23T13:00:00Z",
+      "updatedAt": "2026-10-23T13:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000018",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000010",
+          "quantity": 24,
+          "unitPriceMinor": "10900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-23T13:00:00Z",
+          "updatedAt": "2026-10-23T13:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000018",
+      "reference": "SO-2026-2018",
+      "customerId": "30000000-0000-4000-8000-000000000006",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-24T14:00:00Z",
+      "promisedDeliveryAt": "2026-11-08T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "10000",
+      "contractualPenaltyCapMinor": "80000",
+      "version": 1,
+      "createdAt": "2026-10-24T14:00:00Z",
+      "updatedAt": "2026-10-24T14:00:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000019",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000011",
+          "quantity": 75,
+          "unitPriceMinor": "12900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-24T14:00:00Z",
+          "updatedAt": "2026-10-24T14:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000019",
+      "reference": "SO-2026-2019",
+      "customerId": "30000000-0000-4000-8000-000000000007",
+      "status": "delivered",
+      "currency": "EUR",
+      "orderedAt": "2026-09-20T15:00:00Z",
+      "promisedDeliveryAt": "2026-10-25T17:00:00Z",
+      "shippedAt": "2026-10-22T10:00:00Z",
+      "deliveredAt": "2026-10-24T11:30:00Z",
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 3,
+      "createdAt": "2026-09-20T15:00:00Z",
+      "updatedAt": "2026-10-24T11:30:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000020",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000012",
+          "quantity": 10,
+          "unitPriceMinor": "24900",
+          "currency": "EUR",
+          "version": 3,
+          "createdAt": "2026-09-20T15:00:00Z",
+          "updatedAt": "2026-10-24T11:30:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000020",
+      "reference": "SO-2026-2020",
+      "customerId": "30000000-0000-4000-8000-000000000008",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-26T09:45:00Z",
+      "promisedDeliveryAt": "2026-11-04T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "6000",
+      "contractualPenaltyCapMinor": "48000",
+      "version": 1,
+      "createdAt": "2026-10-26T09:45:00Z",
+      "updatedAt": "2026-10-26T09:45:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000021",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000001",
+          "quantity": 18,
+          "unitPriceMinor": "34900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-26T09:45:00Z",
+          "updatedAt": "2026-10-26T09:45:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000021",
+      "reference": "SO-2026-2021",
+      "customerId": "30000000-0000-4000-8000-000000000009",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-27T10:15:00Z",
+      "promisedDeliveryAt": "2026-11-06T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "9500",
+      "contractualPenaltyCapMinor": "76000",
+      "version": 1,
+      "createdAt": "2026-10-27T10:15:00Z",
+      "updatedAt": "2026-10-27T10:15:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000022",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000002",
+          "quantity": 22,
+          "unitPriceMinor": "43900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-27T10:15:00Z",
+          "updatedAt": "2026-10-27T10:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000022",
+      "reference": "SO-2026-2022",
+      "customerId": "30000000-0000-4000-8000-000000000010",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-28T11:15:00Z",
+      "promisedDeliveryAt": "2026-11-17T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": null,
+      "contractualPenaltyCapMinor": null,
+      "version": 1,
+      "createdAt": "2026-10-28T11:15:00Z",
+      "updatedAt": "2026-10-28T11:15:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000023",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000004",
+          "quantity": 45,
+          "unitPriceMinor": "13900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-28T11:15:00Z",
+          "updatedAt": "2026-10-28T11:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000023",
+      "reference": "SO-2026-2023",
+      "customerId": "30000000-0000-4000-8000-000000000011",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-29T12:15:00Z",
+      "promisedDeliveryAt": "2026-11-09T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "7500",
+      "contractualPenaltyCapMinor": "60000",
+      "version": 1,
+      "createdAt": "2026-10-29T12:15:00Z",
+      "updatedAt": "2026-10-29T12:15:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000024",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000005",
+          "quantity": 125,
+          "unitPriceMinor": "7900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-29T12:15:00Z",
+          "updatedAt": "2026-10-29T12:15:00Z"
+        }
+      ]
+    },
+    {
+      "id": "60000000-0000-4000-8000-000000000024",
+      "reference": "SO-2026-2024",
+      "customerId": "30000000-0000-4000-8000-000000000012",
+      "status": "confirmed",
+      "currency": "EUR",
+      "orderedAt": "2026-10-30T13:15:00Z",
+      "promisedDeliveryAt": "2026-11-21T17:00:00Z",
+      "shippedAt": null,
+      "deliveredAt": null,
+      "contractualPenaltyDailyMinor": "6500",
+      "contractualPenaltyCapMinor": "52000",
+      "version": 1,
+      "createdAt": "2026-10-30T13:15:00Z",
+      "updatedAt": "2026-10-30T13:15:00Z",
+      "lines": [
+        {
+          "id": "61000000-0000-4000-8000-000000000025",
+          "lineNumber": 1,
+          "productId": "20000000-0000-4000-8000-000000000006",
+          "quantity": 90,
+          "unitPriceMinor": "4900",
+          "currency": "EUR",
+          "version": 1,
+          "createdAt": "2026-10-30T13:15:00Z",
+          "updatedAt": "2026-10-30T13:15:00Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "10000000-0000-4000-8000-000000000001",
+      "reference": "SUP-BALTIC",
+      "name": "Baltic Components OU",
+      "status": "active",
+      "currency": "EUR",
+      "version": 6,
+      "createdAt": "2026-01-02T08:00:00Z",
+      "updatedAt": "2026-10-28T15:30:00Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000002",
+      "reference": "SUP-RHINE",
+      "name": "Rhine Technical Supply GmbH",
+      "status": "active",
+      "currency": "EUR",
+      "version": 4,
+      "createdAt": "2026-01-02T08:05:00Z",
+      "updatedAt": "2026-10-20T11:00:00Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000003",
+      "reference": "SUP-IBERIA",
+      "name": "Iberia Devices SL",
+      "status": "active",
+      "currency": "EUR",
+      "version": 3,
+      "createdAt": "2026-01-02T08:10:00Z",
+      "updatedAt": "2026-09-30T09:15:00Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000004",
+      "reference": "SUP-NORDIC",
+      "name": "Nordic Peripherals AB",
+      "status": "active",
+      "currency": "EUR",
+      "version": 2,
+      "createdAt": "2026-01-02T08:15:00Z",
+      "updatedAt": "2026-09-18T13:40:00Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000005",
+      "reference": "SUP-ALPINE",
+      "name": "Alpine Office Systems AG",
+      "status": "suspended",
+      "currency": "EUR",
+      "version": 5,
+      "createdAt": "2026-01-02T08:20:00Z",
+      "updatedAt": "2026-10-22T16:10:00Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000006",
+      "reference": "SUP-ADRIATIC",
+      "name": "Adriatic Trade d.o.o.",
+      "status": "active",
+      "currency": "EUR",
+      "version": 2,
+      "createdAt": "2026-01-02T08:25:00Z",
+      "updatedAt": "2026-10-05T10:20:00Z"
+    }
+  ]
+}

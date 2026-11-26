@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "30000000-0000-4000-8000-000000000001",
+      "reference": "CUS-NORTHWIND",
+      "name": "Northwind Retail GmbH",
+      "status": "active",
+      "version": 3,
+      "createdAt": "2026-01-08T08:00:00Z",
+      "updatedAt": "2026-10-11T09:10:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000002",
+      "reference": "CUS-BLUEHARBOR",
+      "name": "Blue Harbor Stores Ltd",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-08T08:05:00Z",
+      "updatedAt": "2026-09-25T14:20:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000003",
+      "reference": "CUS-MERIDIAN",
+      "name": "Meridian Offices BV",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-08T08:10:00Z",
+      "updatedAt": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000004",
+      "reference": "CUS-CEDARPINE",
+      "name": "Cedar and Pine Retail",
+      "status": "active",
+      "version": 1,
+      "createdAt": "2026-01-08T08:15:00Z",
+      "updatedAt": "2026-05-19T11:45:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000005",
+      "reference": "CUS-LAKESIDE",
+      "name": "Lakeside Education Trust",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-08T08:20:00Z",
+      "updatedAt": "2026-10-06T15:30:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000006",
+      "reference": "CUS-GRANITE",
+      "name": "Granite Works Inc",
+      "status": "active",
+      "version": 1,
+      "createdAt": "2026-01-08T08:25:00Z",
+      "updatedAt": "2026-04-22T12:15:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000007",
+      "reference": "CUS-SOLSTICE",
+      "name": "Solstice Clinics",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-08T08:30:00Z",
+      "updatedAt": "2026-09-14T08:40:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000008",
+      "reference": "CUS-HARBORVIEW",
+      "name": "Harborview Hotels",
+      "status": "active",
+      "version": 3,
+      "createdAt": "2026-01-08T08:35:00Z",
+      "updatedAt": "2026-10-19T17:00:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000009",
+      "reference": "CUS-SUMMIT",
+      "name": "Summit Logistics",
+      "status": "active",
+      "version": 2,
+      "createdAt": "2026-01-08T08:40:00Z",
+      "updatedAt": "2026-08-27T13:05:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000010",
+      "reference": "CUS-AURORALABS",
+      "name": "Aurora Labs",
+      "status": "inactive",
+      "version": 2,
+      "createdAt": "2026-01-08T08:45:00Z",
+      "updatedAt": "2026-07-30T16:50:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000011",
+      "reference": "CUS-VANTAGE",
+      "name": "Vantage Media",
+      "status": "active",
+      "version": 1,
+      "createdAt": "2026-01-08T08:50:00Z",
+      "updatedAt": "2026-03-16T09:35:00Z"
+    },
+    {
+      "id": "30000000-0000-4000-8000-000000000012",
+      "reference": "CUS-OLDTOWN",
+      "name": "Old Town Museum",
+      "status": "inactive",
+      "version": 1,
+      "createdAt": "2026-01-08T08:55:00Z",
+      "updatedAt": "2026-02-11T14:25:00Z"
+    }
+  ]
+}
