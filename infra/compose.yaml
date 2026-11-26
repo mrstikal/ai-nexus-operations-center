@@ -1,0 +1,95 @@
+name: nexus
+
+services:
+  postgres:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.postgres
+      args:
+        PGVECTOR_VERSION: 0.8.7
+        PGVECTOR_SHA256: cac0b10c360f05b2d521200105ba3697e773d4cd3731f5a915a7e37ebe0bea85
+    image: nexus-postgres:18.7-pgvector-0.8.7
+    profiles: ["infra"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD:?run pnpm infra:up to generate local credentials}
+      POSTGRES_DB: nexus
+      NEXUS_MIGRATOR_PASSWORD: ${NEXUS_MIGRATOR_PASSWORD:?}
+      NEXUS_API_PASSWORD: ${NEXUS_API_PASSWORD:?}
+      NEXUS_WORKER_PASSWORD: ${NEXUS_WORKER_PASSWORD:?}
+      ENTERPRISE_MIGRATOR_PASSWORD: ${ENTERPRISE_MIGRATOR_PASSWORD:?}
+      ENTERPRISE_APP_PASSWORD: ${ENTERPRISE_APP_PASSWORD:?}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./postgres/init-roles.sql:/docker-entrypoint-initdb.d/010-init-roles.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres -d nexus && psql -U postgres -d nexus -tAc "SELECT extversion FROM pg_extension WHERE extname = 'vector'" | grep -qx 0.8.7
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+    labels:
+      nexus.owner: ${NEXUS_OWNER:-local}
+      nexus.phase: F02
+    restart: "no"
+
+  rabbitmq:
+    image: rabbitmq:4.4.1-management@sha256:1c70aa901955dff9c3c86975cf77a9498a6e3448336a2e049dde888b44f9b977
+    profiles: ["infra"]
+    hostname: nexus-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-nexus_app}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?}
+      RABBITMQ_DEFAULT_VHOST: /nexus
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq/definitions.json:/opt/nexus/definitions.json:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    labels:
+      nexus.owner: ${NEXUS_OWNER:-local}
+      nexus.phase: F02
+    restart: "no"
+
+  valkey:
+    image: valkey/valkey:9.2.0@sha256:1c2b25b09f354c66fe994733acdf12fcfd4bdf6f3bd92b88a93a70378d884056
+    profiles: ["infra"]
+    environment:
+      VALKEY_PASSWORD: ${VALKEY_PASSWORD:?}
+    command:
+      - valkey-server
+      - --requirepass
+      - ${VALKEY_PASSWORD}
+      - --appendonly
+      - "no"
+      - --save
+      - ""
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - valkey-cli --no-auth-warning -a "$$VALKEY_PASSWORD" ping | grep -q PONG
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    labels:
+      nexus.owner: ${NEXUS_OWNER:-local}
+      nexus.phase: F02
+    restart: "no"
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  valkey_data:

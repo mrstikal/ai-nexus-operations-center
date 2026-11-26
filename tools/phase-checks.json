@@ -124,7 +124,8 @@
           "path": "THIRD_PARTY_NOTICES.md",
           "minBytes": 1
         }
-      ]
+      ],
+      "requiresInfrastructure": false
     },
     {
       "id": "F02",
@@ -134,9 +135,117 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f02-infrastructure.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "infra/compose.yaml",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/compose.dev.yaml",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/compose.test.yaml",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/Dockerfile.postgres",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/postgres/init-roles.sql",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/rabbitmq/definitions.json",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/versions.json",
+          "minBytes": 1
+        },
+        {
+          "path": ".env.example",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/connection.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/src/migrate.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/db/migrations/0001_bootstrap.sql",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/enterprise-db/package.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/enterprise-db/tsconfig.json",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/enterprise-db/src/connection.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/enterprise-db/src/migrate.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0001_bootstrap.sql",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/infra-up.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/demo-init.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tools/lib/infra.mjs",
+          "minBytes": 1
+        },
+        {
+          "path": "tests/integration/f02-infrastructure.test.ts",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/OPERATIONS.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/adr/002-data-ownership.md",
+          "minBytes": 1
+        },
+        {
+          "path": "docs/adr/004-transport-roles.md",
+          "minBytes": 1
+        },
+        {
+          "path": "infra/compose.migrate.yaml",
+          "minBytes": 1
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F03",

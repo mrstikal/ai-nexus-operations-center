@@ -1,0 +1,17 @@
+services:
+  postgres:
+    ports:
+      - "127.0.0.1::5432"
+    labels:
+      nexus.owner: test
+  rabbitmq:
+    ports:
+      - "127.0.0.1::5672"
+      - "127.0.0.1::15672"
+    labels:
+      nexus.owner: test
+  valkey:
+    ports:
+      - "127.0.0.1::6379"
+    labels:
+      nexus.owner: test

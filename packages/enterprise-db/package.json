@@ -1,0 +1,27 @@
+{
+  "name": "@nexus/enterprise-db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./connection": {
+      "types": "./dist/connection.d.ts",
+      "default": "./dist/connection.js"
+    },
+    "./migrate": {
+      "types": "./dist/migrate.d.ts",
+      "default": "./dist/migrate.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11",
+    "@types/pg": "8.23.1"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "postgres": {
+    "tag": "postgres:18.7-bookworm",
+    "digest": "sha256:e742a2668255221388004f3a42b6150a2103f5054ab3a4a93ae9e4f01e551c35",
+    "license": "PostgreSQL",
+    "pgvector": {
+      "version": "0.8.7",
+      "url": "https://github.com/pgvector/pgvector/archive/refs/tags/v0.8.7.tar.gz",
+      "sha256": "cac0b10c360f05b2d521200105ba3697e773d4cd3731f5a915a7e37ebe0bea85",
+      "buildFlags": "OPTFLAGS=\"\"",
+      "license": "PostgreSQL"
+    }
+  },
+  "rabbitmq": {
+    "tag": "rabbitmq:4.4.1-management",
+    "digest": "sha256:1c70aa901955dff9c3c86975cf77a9498a6e3448336a2e049dde888b44f9b977",
+    "license": "MPL-2.0"
+  },
+  "valkey": {
+    "tag": "valkey/valkey:9.2.0",
+    "digest": "sha256:1c2b25b09f354c66fe994733acdf12fcfd4bdf6f3bd92b88a93a70378d884056",
+    "license": "BSD-3-Clause"
+  }
+}

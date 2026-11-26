@@ -25,6 +25,16 @@ const ALLOWED_LICENSES = new Set([
 ]);
 const WORKSPACE_PREFIXES = ['@nexus/'];
 
+function isInstalledPackageManifest(filePath) {
+  const parts = filePath.split(path.sep);
+  const nodeModulesIndex = parts.lastIndexOf('node_modules');
+  if (nodeModulesIndex === -1) {
+    return false;
+  }
+  const tail = parts.slice(nodeModulesIndex + 1);
+  return tail.length === 2 || (tail.length === 3 && tail[0].startsWith('@'));
+}
+
 function collectPackageJsonFiles(directory, result = []) {
   if (!fs.existsSync(directory)) {
     return result;
@@ -35,7 +45,10 @@ function collectPackageJsonFiles(directory, result = []) {
       continue;
     }
     if (entry.name === 'package.json') {
-      result.push(path.join(directory, entry.name));
+      const filePath = path.join(directory, entry.name);
+      if (isInstalledPackageManifest(filePath)) {
+        result.push(filePath);
+      }
     }
   }
   return result;
@@ -207,9 +220,9 @@ function main() {
     }
   }
 
-  if (fs.existsSync(noticesPath)) {
-    const notices = fs.readFileSync(noticesPath, 'utf8');
-    const noticeRows = parseNoticeRows(notices, problems);
+  const noticesText = fs.existsSync(noticesPath) ? fs.readFileSync(noticesPath, 'utf8') : '';
+  if (noticesText !== '') {
+    const noticeRows = parseNoticeRows(noticesText, problems);
     for (const dependency of direct) {
       const key = `${dependency.name}@${dependency.version}`;
       const recordedLicense = noticeRows.get(key);
@@ -248,13 +261,67 @@ function main() {
   }
 
   const containerImages = [];
-  const composePath = path.join(ROOT, 'infra/compose.yaml');
-  if (fs.existsSync(composePath)) {
-    const compose = fs.readFileSync(composePath, 'utf8');
-    for (const line of compose.split('\n')) {
-      const match = line.match(/^\s*image:\s*(\S+)/);
-      if (match) {
-        containerImages.push(match[1]);
+  const versionsPath = path.join(ROOT, 'infra/versions.json');
+  if (fs.existsSync(versionsPath)) {
+    const versions = JSON.parse(fs.readFileSync(versionsPath, 'utf8'));
+    const composePath = path.join(ROOT, 'infra/compose.yaml');
+    const compose = fs.existsSync(composePath) ? fs.readFileSync(composePath, 'utf8') : '';
+    const dockerfilePath = path.join(ROOT, 'infra/Dockerfile.postgres');
+    const dockerfile = fs.existsSync(dockerfilePath)
+      ? fs.readFileSync(dockerfilePath, 'utf8')
+      : '';
+    for (const [name, entry] of Object.entries(versions)) {
+      if (
+        !entry ||
+        typeof entry.tag !== 'string' ||
+        typeof entry.digest !== 'string' ||
+        typeof entry.license !== 'string'
+      ) {
+        problems.push(`infra/versions.json entry ${name} is incomplete`);
+        continue;
+      }
+      const imageRef = `${entry.tag}@${entry.digest}`;
+      containerImages.push(imageRef);
+      if (!isAllowedExpression(entry.license)) {
+        problems.push(`Unapproved container license for ${entry.tag}: ${entry.license}`);
+      }
+      if (!noticesText.includes(entry.tag) || !noticesText.includes(entry.license)) {
+        problems.push(`THIRD_PARTY_NOTICES.md is missing container notice for ${entry.tag}`);
+      }
+      if (name === 'postgres') {
+        if (
+          !entry.pgvector ||
+          typeof entry.pgvector.version !== 'string' ||
+          typeof entry.pgvector.sha256 !== 'string' ||
+          typeof entry.pgvector.license !== 'string'
+        ) {
+          problems.push('infra/versions.json is missing the pgvector source pin');
+        } else {
+          if (!isAllowedExpression(entry.pgvector.license)) {
+            problems.push(`Unapproved pgvector license: ${entry.pgvector.license}`);
+          }
+          if (
+            typeof entry.pgvector.buildFlags !== 'string' ||
+            entry.pgvector.buildFlags === ''
+          ) {
+            problems.push('infra/versions.json is missing the pgvector buildFlags pin');
+          }
+          if (
+            !dockerfile.includes(entry.digest) ||
+            !dockerfile.includes(entry.pgvector.version) ||
+            !dockerfile.includes(entry.pgvector.sha256) ||
+            (typeof entry.pgvector.buildFlags === 'string' &&
+              entry.pgvector.buildFlags !== '' &&
+              !dockerfile.includes(entry.pgvector.buildFlags))
+          ) {
+            problems.push('infra/Dockerfile.postgres does not match the pinned PostgreSQL/pgvector versions');
+          }
+          if (!noticesText.includes(entry.pgvector.version)) {
+            problems.push('THIRD_PARTY_NOTICES.md is missing the pgvector notice');
+          }
+        }
+      } else if (!compose.includes(entry.digest)) {
+        problems.push(`infra/compose.yaml does not reference the pinned digest for ${entry.tag}`);
       }
     }
   }
@@ -277,8 +344,8 @@ function main() {
   console.log(`Direct dependencies verified against notices: ${direct.length}`);
   console.log(
     containerImages.length === 0
-      ? 'Container images: none declared in F01.'
-      : `Container images requiring notice review: ${containerImages.join(', ')}`,
+      ? 'Container images: none declared.'
+      : `Container images verified against notices and pins: ${containerImages.join(', ')}`,
   );
 }
 

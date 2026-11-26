@@ -8,6 +8,7 @@ import {
   selectStageSuites,
   validateRegisteredFiles,
 } from './lib/phase.mjs';
+import { startTestInfrastructure } from './lib/infra.mjs';
 
 function parseArgs(argv) {
   const args = [];
@@ -39,7 +40,17 @@ function parseArgs(argv) {
   return { manifestPath, spec: args[0] };
 }
 
-function main() {
+function runVitest(paths, env) {
+  return spawnSync('pnpm', ['exec', 'vitest', 'run', '--project', 'integration', ...paths], {
+    cwd: process.cwd(),
+    env,
+    stdio: 'inherit',
+  });
+}
+
+async function main() {
+  let exitCode = 0;
+  let infrastructure = null;
   try {
     const options = parseArgs(process.argv.slice(2));
     const loaded = loadManifest(options.manifestPath);
@@ -48,21 +59,60 @@ function main() {
     const paths = selectStageSuites(loaded.manifest, selectedIds, 'integrationTests');
     validateRegisteredFiles(process.cwd(), paths, 'Integration');
 
-    console.log(
-      'Integration infrastructure provisioning begins in F02. F01 suites run without Compose or a database.',
-    );
-    const result = spawnSync('pnpm', ['exec', 'vitest', 'run', '--project', 'integration', ...paths], {
+    const build = spawnSync('pnpm', ['build'], {
       cwd: process.cwd(),
       env: process.env,
       stdio: 'inherit',
     });
+    if (build.error) {
+      throw build.error;
+    }
+    if ((build.status ?? 1) !== 0) {
+      exitCode = build.status ?? 1;
+      return;
+    }
+
+    const positions = new Map(loaded.manifest.stages.map((stage) => [stage.id, stage]));
+    const requiresInfrastructure = selectedIds.some(
+      (id) => positions.get(id).requiresInfrastructure === true,
+    );
+
+    let testEnv = process.env;
+    if (requiresInfrastructure) {
+      infrastructure = startTestInfrastructure(selectedIds.join('-'));
+      testEnv = { ...process.env, ...infrastructure.testEnv };
+      console.log(
+        'Isolated test infrastructure is running. The runner owns its teardown.',
+      );
+    } else {
+      console.log('This phase requires no Compose infrastructure.');
+    }
+
+    const result = runVitest(paths, testEnv);
     if (result.error) {
       throw result.error;
     }
-    process.exitCode = result.status ?? 1;
+    exitCode = result.status ?? 1;
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
-    process.exitCode = 1;
+    exitCode = 1;
+  } finally {
+    if (infrastructure) {
+      try {
+        infrastructure.teardown();
+        console.log('Test infrastructure teardown completed.');
+      } catch (error) {
+        console.error(
+          `Test infrastructure teardown failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        if (exitCode === 0) {
+          exitCode = 1;
+        }
+      }
+    }
+    process.exitCode = exitCode;
   }
 }
 
@@ -70,5 +120,5 @@ const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
 const modulePath = fileURLToPath(import.meta.url);
 
 if (invokedPath === modulePath) {
-  main();
+  void main();
 }

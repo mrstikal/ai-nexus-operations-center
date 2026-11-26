@@ -1,4 +1,6 @@
 import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -7,6 +9,7 @@ import {
   parseStageSpec,
   stageHasChecks,
 } from '../../tools/lib/phase.mjs';
+import { ensureLocalEnv } from '../../tools/lib/infra.mjs';
 import { buildVerifyPlan, verifyPhase } from '../../tools/run-phase.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
@@ -131,6 +134,62 @@ describe('F01 phase manifest and selection', () => {
       }),
     ).toThrow(/Artifact assertions failed/);
     expect(commandsRun).toBe(0);
+  });
+});
+
+describe('F01 local infrastructure environment backfill', () => {
+  it('backfills derived runtime keys into an existing .env without changing role passwords', () => {
+    const directory = mkdtempSync(path.join(os.tmpdir(), 'nexus-env-'));
+    const envFile = path.join(directory, '.env');
+    try {
+      writeFileSync(
+        envFile,
+        [
+          'POSTGRES_SUPERUSER_PASSWORD=superuser-secret',
+          'NEXUS_MIGRATOR_PASSWORD=migrator-secret',
+          'NEXUS_API_PASSWORD=api-secret',
+          'NEXUS_WORKER_PASSWORD=worker-secret',
+          'ENTERPRISE_MIGRATOR_PASSWORD=enterprise-migrator-secret',
+          'ENTERPRISE_APP_PASSWORD=enterprise-app-secret',
+          'RABBITMQ_DEFAULT_USER=nexus_app',
+          'RABBITMQ_DEFAULT_PASS=rabbit-secret',
+          'VALKEY_PASSWORD=valkey-secret',
+          'NEXUS_PG_DEV_PORT=55432',
+          'NEXUS_DB_HOST=127.0.0.1',
+          'NEXUS_DB_HOST=',
+          '  NEXUS_DB_NAME=',
+          '# keep this local maintenance note',
+          '',
+        ].join('\n'),
+        { mode: 0o600 },
+      );
+
+      ensureLocalEnv(envFile);
+
+      const rewritten = readFileSync(envFile, 'utf8');
+      expect(rewritten).toContain('# keep this local maintenance note');
+      expect(rewritten.match(/^NEXUS_DB_HOST=/gm)).toHaveLength(2);
+      expect(rewritten.match(/^NEXUS_DB_HOST=127\.0\.0\.1$/gm)).toHaveLength(2);
+      expect(rewritten.match(/^ {2}NEXUS_DB_NAME=nexus$/gm)).toHaveLength(1);
+      const values = Object.fromEntries(
+        readFileSync(envFile, 'utf8')
+          .split(/\r?\n/)
+          .filter(Boolean)
+          .map((line) => {
+            const separator = line.indexOf('=');
+            return [line.slice(0, separator), line.slice(separator + 1)];
+          }),
+      );
+      expect(values['NEXUS_DB_HOST']).toBe('127.0.0.1');
+      expect(values['NEXUS_DB_PORT']).toBe('55432');
+      expect(values['NEXUS_API_DB_PASSWORD']).toBe('api-secret');
+      expect(values['NEXUS_WORKER_DB_PASSWORD']).toBe('worker-secret');
+      expect(values['ENTERPRISE_APP_DB_PASSWORD']).toBe('enterprise-app-secret');
+      expect(values['NEXUS_API_PASSWORD']).toBe('api-secret');
+      expect(statSync(envFile).mode & 0o777).toBe(0o600);
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
   });
 });
 

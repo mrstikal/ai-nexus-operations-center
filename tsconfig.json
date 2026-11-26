@@ -5,7 +5,13 @@
     "allowJs": true,
     "checkJs": false,
     "lib": ["ES2023", "DOM"],
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@nexus/db/connection": ["./packages/db/src/connection.ts"],
+      "@nexus/db/migrate": ["./packages/db/src/migrate.ts"],
+      "@nexus/enterprise-db/connection": ["./packages/enterprise-db/src/connection.ts"],
+      "@nexus/enterprise-db/migrate": ["./packages/enterprise-db/src/migrate.ts"]
+    }
   },
   "include": [
     "tests/**/*.ts",

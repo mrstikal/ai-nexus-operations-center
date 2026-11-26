@@ -3,23 +3,33 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const INCLUDED_EXTENSIONS = new Set([
+  '.conf',
   '.css',
   '.html',
   '.js',
   '.json',
   '.md',
   '.mjs',
+  '.sql',
   '.svg',
   '.ts',
   '.tsx',
   '.yaml',
   '.yml',
 ]);
-const INCLUDED_NAMES = new Set(['.gitignore', '.node-version', '.npmrc', '.nvmrc', 'LICENSE']);
+const INCLUDED_NAMES = new Set([
+  '.env.example',
+  '.gitignore',
+  '.node-version',
+  '.npmrc',
+  '.nvmrc',
+  'LICENSE',
+]);
 const SKIP_DIRECTORIES = new Set([
   '.git',
   '.idea',
   '.next',
+  '.vscode',
   'agent-memory',
   'blob-report',
   'coverage',
@@ -40,7 +50,7 @@ function shouldCheck(filePath) {
   if (SKIP_FILES.has(basename)) {
     return false;
   }
-  if (INCLUDED_NAMES.has(basename)) {
+  if (INCLUDED_NAMES.has(basename) || basename.startsWith('Dockerfile')) {
     return true;
   }
   return INCLUDED_EXTENSIONS.has(path.extname(basename));

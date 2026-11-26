@@ -76,12 +76,21 @@ path or artifact assertion in the owning phase; an empty selector never passes.
 - No model, font CDN, telemetry collector, database, broker, or cache connection is
   made in F01.
 
+## Local infrastructure
+
+F02 adds PostgreSQL 18.7 with pgvector 0.8.7, RabbitMQ 4.4.1, and Valkey 9.2.0.
+`pnpm infra:up` starts them without host ports; `pnpm infra:up --dev-ports` publishes
+explicit loopback development ports; `pnpm db:migrate` applies both reviewed migration
+sets through a temporary PostgreSQL-only loopback port and restores the no-port default;
+`pnpm demo:init` performs the initial idempotent initialization. See the
+[operations guide](OPERATIONS.md) for roles, health checks, credentials, migration
+semantics, and test-resource cleanup.
+
 ## Commands reserved for later phases
 
-`pnpm infra:up`, `pnpm db:migrate`, `pnpm demo:init`, `pnpm demo:reset`,
-`pnpm eval:offline`, `pnpm retrieval:check`, and `pnpm eval:live` are registered
-entry points. Until their owning phase is implemented they exit non-zero with the
-owner stage named. In particular, `eval:live` never pretends to succeed and never
+`pnpm demo:reset`, `pnpm eval:offline`, `pnpm retrieval:check`, and `pnpm eval:live` are
+registered entry points. Until their owning phase is implemented they exit non-zero with
+the owner stage named. In particular, `eval:live` never pretends to succeed and never
 starts a paid call.
 
 `pnpm audit --prod` is an explicit advisory-metadata network check for maintenance;
@@ -91,8 +100,10 @@ it is not part of the network-isolated replay test path.
 
 - `tests/unit/` contains pure Vitest tests. F01 covers the phase runner, manifest
   selection, failure propagation, and dependency boundary fixtures.
-- `tests/integration/` launches the compiled Nest API and worker. Run `pnpm build`
-  before invoking the integration suite directly.
+- `tests/integration/` starts isolated Compose resources for infrastructure phases.
+  F01 launches the compiled Nest API and worker; F02 verifies the database roles,
+  migrations, broker persistence, and cache/database separation. The integration runner
+  builds the workspace before starting tests.
 - `tests/e2e/` contains Playwright tests against the production-built Next server.
 - `tests/fixtures/` contains intentionally invalid boundary and phase manifests used
   to prove that gates fail closed. These fixtures are excluded from lint and typecheck.

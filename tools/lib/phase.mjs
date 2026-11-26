@@ -76,6 +76,13 @@ export function validateManifest(manifest, manifestPath = 'tools/phase-checks.js
     if (typeof stage.checkpoint !== 'boolean') {
       fail(`${manifestPath}: stage ${stage.id} needs a boolean checkpoint flag`);
     }
+    if (
+      stage.requiresInfrastructure !== undefined &&
+      typeof stage.requiresInfrastructure !== 'boolean'
+    ) {
+      fail(`${manifestPath}: stage ${stage.id} requiresInfrastructure must be a boolean when present`);
+    }
+    stage.requiresInfrastructure = stage.requiresInfrastructure === true;
   });
 
   manifest.stages.forEach((stage, index) => {

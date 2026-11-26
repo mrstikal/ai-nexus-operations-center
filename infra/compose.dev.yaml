@@ -1,0 +1,11 @@
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:${NEXUS_PG_DEV_PORT:-55432}:5432"
+  rabbitmq:
+    ports:
+      - "127.0.0.1:${NEXUS_RABBIT_DEV_PORT:-55672}:5672"
+      - "127.0.0.1:${NEXUS_RABBIT_MANAGEMENT_DEV_PORT:-55673}:15672"
+  valkey:
+    ports:
+      - "127.0.0.1:${NEXUS_VALKEY_DEV_PORT:-56379}:6379"
