@@ -1123,10 +1123,148 @@
         "F09"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f10-events.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f10-messaging.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/migrations/0005_events.sql",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/schema/events.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/repositories/ingress.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/contracts/src/ingress.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/contracts/src/events/envelope.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/application/src/ingress/service.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/messaging/src/topology.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/messaging/src/publisher.ts",
+          "minBytes": 6000
+        },
+        {
+          "path": "packages/messaging/src/consumer.ts",
+          "minBytes": 6000
+        },
+        {
+          "path": "packages/messaging/src/retry.ts",
+          "minBytes": 200
+        },
+        {
+          "path": "packages/messaging/src/dead-letter.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "packages/messaging/package.json",
+          "minBytes": 700
+        },
+        {
+          "path": "apps/api/src/ingress/controller.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "apps/api/src/ingress/module.ts",
+          "minBytes": 400
+        },
+        {
+          "path": "apps/worker/src/messaging.module.ts",
+          "minBytes": 6000
+        },
+        {
+          "path": "apps/worker/src/app.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "apps/enterprise-sim/src/outbox.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "apps/enterprise-sim/src/main.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0007_outbox_errors.sql",
+          "minBytes": 80
+        },
+        {
+          "path": "fixtures/failures/duplicate-event.json",
+          "minBytes": 300
+        },
+        {
+          "path": "tests/helpers/event-faults.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "tests/integration/f10-messaging.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "tests/unit/f10-events.test.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/EVENTS.md",
+          "minBytes": 4000
+        },
+        {
+          "path": "docs/adr/006-durable-events.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/OPERATIONS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/check-boundaries.mjs",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/enterprise-db/migrations/0008_outbox_error_grant.sql",
+          "minBytes": 50
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F11",

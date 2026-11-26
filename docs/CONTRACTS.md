@@ -162,9 +162,11 @@ return authorization, credit-note draft and delivery-address change. Unknown kin
 
 ## Event registry
 
-The envelope is strict: UUID event/correlation IDs, nullable causation ID, schema version
-`1`, ISO-UTC occurrence time, producer `api`/`worker`/`enterprise-sim`, and a typed
-payload. The registry accepts only these names:
+The envelope is strict: UUID event ID, nullable UUID causation ID, bounded correlation ID,
+schema version `1`, ISO-UTC occurrence time, producer `api`/`worker`/`enterprise-sim`, and a
+typed payload. F10 clarified that the correlation ID is a bounded identifier rather than a UUID
+because HTTP requests and enterprise commands already use bounded correlation strings; event and
+causation identities remain UUIDs. The registry accepts only these names:
 
 - `nexus.case.created.v1`
 - `nexus.case.completed.v1`
@@ -188,6 +190,28 @@ Tool definitions declare a closed tool class, permission roles, scenario support
 result/timeout/retry/budget values and a redaction mode with an allowlist. Gateway requests
 carry the workflow and budget context; failures carry provider/model, attempt IDs, cost,
 prompt/config revisions and redacted diagnostics alongside success responses.
+
+## Durable case intake and events (F10)
+
+F10 adds `packages/contracts/src/ingress.ts`. `CaseIntakeRequest` carries a title, nullable
+summary and exactly one source variant: `text` with a bounded printable identity, `email` with a
+printable message ID that the server lower-cases, or `document` with a UUID that must resolve to
+an existing document. Until F15 has a document store, document references reject as `NOT_FOUND`;
+text and email ID-only events are valid. `CaseIntakeResponse` returns the created `CaseDetail`,
+the `nexus.case.created.v1` event ID, `queued: true` and whether the response was deduplicated.
+`IdempotencyKey` is a required bounded header.
+
+The registry remains closed and strict. Nexus outbox rows may carry only the six Nexus event
+names with an `api` or `worker` producer; enterprise outbox rows may carry only the five
+enterprise names with the `enterprise-sim` producer. `enterprise.communication.created.v1` now
+requires exactly one recipient identity: `customerId` for a customer communication or
+`supplierId` for a supplier communication. This keeps the payload truthful for the simulator's
+supplier messages while preserving the customer communication shape.
+
+The accepted event envelope and payload are stored in `nexus.event_inbox`; `dispatch_state`
+starts at `pending` and F11 owns the transition to scheduled work. A duplicate event is
+acknowledged without a second inbox row. Schema poison and wrong producer/exchange data produce
+a bounded `dead_letters` record and a DLQ message, not a business retry.
 
 ## Enterprise reads and the tool registry
 

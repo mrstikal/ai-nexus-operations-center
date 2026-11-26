@@ -51,6 +51,14 @@
     "./repositories/trace": {
       "types": "./dist/repositories/trace.d.ts",
       "default": "./dist/repositories/trace.js"
+    },
+    "./schema/events": {
+      "types": "./dist/schema/events.d.ts",
+      "default": "./dist/schema/events.js"
+    },
+    "./repositories/ingress": {
+      "types": "./dist/repositories/ingress.d.ts",
+      "default": "./dist/repositories/ingress.js"
     }
   },
   "scripts": {

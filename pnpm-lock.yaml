@@ -209,6 +209,9 @@ importers:
       '@nexus/integrations':
         specifier: workspace:*
         version: link:packages/integrations
+      '@nexus/messaging':
+        specifier: workspace:*
+        version: link:packages/messaging
       '@nexus/observability':
         specifier: workspace:*
         version: link:packages/observability
@@ -306,6 +309,9 @@ importers:
       '@nexus/enterprise-db':
         specifier: workspace:*
         version: link:../../packages/enterprise-db
+      '@nexus/messaging':
+        specifier: workspace:*
+        version: link:../../packages/messaging
       pg:
         specifier: 8.23.1
         version: 8.23.1
@@ -362,6 +368,18 @@ importers:
       '@nestjs/core':
         specifier: 12.6.2
         version: 12.6.2(@nestjs/common@12.6.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@12.6.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nexus/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@nexus/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@nexus/messaging':
+        specifier: workspace:*
+        version: link:../../packages/messaging
+      pg:
+        specifier: 8.23.1
+        version: 8.23.1
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -375,6 +393,9 @@ importers:
       '@types/node':
         specifier: 26.6.11
         version: 26.6.11
+      '@types/pg':
+        specifier: 8.23.1
+        version: 8.23.1
 
   packages/application:
     dependencies:
@@ -473,6 +494,19 @@ importers:
       '@types/redis-errors':
         specifier: 1.2.3
         version: 1.2.3
+
+  packages/messaging:
+    dependencies:
+      '@nexus/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      amqplib:
+        specifier: 2.4.2
+        version: 2.4.2
+    devDependencies:
+      '@types/node':
+        specifier: 26.6.11
+        version: 26.6.11
 
   packages/observability:
     devDependencies:

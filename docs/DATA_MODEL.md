@@ -149,6 +149,41 @@ migrations revoke public access. Reads and commands are implemented by the priva
 [ENTERPRISE_API.md](ENTERPRISE_API.md) for routes, headers, receipts and retry semantics, and
 [ADR 005](adr/005-tools-vs-privileged-commands.md) for the tool-versus-command boundary.
 
+## Durable events (F10)
+
+Migration `packages/db/migrations/0005_events.sql` adds four Nexus tables.
+
+- `event_outbox` stores the transactional Nexus outbox. It has the event ID, sandbox, event
+  type from the closed Nexus registry, version `1`, `api`/`worker` producer, occurrence time,
+  bounded correlation and optional causation IDs, aggregate type/ID/version, typed JSON payload,
+  `pending|publishing|published|failed` status, attempt count, next-attempt time, bounded last
+  error and row version. `nexus_api` may insert/select; `nexus_worker` may select and update only
+  the publisher columns. A unique identity `(sandbox_id,id)` supports ingress references.
+- `event_inbox` stores one accepted envelope per `(consumer_name,event_id)`. The validated
+  envelope JSON is retained together with sandbox, event type, producer, correlation/causation,
+  occurrence time, `pending|scheduled|processed|dead` dispatch state, attempt count and
+  next-attempt time. F10 inserts `pending` rows; F11 schedules and transitions them. Only
+  `nexus_worker` can access it.
+- `dead_letters` stores a queryable poison record keyed by consumer and SHA-256 of the raw body.
+  It keeps bounded broker metadata, body size, the raw-body hash, a closed reason code and a
+  redacted detail. It does not store the raw body, so poison that accidentally contains a secret
+  is not retained. It does not reference a sandbox because a poison event may carry an unknown
+  sandbox.
+- `ingress_keys` stores the HTTP intake key and normalized source identity. A key is unique per
+  sandbox/actor/route, and a source identity is unique per sandbox/route. The row references the
+  created case and outbox event, stores the canonical request hash and the original accepted
+  response for idempotent replay. Only `nexus_api` can access it.
+
+The enterprise outbox already exists from F08; F10 adds `last_error` in
+`packages/enterprise-db/migrations/0007_outbox_errors.sql` and grants that publisher column in
+`packages/enterprise-db/migrations/0008_outbox_error_grant.sql`. Its publisher statuses remain
+`pending|publishing|published|failed`, and `enterprise_app` retains column-scoped update access
+for the publisher. Neither runtime role can read the other schema.
+
+The F10 tables do not create workflow, approval, proposal, run, document, knowledge or action
+tables. The inbox is the durable accepted queue, not a substitute for the F11 workflow job
+tables. See [EVENTS.md](EVENTS.md) for topology, delivery, retry and DLQ behavior.
+
 ## F05/F07/F08 boundaries
 
 F07/F08 do not implement the application executor, approvals, automatic outbox publishing,

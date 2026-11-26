@@ -879,6 +879,315 @@
         ],
         "additionalProperties": false
       },
+      "CaseIntakeSource": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "email"
+                ]
+              },
+              "messageId": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 200,
+                "pattern": "^[\\x21-\\x7e]+$"
+              }
+            },
+            "required": [
+              "type",
+              "messageId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "document"
+                ]
+              },
+              "documentId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              }
+            },
+            "required": [
+              "type",
+              "documentId"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text"
+                ]
+              },
+              "identity": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[\\x20-\\x7e]+$"
+              }
+            },
+            "required": [
+              "type",
+              "identity"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "CaseIntakeRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "source": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "email"
+                    ]
+                  },
+                  "messageId": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 200,
+                    "pattern": "^[\\x21-\\x7e]+$"
+                  }
+                },
+                "required": [
+                  "type",
+                  "messageId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "document"
+                    ]
+                  },
+                  "documentId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  }
+                },
+                "required": [
+                  "type",
+                  "documentId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text"
+                    ]
+                  },
+                  "identity": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[\\x20-\\x7e]+$"
+                  }
+                },
+                "required": [
+                  "type",
+                  "identity"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "summary",
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "CaseIntakeResponse": {
+        "type": "object",
+        "properties": {
+          "case": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "sandboxId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "new",
+                  "investigating",
+                  "needs_input",
+                  "needs_approval",
+                  "executing",
+                  "resolved",
+                  "escalated",
+                  "cancelled"
+                ]
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647
+              },
+              "terminalReason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "createdAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "updatedAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 5000
+              },
+              "entityRefs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": {
+                      "type": "string",
+                      "enum": [
+                        "nexus",
+                        "enterprise"
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[a-z][a-z0-9_]*$"
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 2147483647
+                    }
+                  },
+                  "required": [
+                    "system",
+                    "type",
+                    "id",
+                    "version"
+                  ],
+                  "additionalProperties": false
+                },
+                "maxItems": 50
+              }
+            },
+            "required": [
+              "id",
+              "sandboxId",
+              "title",
+              "status",
+              "version",
+              "terminalReason",
+              "createdAt",
+              "updatedAt",
+              "summary",
+              "entityRefs"
+            ],
+            "additionalProperties": false
+          },
+          "eventId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "nexus.case.created.v1"
+            ]
+          },
+          "queued": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "deduplicated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "case",
+          "eventId",
+          "eventType",
+          "queued",
+          "deduplicated"
+        ],
+        "additionalProperties": false
+      },
+      "IdempotencyKey": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+      },
       "WorkflowStatus": {
         "type": "string",
         "enum": [
@@ -6750,6 +7059,13 @@
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
           },
           "customerId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "supplierId": {
             "type": "string",
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
           },
@@ -7873,7 +8189,7 @@
           },
           "correlationId": {
             "type": "string",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
           },
           "causationId": {
             "anyOf": [
@@ -9297,6 +9613,633 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "cases"
+        ],
+        "summary": "Accept a case intake event into the durable queue",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "required": true,
+            "name": "Idempotency-Key",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 5000
+                  },
+                  "source": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "email"
+                            ]
+                          },
+                          "messageId": {
+                            "type": "string",
+                            "minLength": 3,
+                            "maxLength": 200,
+                            "pattern": "^[\\x21-\\x7e]+$"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "messageId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "document"
+                            ]
+                          },
+                          "documentId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "documentId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "text"
+                            ]
+                          },
+                          "identity": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200,
+                            "pattern": "^[\\x20-\\x7e]+$"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "identity"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "summary",
+                  "source"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Case and case-created event persisted for queued delivery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "case": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "sandboxId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "title": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "new",
+                            "investigating",
+                            "needs_input",
+                            "needs_approval",
+                            "executing",
+                            "resolved",
+                            "escalated",
+                            "cancelled"
+                          ]
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 2147483647
+                        },
+                        "terminalReason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 1000
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "summary": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 5000
+                        },
+                        "entityRefs": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "system": {
+                                "type": "string",
+                                "enum": [
+                                  "nexus",
+                                  "enterprise"
+                                ]
+                              },
+                              "type": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 64,
+                                "pattern": "^[a-z][a-z0-9_]*$"
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                              },
+                              "version": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 2147483647
+                              }
+                            },
+                            "required": [
+                              "system",
+                              "type",
+                              "id",
+                              "version"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "maxItems": 50
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sandboxId",
+                        "title",
+                        "status",
+                        "version",
+                        "terminalReason",
+                        "createdAt",
+                        "updatedAt",
+                        "summary",
+                        "entityRefs"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "eventId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "eventType": {
+                      "type": "string",
+                      "enum": [
+                        "nexus.case.created.v1"
+                      ]
+                    },
+                    "queued": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "deduplicated": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "case",
+                    "eventId",
+                    "eventType",
+                    "queued",
+                    "deduplicated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body, header or actor role",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Operator role, origin or CSRF check failed",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Referenced document does not exist",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Idempotency key or source identity was reused with a different body",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Intake body exceeds its bound",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "JSON content type is required",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Case intake storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/cases/{caseId}": {
@@ -10165,9 +11108,9 @@
   },
   "webhooks": {},
   "x-nexus-implementation-status": {
-    "stage": "F05",
+    "stage": "F10",
     "contracts": "declared-and-frozen",
-    "httpControllers": "auth-and-read-only-cases",
-    "openapiPaths": "auth, sandbox, cases and evidence reads; later controllers are declared in their owner stages"
+    "httpControllers": "auth, case reads and durable case intake",
+    "openapiPaths": "auth, sandbox, case/evidence reads and case intake; later controllers are declared in their owner stages"
   }
 }

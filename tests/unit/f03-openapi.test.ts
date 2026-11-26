@@ -31,8 +31,8 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F05',
-      httpControllers: 'auth-and-read-only-cases',
+      stage: 'F10',
+      httpControllers: 'auth, case reads and durable case intake',
     });
     expect(Object.keys(document.components.schemas)).toEqual(
       expect.arrayContaining([

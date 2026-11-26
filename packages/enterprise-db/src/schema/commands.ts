@@ -274,6 +274,7 @@ export const eventOutbox = enterpriseSchema.table(
     status: text('status').notNull(),
     attemptCount: integer('attempt_count').notNull(),
     nextAttemptAt: timestamp('next_attempt_at', { withTimezone: true }).notNull(),
+    lastError: text('last_error'),
     version: integer('version').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull(),

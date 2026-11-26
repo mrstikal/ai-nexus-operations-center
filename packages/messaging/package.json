@@ -1,0 +1,39 @@
+{
+  "name": "@nexus/messaging",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./publisher": {
+      "types": "./dist/publisher.d.ts",
+      "default": "./dist/publisher.js"
+    },
+    "./consumer": {
+      "types": "./dist/consumer.d.ts",
+      "default": "./dist/consumer.js"
+    },
+    "./retry": {
+      "types": "./dist/retry.d.ts",
+      "default": "./dist/retry.js"
+    },
+    "./dead-letter": {
+      "types": "./dist/dead-letter.d.ts",
+      "default": "./dist/dead-letter.js"
+    },
+    "./topology": {
+      "types": "./dist/topology.d.ts",
+      "default": "./dist/topology.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nexus/contracts": "workspace:*",
+    "amqplib": "2.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11"
+  }
+}

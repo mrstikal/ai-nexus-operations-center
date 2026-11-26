@@ -161,3 +161,35 @@ import `@nexus/enterprise-db`, call the simulator with ad hoc `fetch`, hold simu
 tokens or derive permissions from tool input. F09 contract tests run a fake HTTP server,
 not mocked application repositories, and replace the read adapter with a test port without
 changing tool definitions or domain code.
+
+## Durable ingress, outbox and inbox (F10)
+
+The public case intake derives the actor from the authenticated session and the sandbox from
+`nexus.active_sandbox`; neither request-body field is trusted. It requires an operator role, a
+same-origin CSRF check and a bounded `Idempotency-Key`. The canonical request hash and normalized
+source identity are stored in `nexus.ingress_keys`; a reused key or source with a different body
+returns `IDEMPOTENCY_MISMATCH`, never a second case or event. A document reference is rejected
+until a document store exists. The accepted case, audit event, Nexus outbox event and ingress key
+commit in one transaction.
+
+The Nexus and enterprise outbox publishers read only code-owned rows, validate every event
+against the closed registry, publish to their own exchange and wait for publisher confirms before
+marking delivery. Credentials are read from the environment, never written to outbox payloads,
+inbox envelopes, dead letters or logs. A producer cannot substitute an enterprise event in the
+Nexus exchange: the publisher checks the event namespace and producer, and the consumer repeats
+the check on the received exchange, type prefix and registered producer.
+
+The consumer inserts a pending inbox row before acknowledgement. A handler does no AI, human or
+business work while holding a delivery. Duplicate deliveries are acknowledged without a second
+inbox row; the unique `(consumer_name,event_id)` is the business duplicate guard. Schema poison,
+unknown event names, producer/exchange mismatches, oversized messages and unknown sandboxes are
+recorded in `dead_letters` with a redacted reason and moved to the durable DLQ; they are not
+retried as business work. Transient broker/database failures remain unacknowledged and retry
+with the bounded schedule, so an accepted outbox row is never silently dropped.
+
+`nexus_api` can insert/read its ingress and outbox rows but cannot access the inbox or dead
+letters. `nexus_worker` can read the outbox and update only publisher columns, and can read/insert
+the inbox and dead letters; it has no access to `ingress_keys` and no outbox update outside the
+publisher columns. Neither role can read the other database schema. The local broker uses one identity for setup and runtime; F10
+documents this as a production-hardening gap and does not claim per-exchange broker ACLs. See
+[EVENTS.md](EVENTS.md) for topology, retry, DLQ and runbook details.

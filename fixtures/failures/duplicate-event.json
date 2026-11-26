@@ -1,0 +1,14 @@
+{
+  "eventId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+  "eventType": "nexus.case.created.v1",
+  "schemaVersion": 1,
+  "occurredAt": "2026-11-02T09:30:00.000Z",
+  "sandboxId": "00000000-0000-4000-8000-000000000001",
+  "correlationId": "f10-duplicate-correlation",
+  "causationId": null,
+  "producer": "api",
+  "payload": {
+    "caseId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+    "title": "Duplicate event fixture"
+  }
+}

@@ -158,6 +158,28 @@ Never use `down --volumes` against the `nexus` developer project as routine clea
   queues survive a broker restart; Valkey is ephemeral and a flush must not affect
   PostgreSQL. F02 tests cover both.
 
+## Durable event transport (F10)
+
+F10 starts two background publishers (Nexus outbox in the worker, enterprise outbox in the
+private simulator) and one worker consumer. They are optional when their database or broker
+environment is absent; the health/API processes still start. When `NEXUS_RABBIT_PASSWORD` (or the
+local `RABBITMQ_DEFAULT_PASS` fallback) and the worker database credentials are present, the
+worker connects, declares the topology described in [EVENTS.md](EVENTS.md), and consumes
+`nexus.worker.events` with prefetch 8.
+
+Operational signals:
+
+- Pending Nexus outbox growth during a broker outage is expected and is not data loss.
+- `nexus.event_outbox.status='failed'` or a growing `nexus.dead_letters` needs operator review.
+- `nexus.event_inbox.dispatch_state='pending'` is the durable accepted queue; F11 will schedule
+  the pending rows. Do not delete them.
+- The local broker uses one identity for setup and runtime. Production must separate those
+  credentials and grant per-exchange permissions; see the F10 limitation in EVENTS.md and
+  ADR 006.
+
+The integration runner owns the isolated test project and tears down RabbitMQ, Valkey and
+PostgreSQL after the suite. Do not run `down --volumes` against the developer project.
+
 ## F02 boundaries
 
 - No application, API, worker, web, or simulator container is started by `infra:up`; those

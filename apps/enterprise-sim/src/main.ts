@@ -15,6 +15,7 @@ import {
 import { CommandController } from './command-controller.js';
 import { ReadController } from './read-controller.js';
 import { ReceiptController } from './receipt-controller.js';
+import { enterpriseOutboxBroker, startEnterpriseOutbox, type EnterpriseOutboxRuntime } from './outbox.js';
 
 @Module({
   controllers: [ReadController, CommandController, ReceiptController],
@@ -52,6 +53,12 @@ if (!address || typeof address === 'string') {
 }
 
 const pool = app.get<Pool>(ENTERPRISE_DB_POOL);
+let outboxRuntime: EnterpriseOutboxRuntime | null = null;
+try {
+  outboxRuntime = startEnterpriseOutbox(pool, enterpriseOutboxBroker());
+} catch {
+  outboxRuntime = null;
+}
 let stopping = false;
 
 const stop = async (signal: string): Promise<void> => {
@@ -61,6 +68,7 @@ const stop = async (signal: string): Promise<void> => {
 
   stopping = true;
   console.log(`ENTERPRISE_SIM_STOPPING signal=${signal}`);
+  await outboxRuntime?.stop();
   await app.close();
   await pool.end();
   console.log('ENTERPRISE_SIM_STOPPED');

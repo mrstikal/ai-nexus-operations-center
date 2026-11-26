@@ -92,12 +92,17 @@ export type EnterpriseChangePayload = z.infer<typeof EnterpriseChangePayloadSche
 export const CommunicationCreatedPayloadSchema = z
   .object({
     communicationId: EntityIdSchema,
-    customerId: EntityIdSchema,
+    customerId: EntityIdSchema.nullable(),
+    supplierId: EntityIdSchema.optional(),
     orderId: EntityIdSchema.nullable(),
     version: z.number().int().nonnegative().max(2_147_483_647),
     createdAt: IsoUtcTimestampSchema,
   })
-  .strict();
+  .strict()
+  .refine(
+    (value) => (value.customerId === null) !== (value.supplierId === undefined),
+    'Exactly one communication recipient identity is required',
+  );
 export type CommunicationCreatedPayload = z.infer<typeof CommunicationCreatedPayloadSchema>;
 
 export const KnowledgeChangedPayloadSchema = z

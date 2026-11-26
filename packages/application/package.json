@@ -31,6 +31,10 @@
     "./ports/tools": {
       "types": "./dist/ports/tools.d.ts",
       "default": "./dist/ports/tools.js"
+    },
+    "./ingress/service": {
+      "types": "./dist/ingress/service.d.ts",
+      "default": "./dist/ingress/service.js"
     }
   },
   "scripts": {

@@ -349,8 +349,12 @@ function checkImport({ from, specifier, typeOnly, workspaces }) {
   }
 
   if (fromRelative === 'apps/enterprise-sim') {
-    if (!['packages/contracts', 'packages/enterprise-db'].includes(targetRelative)) {
-      return 'apps/enterprise-sim may depend only on contracts and enterprise-db';
+    if (
+      !['packages/contracts', 'packages/enterprise-db', 'packages/messaging'].includes(
+        targetRelative,
+      )
+    ) {
+      return 'apps/enterprise-sim may depend only on contracts, enterprise-db and messaging';
     }
     return null;
   }

@@ -3,6 +3,7 @@ import type { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth/module.js';
 import { CasesModule } from './cases/module.js';
+import { IngressModule } from './ingress/module.js';
 import { ProblemFilter } from './errors.js';
 
 export const HEALTH_PROVIDER = 'NEXUS_HEALTH_PROVIDER';
@@ -37,7 +38,7 @@ export class HealthController {
 }
 
 @Module({
-  imports: [AuthModule, CasesModule],
+  imports: [AuthModule, CasesModule, IngressModule],
   controllers: [HealthController],
   providers: [
     {

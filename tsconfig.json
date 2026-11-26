@@ -122,6 +122,30 @@
       ],
       "@nexus/integrations/tools/enterprise-reads": [
         "./packages/integrations/src/tools/enterprise-reads.ts"
+      ],
+      "@nexus/application/ingress/service": [
+        "./packages/application/src/ingress/service.ts"
+      ],
+      "@nexus/db/schema/events": [
+        "./packages/db/src/schema/events.ts"
+      ],
+      "@nexus/db/repositories/ingress": [
+        "./packages/db/src/repositories/ingress.ts"
+      ],
+      "@nexus/messaging/publisher": [
+        "./packages/messaging/src/publisher.ts"
+      ],
+      "@nexus/messaging/consumer": [
+        "./packages/messaging/src/consumer.ts"
+      ],
+      "@nexus/messaging/retry": [
+        "./packages/messaging/src/retry.ts"
+      ],
+      "@nexus/messaging/dead-letter": [
+        "./packages/messaging/src/dead-letter.ts"
+      ],
+      "@nexus/messaging/topology": [
+        "./packages/messaging/src/topology.ts"
       ]
     },
     "skipLibCheck": true

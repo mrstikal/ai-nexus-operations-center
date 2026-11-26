@@ -25,6 +25,9 @@ const {
   AuthUserSchema,
   CaseDetailSchema,
   CaseHistoryResponseSchema,
+  CaseIntakeRequestSchema,
+  CaseIntakeResponseSchema,
+  CaseIntakeSourceSchema,
   CaseListResponseSchema,
   CaseStatusSchema,
   CaseSummarySchema,
@@ -43,6 +46,7 @@ const {
   GatewayRequestSchema,
   GatewayResultSchema,
   GatewaySuccessSchema,
+  IdempotencyKeySchema,
   LoginRequestSchema,
   LoginResponseSchema,
   LogoutResponseSchema,
@@ -102,6 +106,10 @@ const COMPONENTS = [
   ['CaseDetail', CaseDetailSchema],
   ['CaseListResponse', CaseListResponseSchema],
   ['CaseHistoryResponse', CaseHistoryResponseSchema],
+  ['CaseIntakeSource', CaseIntakeSourceSchema],
+  ['CaseIntakeRequest', CaseIntakeRequestSchema],
+  ['CaseIntakeResponse', CaseIntakeResponseSchema],
+  ['IdempotencyKey', IdempotencyKeySchema],
   ['WorkflowStatus', WorkflowStatusSchema],
   ['WaitReason', WaitReasonSchema],
   ['WorkflowRun', WorkflowRunSchema],
@@ -262,6 +270,58 @@ function registerCasePaths(registry) {
       },
       503: {
         description: 'Case storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/cases',
+    tags: ['cases'],
+    summary: 'Accept a case intake event into the durable queue',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({ 'Idempotency-Key': IdempotencyKeySchema }),
+      body: {
+        required: true,
+        content: { 'application/json': { schema: CaseIntakeRequestSchema } },
+      },
+    },
+    responses: {
+      202: {
+        description: 'Case and case-created event persisted for queued delivery',
+        content: { 'application/json': { schema: CaseIntakeResponseSchema } },
+      },
+      400: {
+        description: 'Invalid body, header or actor role',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Referenced document does not exist',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Idempotency key or source identity was reused with a different body',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      413: {
+        description: 'Intake body exceeds its bound',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      415: {
+        description: 'JSON content type is required',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Case intake storage unavailable',
         content: { 'application/problem+json': { schema: ProblemSchema } },
       },
     },
@@ -517,10 +577,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F05',
+    stage: 'F10',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth-and-read-only-cases',
-    openapiPaths: 'auth, sandbox, cases and evidence reads; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads and durable case intake',
+    openapiPaths: 'auth, sandbox, case/evidence reads and case intake; later controllers are declared in their owner stages',
   };
 
   return document;
