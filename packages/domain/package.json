@@ -31,6 +31,10 @@
     "./policies/approvals": {
       "types": "./dist/policies/approvals.d.ts",
       "default": "./dist/policies/approvals.js"
+    },
+    "./actions/bindings": {
+      "types": "./dist/actions/bindings.d.ts",
+      "default": "./dist/actions/bindings.js"
     }
   },
   "scripts": {

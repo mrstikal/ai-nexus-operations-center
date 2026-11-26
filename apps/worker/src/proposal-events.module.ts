@@ -64,6 +64,14 @@ class ProposalEventProcessor {
         },
         changedFields: payload.changedFields,
         originatingRevisionId: payload.originatingRevisionId ?? null,
+        origin: {
+          ...(payload.originatingItemId === undefined
+            ? {}
+            : { itemId: payload.originatingItemId }),
+          ...(payload.originatingReceiptKey === undefined
+            ? {}
+            : { receiptKey: payload.originatingReceiptKey }),
+        },
         requestId: `proposal-event-${claim.eventId}`.slice(0, 128),
         correlationId: claim.correlationId,
       });

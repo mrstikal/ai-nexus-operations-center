@@ -300,3 +300,26 @@ completion resumes the matching waiting workflow run; rejection, clarification a
 to a recorded human-input wait. No-action requires an active run, cancels unstarted plans/active
 runs, then resolves through the case reducer only after the execution-state port reports no
 started/succeeded/unknown effect. Enterprise execution remains absent until F13A.
+
+## Execution receipts and per-item state (F13A)
+
+Migration `packages/db/migrations/0010_executions.sql` adds:
+
+- `action_executions`: one row per revision item with stable execution key, command kind, plan/item
+  hash, `pending|in_progress|succeeded|retryable_failure|unknown|permanent_failure|cancelled` state,
+  authorization basis (`human|policy_auto`), policy identity, per-item committed amount, receipt
+  identity/result and attempt count. Unique on `(sandbox, revision, item)` and the execution key.
+- `action_execution_attempts`: bounded attempt rows with request hash, executeBefore, authorization
+  lifetime, state, error code and timestamps.
+- `action_execution_receipts`: immutable local receipt copy with typed result, plan/item hash,
+  command kind and raw receipt JSON.
+- `action_execution_entity_changes`: typed receipt entity changes used only for the proven
+  same-revision version-chain advance and own-origin invalidation proof.
+- `case_notes`: policy-auto internal notes with policy revision/content hash, unique per revision
+  item.
+
+The worker role owns execution/attempt/note writes and current execution state; the API role has
+read-only execution/receipt/note access for prior commitments, preflight and no-action checks. No
+JSON blob substitutes for the queryable execution state, per-item identity, committed amount,
+receipt key, result IDs/versions or entity-change versions. F13B adds recovery/cancellation/partial
+effect tables and the absent-final protocol; F13A does not claim exactly-once delivery.

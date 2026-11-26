@@ -23,6 +23,10 @@
     "./tools/enterprise-reads": {
       "types": "./dist/tools/enterprise-reads.d.ts",
       "default": "./dist/tools/enterprise-reads.js"
+    },
+    "./enterprise/commands": {
+      "types": "./dist/enterprise/commands.d.ts",
+      "default": "./dist/enterprise/commands.js"
     }
   },
   "scripts": {

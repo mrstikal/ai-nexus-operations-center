@@ -45,6 +45,7 @@ import {
   caseResolutions,
 } from '../schema/approvals.js';
 import { cases } from '../schema/cases.js';
+import { actionExecutions } from '../schema/executions.js';
 import { userRoles } from '../schema/identity.js';
 import {
   workflowJobs,
@@ -1328,6 +1329,20 @@ export function createApprovalStore(db: NexusDb): ApprovalStoreBundle {
           currentCase.status === 'cancelled'
         ) {
           return { ok: false, code: 'CASE_TERMINAL' };
+        }
+        const executionRows = await tx
+          .select({ state: actionExecutions.state })
+          .from(actionExecutions)
+          .where(
+            and(
+              eq(actionExecutions.sandboxId, input.sandboxId),
+              eq(actionExecutions.caseId, input.caseId),
+              inArray(actionExecutions.state, ['in_progress', 'succeeded', 'unknown']),
+            ),
+          )
+          .limit(1);
+        if (executionRows.length > 0) {
+          return { ok: false, code: 'EXECUTION_STATE_PRESENT' };
         }
         for (let index = 0; index < proposalsToSupersede.length; index += 1) {
           const proposal = proposalsToSupersede[index];

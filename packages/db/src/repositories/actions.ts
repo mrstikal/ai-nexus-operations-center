@@ -45,6 +45,11 @@ import { policyBundles } from '../schema/policies.js';
 import { approvalDecisions } from '../schema/approvals.js';
 import { workflowRuns } from '../schema/workflows.js';
 import {
+  actionExecutionEntityChanges,
+  actionExecutionReceipts,
+  actionExecutions,
+} from '../schema/executions.js';
+import {
   CaseWorkflowTransitionError,
   applyCaseTransition,
 } from './workflow-case.js';
@@ -815,6 +820,53 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
         }
         throw error;
       }
+    },
+
+    async hasProvenOwnExecution(input: {
+      readonly sandboxId: string;
+      readonly actionRevisionId: string;
+      readonly entityRef: { readonly type: string; readonly id: string };
+      readonly originatingRevisionId: string | null;
+      readonly itemId?: string;
+      readonly receiptKey?: string;
+    }): Promise<boolean> {
+      if (input.originatingRevisionId !== input.actionRevisionId) {
+        return false;
+      }
+      const rows = await db
+        .select({ id: actionExecutionEntityChanges.entityId })
+        .from(actionExecutionEntityChanges)
+        .innerJoin(
+          actionExecutionReceipts,
+          and(
+            eq(actionExecutionReceipts.sandboxId, actionExecutionEntityChanges.sandboxId),
+            eq(actionExecutionReceipts.id, actionExecutionEntityChanges.receiptId),
+          ),
+        )
+        .innerJoin(
+          actionExecutions,
+          and(
+            eq(actionExecutions.sandboxId, actionExecutionReceipts.sandboxId),
+            eq(actionExecutions.id, actionExecutionReceipts.executionId),
+          ),
+        )
+        .where(
+          and(
+            eq(actionExecutionEntityChanges.sandboxId, input.sandboxId),
+            eq(actionExecutionEntityChanges.entityType, input.entityRef.type),
+            eq(actionExecutionEntityChanges.entityId, input.entityRef.id),
+            eq(actionExecutions.actionRevisionId, input.actionRevisionId),
+            eq(actionExecutions.state, 'succeeded'),
+            ...(input.itemId === undefined
+              ? []
+              : [eq(actionExecutionReceipts.itemId, input.itemId)]),
+            ...(input.receiptKey === undefined
+              ? []
+              : [eq(actionExecutionReceipts.receiptKey, input.receiptKey)]),
+          ),
+        )
+        .limit(1);
+      return rows.length > 0;
     },
 
     async listOpenProposalRevisions(

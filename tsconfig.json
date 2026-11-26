@@ -245,6 +245,27 @@
       ],
       "@nexus/application/cases/no-action": [
         "./packages/application/src/cases/no-action.ts"
+      ],
+      "@nexus/application/actions/action-dag": [
+        "./packages/application/src/actions/action-dag.ts"
+      ],
+      "@nexus/domain/actions/bindings": [
+        "./packages/domain/src/actions/bindings.ts"
+      ],
+      "@nexus/db/schema/executions": [
+        "./packages/db/src/schema/executions.ts"
+      ],
+      "@nexus/db/repositories/executions": [
+        "./packages/db/src/repositories/executions.ts"
+      ],
+      "@nexus/integrations/enterprise/commands": [
+        "./packages/integrations/src/enterprise/commands.ts"
+      ],
+      "@nexus/application/actions/executor": [
+        "./packages/application/src/actions/executor.ts"
+      ],
+      "@nexus/application/actions/preflight": [
+        "./packages/application/src/actions/preflight.ts"
       ]
     },
     "skipLibCheck": true

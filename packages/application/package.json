@@ -111,6 +111,18 @@
     "./cases/no-action": {
       "types": "./dist/cases/no-action.d.ts",
       "default": "./dist/cases/no-action.js"
+    },
+    "./actions/action-dag": {
+      "types": "./dist/actions/action-dag.d.ts",
+      "default": "./dist/actions/action-dag.js"
+    },
+    "./actions/executor": {
+      "types": "./dist/actions/executor.d.ts",
+      "default": "./dist/actions/executor.js"
+    },
+    "./actions/preflight": {
+      "types": "./dist/actions/preflight.d.ts",
+      "default": "./dist/actions/preflight.js"
     }
   },
   "scripts": {

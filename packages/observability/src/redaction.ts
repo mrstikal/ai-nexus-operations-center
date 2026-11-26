@@ -17,6 +17,7 @@ export const AUDIT_ALLOWED_KEYS = [
   'actionRevisionId',
   'planHash',
   'policyRevision',
+  'policyContentHash',
   'role',
   'decision',
 ] as const;

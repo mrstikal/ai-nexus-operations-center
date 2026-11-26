@@ -16,6 +16,10 @@ export interface ExpireProposalRevisionInput {
   readonly entityRef: EntityRef;
   readonly changedFields: readonly string[];
   readonly originatingRevisionId: string | null;
+  readonly origin?: {
+    readonly itemId?: string;
+    readonly receiptKey?: string;
+  };
   readonly requestId: string;
   readonly correlationId: string;
 }
@@ -23,6 +27,14 @@ export interface ExpireProposalRevisionInput {
 export interface ProposalInvalidationStore {
   listOpenProposalRevisions(sandboxId: string): Promise<OpenProposalRevision[]>;
   expireProposalRevision(input: ExpireProposalRevisionInput): Promise<boolean>;
+  hasProvenOwnExecution?(input: {
+    readonly sandboxId: string;
+    readonly actionRevisionId: string;
+    readonly entityRef: EntityRef;
+    readonly originatingRevisionId: string | null;
+    readonly itemId?: string;
+    readonly receiptKey?: string;
+  }): Promise<boolean>;
 }
 
 export interface InvalidateProposalsInput {
@@ -30,6 +42,10 @@ export interface InvalidateProposalsInput {
   readonly entityRef: EntityRef;
   readonly changedFields: readonly string[];
   readonly originatingRevisionId: string | null;
+  readonly origin?: {
+    readonly itemId?: string;
+    readonly receiptKey?: string;
+  };
   readonly requestId: string;
   readonly correlationId: string;
 }
@@ -46,8 +62,29 @@ export async function invalidateAffectedProposals(
   const affected = open.filter((revision) =>
     revisionUsesEntity(revision.items, input.entityRef),
   );
-  const expiredProposalIds: string[] = [];
+  const proven: typeof affected = [];
   for (const revision of affected) {
+    const own =
+      input.originatingRevisionId === revision.revisionId &&
+      input.origin !== undefined &&
+      input.origin.itemId !== undefined &&
+      input.origin.receiptKey !== undefined &&
+      store.hasProvenOwnExecution !== undefined
+        ? await store.hasProvenOwnExecution({
+            sandboxId: input.sandboxId,
+            actionRevisionId: revision.revisionId,
+            entityRef: input.entityRef,
+            originatingRevisionId: input.originatingRevisionId,
+            itemId: input.origin.itemId as string,
+            receiptKey: input.origin.receiptKey as string,
+          })
+        : false;
+    if (!own) {
+      proven.push(revision);
+    }
+  }
+  const expiredProposalIds: string[] = [];
+  for (const revision of proven) {
     const expired = await store.expireProposalRevision({
       sandboxId: input.sandboxId,
       proposalId: revision.proposalId,

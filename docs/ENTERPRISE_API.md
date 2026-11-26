@@ -358,3 +358,25 @@ invoices, returns, customer addresses, chosen alternatives or financial effects.
 expose the Nexus API, create workflow runs, write Nexus audit rows or send real email. Later
 stages add the executor, approval binding, recovery and cross-store workflow behavior behind
 their own contracts.
+
+## Application executor additions (F13A)
+
+The application executor is the only caller that receives `ENTERPRISE_SIM_COMMAND_TOKEN`. Its
+request is the F08 command shape with `executeBefore` no later than the DB clock plus 30 seconds and
+no later than the authorizing revision expiry, `authorizationValidUntil` equal to that expiry, the
+whole-plan `planHash`, canonical per-item `itemHash` over the resolved payload and advanced base
+versions, and sorted prior receipt keys from the same revision. The executor persists its per-item
+execution key before I/O; the simulator receipt key is
+`sandboxId:actionRevisionId:itemId:commandKind`.
+
+Base versions may advance only through a continuous chain of this revision's earlier simulator
+receipt entity changes. The executor re-fetches prior receipts from the simulator lookup route
+before constructing the next command; it does not trust a local receipt copy or a client-supplied
+version. An external/agreement change returns `STALE_STATE`; an expired deadline returns
+`APPROVAL_EXPIRED` and no command is recorded. Message receipt-fact parts are resolved to committed
+entity IDs before the simulator sees them; the simulator remains unable to execute a deferred
+binding or accept a client approval claim.
+
+The simulator's receipt lookup remains available for a committed effect even if the local caller
+lost the response. F13A reports a failed command item without retrying or inventing a receipt; F13B
+adds found/unknown/absent-final reconciliation, bounded same-payload renewal and cancellation.

@@ -1826,16 +1826,88 @@
       "name": "Sequential Plan Executor and Per-Item Receipts",
       "dependencies": [
         "F08",
-        "F09",
-        "F11A",
+        "F10",
+        "F11",
         "F12",
         "F13"
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f13a-executor.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/src/schema/executions.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/migrations/0010_executions.sql",
+          "minBytes": 6000
+        },
+        {
+          "path": "packages/db/src/repositories/executions.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "packages/domain/src/actions/bindings.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/application/src/actions/action-dag.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/application/src/actions/preflight.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/application/src/actions/executor.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/integrations/src/enterprise/commands.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/worker/src/action.module.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "apps/api/src/actions.module.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "tests/integration/f13a-executor.test.ts",
+          "minBytes": 20000
+        },
+        {
+          "path": "docs/ACTIONS.md",
+          "minBytes": 4000
+        },
+        {
+          "path": "docs/ENTERPRISE_API.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/openapi.json",
+          "minBytes": 15000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F13B",

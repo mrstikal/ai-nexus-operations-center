@@ -252,3 +252,53 @@ revision/hash, policy revision/content hash, required/filled/missing roles, expi
 state, with `none` before executions exist. Decision registration also rejects an approval when the
 revision's policy identity differs from the current validated bundle (`POLICY_CHANGED`). Preflight
 is not an execution grant.
+
+## Sequential executor and per-item receipts (F13A)
+
+F13A adds the deterministic executor after approval. `packages/application/src/actions/executor.ts`
+walks the approved plan in topological item order; `action-dag.ts` supplies readiness and prior
+receipt keys, and `packages/domain/src/actions/bindings.ts` resolves only registered receipt-created
+IDs and advances expected versions only through a continuous chain of this same revision's earlier
+committed receipts. The first PO's own source-PO/inventory version changes may advance the second
+PO's captured base version; an unrelated change or agreement change still requires a new approval.
+Created entity bindings start from the creating receipt's result; money, customer, supplier, address
+and arbitrary field bindings are rejected.
+
+Each execution is unique on `(sandbox_id, action_revision_id, item_id)` with the stable key
+`sandboxId:actionRevisionId:itemId:commandKind`. Before an enterprise command the executor:
+reloads the current policy bundle and revision policy identity; checks active sandbox, proposal and
+revision state, whole-plan expiry, complete active decisions and no cancellation; fetches prior
+receipts through the simulator receipt port rather than trusting local copies; resolves bindings;
+computes the canonical command item hash from the resolved payload and advanced base versions; and
+sets `executeBefore <= min(DB clock + 30 seconds, revision/approval expiry)`. The business identity
+(plan hash, item hash, revision, item, kind, sandbox) is immutable across transport renewal. A
+successful receipt is persisted locally with typed result, entity changes and attempt history before
+the next item starts. A failed predecessor stops dependents; F13A records the failure and does not
+invent a retry. F13B owns unknown/absent-final recovery, cancellation after effects, partial effects
+and reissue.
+
+The worker owns execution writes; the API role has read-only execution access for commitment,
+preflight and no-action state. `proposal-events` invalidation ignores an event only when its
+`originatingRevisionId` plus receipt key matches a locally persisted succeeded execution and entity
+change for the same revision; an external/incomplete origin still expires the plan. The F12 prior
+commitment port now sums succeeded execution commitments for the case; the F13 empty execution-state
+port is bound to real `action_executions` rows in both API and worker compositions.
+
+The sole automatic branch remains `case.add_internal_note`: when the current policy bundle enables
+the internal-note automation, the executor records `authorizationBasis=policy_auto` with the policy
+revision/content hash and an audit event, inserts the local case note, and creates no enterprise
+command or human decision. Pending enterprise PO/message items never execute without a complete
+human approval. Execution does not change proposal semantics: approval is not execution proof, and
+proposal status remains separate from item execution state.
+
+### F13A dispatch rechecks and uncertain outcomes
+
+Candidate selection excludes terminal cases and any revision with an in-progress, failed or unknown
+execution, so one blocked plan cannot stall later approved plans. Claim re-reads the case status,
+the pinned-versus-current policy identity, live approver role rows, evidence availability, expiry,
+deadline and an all-pending execution set under the proposal/revision locks. Evidence becoming
+unavailable expires the plan and supersedes decisions with an `evidence_unavailable` audit rather
+than silently skipping it. TIMEOUT/NETWORK/ABORTED, malformed/oversized/sandbox-mismatched responses,
+and a local receipt-persistence failure after a remote success persist `unknown`; no-action and
+preflight block it. Cancellation or policy change after the claim but before the remote command is
+the documented claim-to-dispatch gap owned by F13B, not a claim that F13A is exactly-once.

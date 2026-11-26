@@ -103,6 +103,14 @@
     "./repositories/approvals": {
       "types": "./dist/repositories/approvals.d.ts",
       "default": "./dist/repositories/approvals.js"
+    },
+    "./schema/executions": {
+      "types": "./dist/schema/executions.d.ts",
+      "default": "./dist/schema/executions.js"
+    },
+    "./repositories/executions": {
+      "types": "./dist/repositories/executions.d.ts",
+      "default": "./dist/repositories/executions.js"
     }
   },
   "scripts": {
