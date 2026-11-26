@@ -5,6 +5,7 @@ import {
   pgSchema,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 import { cases } from './cases.js';
@@ -31,6 +32,7 @@ export const evidence = nexusSchema.table(
     capturedAt: timestamp('captured_at', { withTimezone: true }).notNull(),
   },
   (table) => [
+    uniqueIndex('evidence_sandbox_id_key').on(table.sandboxId, table.id),
     foreignKey({
       columns: [table.sandboxId, table.caseId],
       foreignColumns: [cases.sandboxId, cases.id],

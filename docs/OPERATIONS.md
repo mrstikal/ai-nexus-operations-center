@@ -180,6 +180,32 @@ Operational signals:
 The integration runner owns the isolated test project and tears down RabbitMQ, Valkey and
 PostgreSQL after the suite. Do not run `down --volumes` against the developer project.
 
+## Workflow worker (F11)
+
+When the worker database environment is present, `apps/worker` starts the workflow scheduler and
+runner in addition to the event transport. The scheduler polls pending inbox rows that have a
+registered trigger mapping; the runner claims database jobs with a 30-second lease, a 5-second
+heartbeat and a fencing token. If the worker database environment is absent, the workflow runtime
+is disabled and the worker health process still starts.
+
+The production default has an empty workflow definition registry and empty trigger map. The
+deterministic test definitions are enabled only with `NEXUS_WORKFLOW_TEST_DEFINITION=1`; do not set
+that flag in a demo or production process. F11 exposes no run query or SSE route.
+
+Operational signals:
+
+- `workflow_jobs.state='pending'` with an old `available_at` means the runner is not running.
+- A `leased` job with an expired `lease_expires_at` is reclaimed after expiry; it is not proof of
+  duplicate business execution because a stale commit fails the fence.
+- `workflow_runs.status='blocked'` with `UNKNOWN_DEFINITION` needs a registered definition
+  version; do not edit the run's definition fields.
+- `waiting_input`, `waiting_approval` and `waiting_dependency` runs are intentional persisted
+  waits. F11A adds the resume/cancel controls.
+- Attempt rows, evidence joins and trace rows are retained; F11 provides no automatic job or
+  journal deletion.
+
+See [WORKFLOWS.md](WORKFLOWS.md) for claim/fence, retry, hash and runbook details.
+
 ## F02 boundaries
 
 - No application, API, worker, web, or simulator container is started by `infra:up`; those

@@ -146,6 +146,27 @@
       ],
       "@nexus/messaging/topology": [
         "./packages/messaging/src/topology.ts"
+      ],
+      "@nexus/application/workflows/definitions": [
+        "./packages/application/src/workflows/definitions.ts"
+      ],
+      "@nexus/application/workflows/journal": [
+        "./packages/application/src/workflows/journal.ts"
+      ],
+      "@nexus/application/workflows/leases": [
+        "./packages/application/src/workflows/leases.ts"
+      ],
+      "@nexus/application/workflows/runner": [
+        "./packages/application/src/workflows/runner.ts"
+      ],
+      "@nexus/application/workflows/transitions": [
+        "./packages/application/src/workflows/transitions.ts"
+      ],
+      "@nexus/db/schema/workflows": [
+        "./packages/db/src/schema/workflows.ts"
+      ],
+      "@nexus/db/repositories/workflows": [
+        "./packages/db/src/repositories/workflows.ts"
       ]
     },
     "skipLibCheck": true

@@ -184,6 +184,31 @@ The F10 tables do not create workflow, approval, proposal, run, document, knowle
 tables. The inbox is the durable accepted queue, not a substitute for the F11 workflow job
 tables. See [EVENTS.md](EVENTS.md) for topology, delivery, retry and DLQ behavior.
 
+## Workflow journal (F11)
+
+Migration `packages/db/migrations/0006_workflows.sql` adds five Nexus tables.
+
+- `workflow_runs` stores the immutable ingress envelope/hash, definition name/version, trigger
+  event/inbox IDs, status, wait reason, effective time, policy/model/config/prompt revisions,
+  active-time limit/used, deadline, cancellation flag and row version. A unique
+  `(sandbox_id, trigger_event_id)` prevents duplicate runs.
+- `workflow_steps` stores one row per definition step: key/kind, status, input/output hash,
+  redacted output, evidence refs, attempt count/limit, error class and timing. Input identity is a
+  canonical hash of definition, ingress and sorted dependency outputs.
+- `workflow_step_attempts` is append-only attempt history with hashes, redacted output, evidence
+  refs, error class, revisions, fencing token and timing.
+- `workflow_attempt_evidence` is the typed join to an existing evidence row in the same sandbox;
+  missing, duplicate or cross-sandbox references are journaled as permanent failures rather than
+  copied into the journal.
+- `workflow_jobs` is the durable queue with state, owner, database-time lease, monotonic fencing
+  token, attempt count and availability. A partial unique index allows at most one active job per
+  run.
+
+`nexus_worker` can insert the journal and update only mutable lifecycle columns; ingress,
+definition identity and attempts are immutable. `nexus_api` has read access for F11B. The pending
+inbox row, run, initial job and pending step rows are created in one transaction. F11 does not add
+approval/proposal/action/execution/SSE tables; F11A/B and F12/F13 own those.
+
 ## F05/F07/F08 boundaries
 
 F07/F08 do not implement the application executor, approvals, automatic outbox publishing,

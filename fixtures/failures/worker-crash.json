@@ -1,0 +1,10 @@
+{
+  "leaseMs": 1000,
+  "heartbeatMs": 200,
+  "points": [
+    { "point": "after_claim" },
+    { "point": "before_step_commit", "stepKey": "join" },
+    { "point": "after_step_commit", "stepKey": "beta" },
+    { "point": "after_run_complete" }
+  ]
+}

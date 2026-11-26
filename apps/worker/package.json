@@ -18,7 +18,8 @@
     "@nexus/contracts": "workspace:*",
     "@nexus/db": "workspace:*",
     "@nexus/messaging": "workspace:*",
-    "pg": "8.23.1"
+    "pg": "8.23.1",
+    "@nexus/application": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/cli": "12.0.15",

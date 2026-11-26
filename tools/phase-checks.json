@@ -1275,10 +1275,96 @@
         "F10"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f11-workflow.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f11-workflow-journal.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/migrations/0006_workflows.sql",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/src/schema/workflows.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/src/repositories/workflows.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/application/src/workflows/definitions.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/application/src/workflows/journal.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/application/src/workflows/leases.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/application/src/workflows/runner.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/application/src/workflows/transitions.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "apps/worker/src/workflow.module.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "apps/worker/src/app.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "fixtures/failures/worker-crash.json",
+          "minBytes": 200
+        },
+        {
+          "path": "tests/helpers/worker-faults.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "tests/integration/f11-workflow-journal.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "tests/unit/f11-workflow.test.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "docs/WORKFLOWS.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/adr/003-workflow-engine.md",
+          "minBytes": 1500
+        },
+        {
+          "path": "docs/DATA_MODEL.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/SECURITY.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F11A",

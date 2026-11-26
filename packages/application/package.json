@@ -35,6 +35,26 @@
     "./ingress/service": {
       "types": "./dist/ingress/service.d.ts",
       "default": "./dist/ingress/service.js"
+    },
+    "./workflows/definitions": {
+      "types": "./dist/workflows/definitions.d.ts",
+      "default": "./dist/workflows/definitions.js"
+    },
+    "./workflows/journal": {
+      "types": "./dist/workflows/journal.d.ts",
+      "default": "./dist/workflows/journal.js"
+    },
+    "./workflows/leases": {
+      "types": "./dist/workflows/leases.d.ts",
+      "default": "./dist/workflows/leases.js"
+    },
+    "./workflows/runner": {
+      "types": "./dist/workflows/runner.d.ts",
+      "default": "./dist/workflows/runner.js"
+    },
+    "./workflows/transitions": {
+      "types": "./dist/workflows/transitions.d.ts",
+      "default": "./dist/workflows/transitions.js"
     }
   },
   "scripts": {

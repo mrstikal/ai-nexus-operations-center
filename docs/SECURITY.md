@@ -193,3 +193,35 @@ the inbox and dead letters; it has no access to `ingress_keys` and no outbox upd
 publisher columns. Neither role can read the other database schema. The local broker uses one identity for setup and runtime; F10
 documents this as a production-hardening gap and does not claim per-exchange broker ACLs. See
 [EVENTS.md](EVENTS.md) for topology, retry, DLQ and runbook details.
+
+## Workflow journal, jobs and leases (F11)
+
+Workflow execution is claimed only from the database job queue with `FOR UPDATE SKIP LOCKED`.
+A claim takes a 30-second database-time lease, a monotonic fencing token and an owner identity.
+Every step commit, job completion, block and budget transition rechecks the job, owner, token and
+unexpired lease in the same transaction. A stale or stolen worker cannot commit, and a heartbeat
+after expiry returns false. Lease validity uses `clock_timestamp()`, not process time.
+
+The worker can insert runs, steps, attempts, evidence joins and jobs, but can update only the
+journal's mutable lifecycle columns. Ingress, definition identity and attempt rows are immutable
+to it. The API receives read-only run/step/attempt access for F11B; it cannot claim jobs or edit
+the journal. Attempt records contain canonical input/output hashes, a bounded redacted output
+object, evidence IDs joined to existing evidence rows in the same sandbox and revisions/error
+class. Evidence references are checked for UUID syntax, uniqueness, existence and sandbox
+ownership; an invalid reference becomes a journaled permanent failure, not a repeated execution.
+Attempts do not copy raw documents, prompts, model reasoning or enterprise payloads. Trace records
+use the existing allowlist and carry only step/status/attempt/duration/error/evidence-count/retry
+fields.
+
+Only pure/read steps use the bounded `1s`/`5s`/`30s` retry policy with at most three attempts;
+definitions and the database reject a larger limit. External steps are never generically retried;
+a retryable failure is recorded as `EXTERNAL_RETRY_FORBIDDEN`. Deadline or projected active-time
+exhaustion moves the run to `budget_exhausted` and fails the job in a committed transaction, so a
+deadline that passes during a step cannot roll the transition back. A persisted wait releases the
+lease; F11 does not perform AI or human work while holding a delivery.
+
+The deterministic test definitions are registered only when
+`NEXUS_WORKFLOW_TEST_DEFINITION=1`. Production starts with an empty registry and trigger map, so a
+test workflow cannot appear as a product workflow. Unknown definition versions create a blocked
+run without a job; a trigger without a case link marks the inbox row dead. Neither path executes a
+step. F11 exposes no run/SSE HTTP route; F11B owns authenticated run queries and bounded SSE.

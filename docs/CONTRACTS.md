@@ -191,6 +191,26 @@ result/timeout/retry/budget values and a redaction mode with an allowlist. Gatew
 carry the workflow and budget context; failures carry provider/model, attempt IDs, cost,
 prompt/config revisions and redacted diagnostics alongside success responses.
 
+## Workflow journal contracts (F11)
+
+The declared `WorkflowRun` and `WorkflowStep` schemas remain the shared run/step shapes. F11
+implements their durable backing tables and adds no HTTP route; F11B will expose bounded run and
+SSE queries. Run statuses are the declared `queued`/`running`/`waiting_*`/`blocked`/
+`budget_exhausted`/`completed`/`failed`/`cancel_requested`/`cancelled` set. Step statuses are
+`pending`/`running`/`succeeded`/`retryable_failure`/`permanent_failure`/`waiting`/`cancelled`.
+
+Each committed step attempt has a canonical input hash and output hash, a bounded redacted output
+object, evidence IDs and model/policy/config/prompt revisions. The input hash covers definition
+name/version, run ingress hash, step key and sorted dependency output hashes; a succeeded step is
+reused only for the same hash. Attempts are immutable. A job claim has an owner, database-time
+lease and monotonic fencing token; a commit with a stale token is rejected with a lease-lost
+outcome, never a partial journal write.
+
+Pure/read retries use `1s`/`5s`/`30s` for at most three attempts. External steps do not use the
+generic retry path. A persistent wait stores a `WaitReason` and releases the lease. Unknown
+workflow definition versions create a `blocked` run without a job; they do not silently fall back
+to an older definition.
+
 ## Durable case intake and events (F10)
 
 F10 adds `packages/contracts/src/ingress.ts`. `CaseIntakeRequest` carries a title, nullable

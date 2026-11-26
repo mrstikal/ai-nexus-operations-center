@@ -59,6 +59,14 @@
     "./repositories/ingress": {
       "types": "./dist/repositories/ingress.d.ts",
       "default": "./dist/repositories/ingress.js"
+    },
+    "./schema/workflows": {
+      "types": "./dist/schema/workflows.d.ts",
+      "default": "./dist/schema/workflows.js"
+    },
+    "./repositories/workflows": {
+      "types": "./dist/repositories/workflows.d.ts",
+      "default": "./dist/repositories/workflows.js"
     }
   },
   "scripts": {
