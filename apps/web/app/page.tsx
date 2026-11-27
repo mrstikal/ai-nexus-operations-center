@@ -218,7 +218,7 @@ export default async function HomePage() {
         variant="empty"
         title="No cases in this sandbox yet"
         testId="empty-state"
-        action={<span className="nexus-feedback__hint">Case workbench is scheduled for F20.</span>}
+        action={<span className="nexus-feedback__hint">Case workbench is scheduled for F21.</span>}
       >
         This phase exposes the authenticated session and server-resolved sandbox only. No
         case list, approval center, or assistant screen is claimed complete.

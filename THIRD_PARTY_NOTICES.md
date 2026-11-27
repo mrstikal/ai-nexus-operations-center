@@ -78,4 +78,4 @@ from pinned sources.
 
 The base distribution also contains operating-system libraries and notices. The full
 container and binary inventory, including their distribution obligations, is expanded
-by the supply-chain gate in F48B.
+by the supply-chain gate in F64.

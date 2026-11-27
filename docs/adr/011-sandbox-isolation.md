@@ -4,7 +4,7 @@
 
 Accepted as the fixed isolation decision of the implementation plan. F05 implements the
 initial active sandbox, scoped case/evidence/audit/trace foundation and server-side read
-resolution; non-destructive reset remains F46.
+resolution; non-destructive reset remains F56.
 
 ## Context
 
@@ -24,7 +24,7 @@ an arbitrary sandbox and use case IDs as authorization.
   keys for local business references and validate external references.
 - Resolve the active sandbox on the server for every request. A browser-supplied sandbox or
   case/evidence ID never grants access; foreign-sandbox resources return 404 without content.
-- Treat retired sandboxes as read-only. Reset creates a new seed/sandbox generation in F46;
+- Treat retired sandboxes as read-only. Reset creates a new seed/sandbox generation in F56;
   it does not truncate historical data or use destructive volume cleanup.
 - Keep users/sessions/configuration global. Isolation is for synthetic scenarios of one
   company, not a multi-tenant authorization claim.
@@ -38,7 +38,7 @@ an arbitrary sandbox and use case IDs as authorization.
 - Evidence cannot claim a source from another sandbox; source status must be explicit when
   a source is missing.
 - F05 does not implement browser sandbox switching or reset; F06 displays the active context
-  and F46 adds admin-confirmed lifecycle.
+  and F56 adds admin-confirmed lifecycle.
 - Cross-sandbox IDs return 404/403 without revealing whether the record exists.
 
 ## Alternatives considered
@@ -55,5 +55,5 @@ an arbitrary sandbox and use case IDs as authorization.
 ## Sources
 
 - [NEXUS implementation plan](../../NEXUS_IMPLEMENTATION_PLAN_final.md) sections 2.3, 3.2, 4.1,
-  F05 and F46.
+  F05 and F56.
 - [Data model](../DATA_MODEL.md), [security guide](../SECURITY.md).

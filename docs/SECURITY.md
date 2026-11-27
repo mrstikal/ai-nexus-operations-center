@@ -125,7 +125,7 @@ allowlisted primitive payload with a per-sandbox sequence, and is retained under
 diagnostic policy without becoming a workflow journal. Trace must not contain raw prompts,
 secrets or personal data. Application roles can append/read trace but cannot alter existing
 audit or trace rows. Audit/decision/receipt/spend records are retained longer than traces;
-retention jobs arrive in F46A and must never purge approval/audit history silently.
+retention jobs arrive in F57 and must never purge approval/audit history silently.
 
 ## Enterprise read client and tool registry
 

@@ -60,7 +60,7 @@ describe('F01 phase manifest and selection', () => {
 
     expect(ids).toHaveLength(74);
     expect(ids[0]).toBe('F01');
-    expect(ids.at(-1)).toBe('F52');
+    expect(ids.at(-1)).toBe('F70');
     expect(new Set(ids).size).toBe(74);
 
     for (const stage of manifest.stages) {

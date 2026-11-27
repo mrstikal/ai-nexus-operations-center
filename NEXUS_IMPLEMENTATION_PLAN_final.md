@@ -7,8 +7,8 @@
 - This document specifies intended behavior. No application, migrations, deployment, live AI run, or product acceptance is claimed by producing it.
 - The deliverable is this plan, not an instruction to start implementation. Implementation requires the user's subsequent authorization.
 - English is used for implementation artifacts. Operator-facing application copy is English; phase reports to the user are Czech. Internationalization is outside core scope.
-- All stages F01 through F52, including letter-suffix stages in document order, are mandatory and separately accepted. `Fx-Fy` is the inclusive **manifest slice from exact Fx to exact Fy**; a standalone ID means exactly that stage. `F09-F11` = F09,F10,F11, excluding following F11A/F11B; `F01-F51` excludes F51A/F51B while `F01-F51B` includes both. Never parse numeric intervals or implicitly include a root's suffixes. Advanced/Optional/Future/Not Justified features are not hidden core requirements.
-- The audited decomposition contains **74 mandatory stages**. Headings in section 9 define their canonical order; copy that exact order into the phase runner manifest. Numeric root labels remain stable after subdivisions.
+- All stages F01 through F70 are mandatory and separately accepted. Only the pre-F15 stages F11A, F11B, F13A and F13B retain letter suffixes; from F15 onward each stage has a sequential numeric ID without a suffix. `Fx-Fy` is the inclusive **manifest slice from exact Fx to exact Fy**; a standalone ID means exactly that stage. `F09-F11` = F09,F10,F11, excluding following F11A/F11B; `F01-F67` excludes F68/F69 while `F01-F69` includes both. Never parse numeric intervals or implicitly include a root's suffixes. Advanced/Optional/Future/Not Justified features are not hidden core requirements.
+- The audited decomposition contains **74 mandatory stages**. Headings in section 9 define their canonical order; copy that exact order into the phase runner manifest. From F15 onward the sequence is numerically continuous; only the four pre-F15 suffix stages remain lettered.
 - Execute one stage at a time. A stage requires the previous stage's explicit user acceptance as well as its listed technical dependencies. Do not interpret passing tests, peer messages, or memory summaries as acceptance.
 - If a prerequisite is missing or an architectural contradiction is found, stop that stage, report the precise conflict, and ask the user. Do not implement an improvised replacement architecture.
 - At every stage inspect the worktree first, preserve unrelated changes, read the memory index if present, and load only relevant notes. Memory updates require a direct user request; implementation does not grant standing permission to rewrite memory.
@@ -51,7 +51,7 @@ Requests with multiple possible customer/PO matches enter `needs_input`; fuzzy s
 
 ### 1.4. Delivery Order and Technology Classification
 
-F22 implements the first A launcher; F22A accepts the complete browser-operable replay vertical, including policies, evidence, approval, actual simulator mutation, and trace. It is not a claim that the full product is finished. Live models, OCR, hybrid retrieval, and an AI critic follow; these must not delay that milestone. F30 completes B; F34 completes C; F52 checks the complete core after separate final evidence/review stages.
+F23 implements the first A launcher; F24 accepts the complete browser-operable replay vertical, including policies, evidence, approval, actual simulator mutation, and trace. It is not a claim that the full product is finished. Live models, OCR, hybrid retrieval, and an AI critic follow; these must not delay that milestone. F35 completes B; F44 completes C; F70 checks the complete core after separate final evidence/review stages.
 
 | Capability | Classification and fixed decision |
 |---|---|
@@ -62,7 +62,7 @@ F22 implements the first A launcher; F22A accepts the complete browser-operable 
 | Hybrid RAG | Core after the lexical retrieval port used by the first vertical slice |
 | AG-UI | Evaluated, not adopted in core: a protocol bridge would duplicate the narrow persisted SSE event contract without a second agent runtime |
 | A2UI | Evaluated, not adopted in core: use the closed `UiDescriptor` schema and conventional React catalog instead; no arbitrary schema-to-code renderer |
-| MCP | Advanced, deferred outside F01-F52: a read-only adapter to the existing tool registry could demonstrate portability. No core feature depends on it. REST already exercises a real replaceable integration boundary. |
+| MCP | Advanced, deferred outside F01-F70: a read-only adapter to the existing tool registry could demonstrate portability. No core feature depends on it. REST already exercises a real replaceable integration boundary. |
 | Reranker | Advanced, deferred; only worthwhile if a future measured hybrid-retrieval baseline fails its relevance target. No runtime reranking dependency in core. |
 | Cache-Augmented Generation | Core only in the mundane form of version-keyed retrieval/context caching; no separate CAG framework |
 | Semantic answer caching | Not justified: authorization, business-state versions, and policy drift make its stale-answer risk exceed demonstrated savings |
@@ -76,7 +76,7 @@ F22 implements the first A launcher; F22A accepts the complete browser-operable 
 
 ### 1.5. Non-Functional Targets
 
-These are acceptance targets to measure in F49, not results already achieved.
+These are acceptance targets to measure in F65, not results already achieved.
 
 - Reference machine: Linux or Docker Desktop, 4 CPU cores, 16 GiB RAM, 15 GiB free disk; no GPU. The default stack should stay below 8 GiB steady-state container RAM; the optional telemetry profile is measured separately.
 - UI at 360, 768, and 1440 CSS-pixel widths; keyboard-complete primary flows; WCAG 2.2 AA-oriented automated and manual checks. Do not claim certification.
@@ -217,18 +217,18 @@ Every business table includes `id`, `sandbox_id`, `created_at`; mutable rows add
 | nexus actions/policy | action_proposals, action_revisions, action_revision_evidence, policy_bundles | F12; each revision is a whole immutable action plan |
 | nexus human decisions | approval_decisions | F13, API-role inserts only |
 | nexus execution | action_executions, action_execution_attempts | F13A-F13B, one execution per revision/item |
-| nexus AI | model_config_revisions, budget_accounts, model_calls, budget_reservations, usage_adjustments | F14; live validation in F23 |
-| nexus live configuration | model_config_validations, privacy_attestations | F23; runtime_limit_revisions F40 |
-| nexus documents | blobs, documents, document_versions, extraction_revisions, extraction_jobs | F15-F16 |
-| nexus knowledge | knowledge_documents, knowledge_versions, knowledge_chunks | F17; vector columns/indexes F25 |
-| enterprise B | deliveries/lines, invoices/lines, invoice_document_keys | F27 |
-| enterprise C | customer_terms (F31), return_authorizations (F31A), replacement_shipments/lines (F31B), credit_note_drafts (F31C) | F31-F31D; address command F31D adds no competing order table |
-| nexus memory | memory_entries, memory_revisions, feedback | F35 |
-| nexus assistant | conversations, conversation_messages, assistant_runs | F36 |
-| nexus evaluation | evaluation_runs, evaluation_results, evaluation_baselines | F42 |
-| nexus lifecycle | reset_requests | F46; retention_jobs F46A |
+| nexus AI | model_config_revisions, budget_accounts, model_calls, budget_reservations, usage_adjustments | F14; live validation in F25 |
+| nexus live configuration | model_config_validations, privacy_attestations | F25; runtime_limit_revisions F50 |
+| nexus documents | blobs, documents, document_versions, extraction_revisions, extraction_jobs | F15-F17 |
+| nexus knowledge | knowledge_documents, knowledge_versions, knowledge_chunks | F18; vector columns/indexes F27 |
+| enterprise B | deliveries/lines, invoices/lines, invoice_document_keys | F30 |
+| enterprise C | customer_terms (F36), return_authorizations (F37), replacement_shipments/lines (F38), credit_note_drafts (F39) | F36-F40; address command F40 adds no competing order table |
+| nexus memory | memory_entries, memory_revisions, feedback | F45 |
+| nexus assistant | conversations, conversation_messages, assistant_runs | F46 |
+| nexus evaluation | evaluation_runs, evaluation_results, evaluation_baselines | F52 |
+| nexus lifecycle | reset_requests | F56; retention_jobs F57 |
 
-Drizzle schema files are grouped by these modules. Migrations are monotonically numbered SQL checked into the corresponding migration folder; destructive changes require an explicit migration plan, not ORM push. Unique constraints include source event identity, normalized invoice identity, immutable revision number, execution idempotency key and simulator receipt key. Add indexes for sandbox/status/created_at, case/run foreign keys, outbox next-attempt and workflow lease eligibility. F25 adds GIN FTS and HNSW vector indexes. No JSON blob substitutes for queryable money, status, identifiers or row versions.
+Drizzle schema files are grouped by these modules. Migrations are monotonically numbered SQL checked into the corresponding migration folder; destructive changes require an explicit migration plan, not ORM push. Unique constraints include source event identity, normalized invoice identity, immutable revision number, execution idempotency key and simulator receipt key. Add indexes for sandbox/status/created_at, case/run foreign keys, outbox next-attempt and workflow lease eligibility. F27 adds GIN FTS and HNSW vector indexes. No JSON blob substitutes for queryable money, status, identifiers or row versions.
 
 `evidence` stores immutable source kind, source ID/version, content hash, locator, captured facts and capture time. It can refer to an enterprise snapshot, document page/offset, policy version, calculation input/output or historical memory. It is never just a model-supplied URL. Authoritative facts can expire for execution even when their historical snapshot remains valid for an audit.
 
@@ -254,13 +254,13 @@ erDiagram
 
 The diagram is a logical aggregate view: documents may be attached to a case after upload; SQL models that as a nullable case reference until attachment. Each ACTION_EXECUTION also has an immutable item ID. Enterprise entities/receipts live in the other schema and are referenced by validated REST snapshots, not cross-schema joins/FKs.
 
-Reconciliation reports have one persisted home: an immutable `evidence` row with `kind='reconciliation_report'`, typed canonical report data, input extraction/entity versions and calculation rule version. `reconciliationReportId` is that row's ID and `reportHash` its canonical content hash, created in F28 and reused by F29/actions/C. Do not add a competing report JSON table or derive an ID from a transient model response. Its concrete evidence relations hold the source against deletion while unresolved/needed for an action.
+Reconciliation reports have one persisted home: an immutable `evidence` row with `kind='reconciliation_report'`, typed canonical report data, input extraction/entity versions and calculation rule version. `reconciliationReportId` is that row's ID and `reportHash` its canonical content hash, created in F33 and reused by F34/actions/C. Do not add a competing report JSON table or derive an ID from a transient model response. Its concrete evidence relations hold the source against deletion while unresolved/needed for an action.
 
 Audit and trace are distinct: audit is append-only security/business history; trace is bounded operational diagnostics. Audit events include actor, request/correlation/run IDs, action, target, before/after hashes and outcome, not raw personal data. Application roles cannot alter existing audit rows; this is not a claim of tamper-proof storage against the database administrator.
 
 ### 3.3. Fixed Business Rules
 
-`config/policies/northstar-v1.json` is the single core executable policy data bundle. F12 also creates `fixtures/knowledge/northstar-v1.md`, its canonical human-readable source, and records its SHA-256 in the bundle. F17 ingests that existing exact file; it does not create a second canonical policy. Unmatched documents may be informational but cannot supply executable rules. Numeric thresholds/allowed product flags live in the validated bundle; algorithms, authorization and hard safety ceilings live in the code homes below. No embedded JavaScript, SQL, template execution or arbitrary expressions are permitted. Model/retrieved text cannot alter the bundle. Revisions are immutable and proposals pin a policy version. Changing executable rules requires a reviewed configuration/code change and migration, not a model-generated policy or free-form UI save.
+`config/policies/northstar-v1.json` is the single core executable policy data bundle. F12 also creates `fixtures/knowledge/northstar-v1.md`, its canonical human-readable source, and records its SHA-256 in the bundle. F18 ingests that existing exact file; it does not create a second canonical policy. Unmatched documents may be informational but cannot supply executable rules. Numeric thresholds/allowed product flags live in the validated bundle; algorithms, authorization and hard safety ceilings live in the code homes below. No embedded JavaScript, SQL, template execution or arbitrary expressions are permitted. Model/retrieved text cannot alter the bundle. Revisions are immutable and proposals pin a policy version. Changing executable rules requires a reviewed configuration/code change and migration, not a model-generated policy or free-form UI save.
 
 | Rule | Exact behavior |
 |---|---|
@@ -278,11 +278,11 @@ Audit and trace are distinct: audit is append-only security/business history; tr
 
 | Rule family | Code source and configuration boundary | Owner |
 |---|---|---|
-| Stock/allocation | `packages/domain/src/supply/allocate.ts`; simulator stock invariant cannot be disabled by bundle | F18; simulator F08/F31B |
-| Approved alternatives/financial impact | `packages/domain/src/supply/{alternatives,impact}.ts`; bundle max suppliers/thresholds, authoritative agreement prices/capacity | F18 |
+| Stock/allocation | `packages/domain/src/supply/allocate.ts`; simulator stock invariant cannot be disabled by bundle | F19; simulator F08/F38 |
+| Approved alternatives/financial impact | `packages/domain/src/supply/{alternatives,impact}.ts`; bundle max suppliers/thresholds, authoritative agreement prices/capacity | F19 |
 | Supply approval/automatic-note allowlist | `packages/domain/src/policies/{approvals,action-validation}.ts`; bundle may tighten thresholds but not grant roles/change low-risk catalog | F12-F13B |
-| Reconciliation/financial writes | `packages/domain/src/reconciliation/{three-way,tolerances}.ts`; bundle cent/window thresholds, compiled finance/no-payment constraints | F27A-F29 |
-| Return/replacement/address eligibility | `packages/domain/src/customer/eligibility.ts` plus independent simulator checks; bundle window/returnability cannot bypass stock/state | F31A-F32 |
+| Reconciliation/financial writes | `packages/domain/src/reconciliation/{three-way,tolerances}.ts`; bundle cent/window thresholds, compiled finance/no-payment constraints | F31-F34 |
+| Return/replacement/address eligibility | `packages/domain/src/customer/eligibility.ts` plus independent simulator checks; bundle window/returnability cannot bypass stock/state | F37-F41 |
 | Approval lifetime/editor separation | `packages/application/src/actions/{decisions,executor}.ts`; bundle TTL <=24h hard ceiling, compiled identity/hash/plan binding | F13-F13B |
 
 Source files, not RAG text, enforce these rules. Only the named northstar bundle exists in core; policy IDs distinguish sections within it, not undeclared additional bundles. A simulator can reuse pure predicates on its own locked DB facts, never trust a model/application's `eligible=true` field.
@@ -293,9 +293,9 @@ For A, compute shortage separately per product and affected delivery deadline. S
 
 ### 3.4. Sandbox and Fixture Model
 
-All cases/simulator records have sandboxId and server scope. The **fresh seed baseline before scenario effects** has 12 products, 6 suppliers, 12 customers, 12 POs, 24 sales orders (F07); 8 deliveries/10 staged invoices (F27); 30 prior communications (F31); 12 imported historical cases (F35). F07 fills foundation tables with named A subset plus coherent residual B/C records, not future tables/code. Runtime commands legitimately add records. Count assertions run before launch or select seed-tagged rows, never mistake effects for seed drift; F45 verifies all counts/links.
+All cases/simulator records have sandboxId and server scope. The **fresh seed baseline before scenario effects** has 12 products, 6 suppliers, 12 customers, 12 POs, 24 sales orders (F07); 8 deliveries/10 staged invoices (F30); 30 prior communications (F36); 12 imported historical cases (F45). F07 fills foundation tables with named A subset plus coherent residual B/C records, not future tables/code. Runtime commands legitimately add records. Count assertions run before launch or select seed-tagged rows, never mistake effects for seed drift; F55 verifies all counts/links.
 
-Scenario launch creates a fresh scenario instance with unique event IDs against known fixture records; it does not overwrite an existing case. The launcher prevents conflicting runs against the same mutable fixture entities and, from F46, offers a new sandbox when needed. Reset is non-destructive: F46 retires the previous sandbox and creates/activates a fresh seed generation. Historical traces remain read-only. No `docker compose down -v`, database drop, or hidden volume deletion is a normal reset.
+Scenario launch creates a fresh scenario instance with unique event IDs against known fixture records; it does not overwrite an existing case. The launcher prevents conflicting runs against the same mutable fixture entities and, from F56, offers a new sandbox when needed. Reset is non-destructive: F56 retires the previous sandbox and creates/activates a fresh seed generation. Historical traces remain read-only. No `docker compose down -v`, database drop, or hidden volume deletion is a normal reset.
 
 ## 4. Stable HTTP, Tool, Event and UI Contracts
 
@@ -311,17 +311,17 @@ The browser calls `/api/v1` on the web origin; Next route handlers proxy a fixed
 | Route group | Essential endpoints | Authorization/owner |
 |---|---|---|
 | auth | `GET /auth/csrf`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | Preauth/session; F04 |
-| cases | list/detail/create/input/history plus `POST /cases/:id/resolve-no-action` | viewer read, operator create/input; F05/F10/F19; human no-action control F13/F13B |
-| evidence/trace | `GET /evidence/:id`, `GET /runs/:id`, `GET /runs/:id/events`, `POST /runs/:id/cancel` | viewer scoped read, operator cancel; F05/F11A/F11B/F20 |
+| cases | list/detail/create/input/history plus `POST /cases/:id/resolve-no-action` | viewer read, operator create/input; F05/F10/F20; human no-action control F13/F13B |
+| evidence/trace | `GET /evidence/:id`, `GET /runs/:id`, `GET /runs/:id/events`, `POST /runs/:id/cancel` | viewer scoped read, operator cancel; F05/F11A/F11B/F21 |
 | proposals | `GET /cases/:id/proposals`, `POST /cases/:id/proposals`, `PATCH /proposals/:id`, `POST /proposals/:id/clarification`, `POST /proposals/:id/reanalyse` | operator, optimistic revision; F12/F13 |
 | approvals | `GET /approvals`, `POST /proposals/:id/approve`, `POST /proposals/:id/reject` | exact ops/finance roles, immutable decisions; F13 |
-| documents | `POST /documents`, `GET /documents`, `GET /documents/:id`, `GET /documents/:id/content`, `PATCH /documents/:id/extraction` | operator upload/correct, viewer read; F15/F16 |
-| knowledge | `GET /knowledge`, `POST /knowledge`, `POST /knowledge/:id/publish`, `POST /knowledge/search` | admin manage, scoped operator search; F17/F38 |
-| assistant | `POST /assistant/runs`, `GET /assistant/runs/:id/events`, `POST /assistant/runs/:id/cancel` | operator; F36 |
-| dashboard | `GET /dashboard`, `POST /briefings` | viewer read, operator budgeted briefing; F39 |
-| admin | `GET /admin/models`, `POST /admin/model-revisions`, `GET /admin/usage`, `GET /admin/failures`, `POST /admin/failures/:id/retry` | admin; retries still use the original safe/idempotent payload; F23/F40/F41 |
-| evaluations | `GET /evaluations`, `GET /evaluations/:id`, `POST /evaluations` | admin; UI start supports offline only, live CLI opt-in; F42-F44 |
-| demo | `GET /demo/scenarios`, `POST /demo/scenarios/:id/launch`, `POST /demo/reset`, `GET /demo/reset/:id` | operator launch, admin reset; F22/F45-F46 |
+| documents | `POST /documents`, `GET /documents`, `GET /documents/:id`, `GET /documents/:id/content`, `PATCH /documents/:id/extraction` | operator upload/correct, viewer read; F15/F17 |
+| knowledge | `GET /knowledge`, `POST /knowledge`, `POST /knowledge/:id/publish`, `POST /knowledge/search` | admin manage, scoped operator search; F18/F48 |
+| assistant | `POST /assistant/runs`, `GET /assistant/runs/:id/events`, `POST /assistant/runs/:id/cancel` | operator; F46 |
+| dashboard | `GET /dashboard`, `POST /briefings` | viewer read, operator budgeted briefing; F49 |
+| admin | `GET /admin/models`, `POST /admin/model-revisions`, `GET /admin/usage`, `GET /admin/failures`, `POST /admin/failures/:id/retry` | admin; retries still use the original safe/idempotent payload; F25/F50/F51 |
+| evaluations | `GET /evaluations`, `GET /evaluations/:id`, `POST /evaluations` | admin; UI start supports offline only, live CLI opt-in; F52-F54 |
+| demo | `GET /demo/scenarios`, `POST /demo/scenarios/:id/launch`, `POST /demo/reset`, `GET /demo/reset/:id` | operator launch, admin reset; F23/F55-F56 |
 
 All read routes enforce current/specified readable sandbox and resource scope. A browser-supplied case/run ID is never authorization. A retired sandbox is read-only to all humans; inactive-sandbox mutations return `STALE_STATE`.
 
@@ -351,10 +351,10 @@ The simulator exposes private `/v1` routes. All require an injected read token o
 | `enterprise.get_inventory` | bounded product IDs -> on hand, reservations, available, confirmed inbound line quantities/arrival dates and all contributing versions | read |
 | `enterprise.get_affected_orders` | PO/product IDs + horizon -> exact sales orders/deadlines/versions | read |
 | `enterprise.list_alternatives` | products/quantities/deadline -> approved supplier offers/capacity/versions | read |
-| `enterprise.get_customer_context` | exact customer/order ID -> delivery, terms, communications, links | read; F31 |
-| `enterprise.get_invoice_context` | supplier/invoice/PO IDs -> invoice, PO and receipt facts | read; F27 |
+| `enterprise.get_customer_context` | exact customer/order ID -> delivery, terms, communications, links | read; F36 |
+| `enterprise.get_invoice_context` | supplier/invoice/PO IDs -> invoice, PO and receipt facts | read; F30 |
 | `domain.calculate_supply_options` | validated snapshots -> immutable allocation/cost comparison evidence | deterministic compute |
-| `domain.reconcile_document` | validated extracted data + authoritative snapshots -> discrepancy report | deterministic compute; F28 |
+| `domain.reconcile_document` | validated extracted data + authoritative snapshots -> discrepancy report | deterministic compute; F33 |
 | `knowledge.search` | bounded query + allowed metadata -> current published chunks and citations | read |
 | `actions.propose` | bounded typed draft plan/items + evidence IDs -> whole-plan draft revision, never approval/execution | propose only |
 | `cases.add_internal_note` | bounded plain text + case ID -> audited internal note | policy-authorized automatic action |
@@ -383,7 +383,7 @@ type EventEnvelope<T> = {
 
 Registry names: `nexus.case.created.v1`, `nexus.case.completed.v1`, `nexus.document.ready.v1`, `nexus.workflow.resume.v1`, `nexus.action.requested.v1`, `enterprise.supplier.delay.v1`, `enterprise.inventory.changed.v1`, `enterprise.order.changed.v1`, `enterprise.invoice.changed.v1`, and `enterprise.communication.created.v1`. Payloads live in contracts/events; arbitrary names reject. Supplier delay has supplier/PO and optional existing document IDs; absent/unready source enters input/document wait, never arbitrary URL download. Other changes identify entity/version/fields. Case-completed has case ID, terminal run/trigger event IDs, terminal case version/status (`resolved|escalated|cancelled`), outcome evidence IDs and correlation; F11A emits it with terminal transition in one transaction.
 
-F17 additionally registers `nexus.knowledge.changed.v1` with document/version IDs, publication state and new retrieval generation. Publication transaction updates version visibility and affected plan revalidation state before emitting this notification. F25's cache keys use the committed SQL generation and recheck current visibility; asynchronous cache invalidation is an optimization, never permission/policy correctness.
+F18 additionally registers `nexus.knowledge.changed.v1` with document/version IDs, publication state and new retrieval generation. Publication transaction updates version visibility and affected plan revalidation state before emitting this notification. F27's cache keys use the committed SQL generation and recheck current visibility; asynchronous cache invalidation is an optimization, never permission/policy correctness.
 
 Publish inside a database outbox transaction with the business change. Publisher confirms precede delivered marking; crash may duplicate. Use durable topic exchanges `nexus.events` and `enterprise.events`, persistent single-node quorum queues, `prefetch=8`, manual ack. Setup credentials declare topology; runtime publishers can write only their own exchange, consumer checks exchange/type-prefix/producer consistency and envelope schemas. Single node is persistence, not HA.
 
@@ -431,11 +431,11 @@ stateDiagram-v2
 
 Resume requires an explicit recorded cause: human input, completed approval, dependency retry, or a new authorized budget extension within the hard ceiling. Terminal states cannot spontaneously resume. A new analysis after completion is a new linked run, not mutation of an old trace.
 
-`waiting_dependency` is distinct from human/approval waits. F11A stores `workflow_dependencies(parent_run_id, child_case_id, child_trigger_event_id, linked_case_version, root_case_id, expires_at, state)` plus typed wait_reason. Same-sandbox linkage has max depth one and unique cause. Wake matches exact child/trigger generation, terminal version >= linked version, and current case terminal version equal to event version; it must not require the child's version to stay unchanged while it works. Old-generation/old-terminal events never wake a newer wait. Child failure/cancel, incompatible new generation or 48-real-hour expiry escalates the parent. Dependency/wake job/inbox transition is transactional; F33A later creates customer-specific child intake using this existing mechanism.
+`waiting_dependency` is distinct from human/approval waits. F11A stores `workflow_dependencies(parent_run_id, child_case_id, child_trigger_event_id, linked_case_version, root_case_id, expires_at, state)` plus typed wait_reason. Same-sandbox linkage has max depth one and unique cause. Wake matches exact child/trigger generation, terminal version >= linked version, and current case terminal version equal to event version; it must not require the child's version to stay unchanged while it works. Old-generation/old-terminal events never wake a newer wait. Child failure/cancel, incompatible new generation or 48-real-hour expiry escalates the parent. Dependency/wake job/inbox transition is transactional; F43 later creates customer-specific child intake using this existing mechanism.
 
 Case states are `new`, `investigating`, `needs_input`, `needs_approval`, `executing`, `resolved`, `escalated`, `cancelled`. Only the application state reducer maps workflow/action transitions to case status. A completed analysis with missing evidence maps to escalated, not resolved. A case is resolved only when all required actions succeed or a human records a justified no-action resolution.
 
-The no-action path is explicit human-only POST from F13: operator supplies a bounded reason, cancels all unstarted plan items under the same run/proposal lock used for dispatch, and records human-resolution evidence/audit. Any started/succeeded/unknown execution returns 409 instead of pretending no effect occurred; F13A/B wire that guard to real execution state. F21 shows it only when server says allowed. No AI tool can resolve a case this way, and a partial-effect case stays visibly escalated/cancelled unless its real required plan completes.
+The no-action path is explicit human-only POST from F13: operator supplies a bounded reason, cancels all unstarted plan items under the same run/proposal lock used for dispatch, and records human-resolution evidence/audit. Any started/succeeded/unknown execution returns 409 instead of pretending no effect occurred; F13A/B wire that guard to real execution state. F22 shows it only when server says allowed. No AI tool can resolve a case this way, and a partial-effect case stays visibly escalated/cancelled unless its real required plan completes.
 
 Workflow step records use `pending`, `running`, `succeeded`, `retryable_failure`, `permanent_failure`, `waiting`, `cancelled`. Each attempt records typed input/output hashes, redacted output or evidence references, timing, model/config/prompt versions and error class. A succeeded step is reused only when its immutable input hash matches; changed human input creates a new revision and invalidates downstream dependent steps.
 
@@ -483,13 +483,13 @@ Approval decisions bind `proposalId`, `actionRevisionId` and this whole-plan has
 | `case.add_internal_note` | case ID, plain text <=2,000 | schema/allowlist F12; actual policy-authorized execution F13A |
 | `enterprise.create_purchase_order` | supplier/source PO; lines of product/quantity/agreement ID/unitPriceMinor/arrival; expedite charge; agreement refs/versions in baseExpectedVersions | ops + finance above cumulative EUR500; command F08, executor/binder F13A |
 | `enterprise.send_message` | recipient/related refs, subject <=200, typed text/verified-claim/receipt-fact parts; rendered <=5,000 | ops; command F08, executor/closed binder F13A |
-| `enterprise.mark_invoice_reconciled` | invoice ID, report ID/hash | finance; command F27B, workflow F29 |
-| `enterprise.hold_invoice` | invoice ID, reason enum, report ID/hash | finance; command F27B, workflow F29 |
-| `enterprise.post_goods_receipt` | PO, delivery reference, document version, line IDs/quantities | finance; command F27A, workflow F29 |
-| `enterprise.create_replacement_shipment` | order/delivery, damaged line quantities, verified address ref | ops; command F31B, workflow F33 |
-| `enterprise.create_return_authorization` | order/delivery, line quantities/reason enums | ops; command F31A, workflow F33 |
-| `enterprise.create_credit_note_draft` | invoice/report ID/hash, exact positive amount, reason enum | finance; command F31C, workflow F33 |
-| `enterprise.change_delivery_address` | order ID and bounded structured postal address | ops; command F31D, workflow F33 |
+| `enterprise.mark_invoice_reconciled` | invoice ID, report ID/hash | finance; command F32, workflow F34 |
+| `enterprise.hold_invoice` | invoice ID, reason enum, report ID/hash | finance; command F32, workflow F34 |
+| `enterprise.post_goods_receipt` | PO, delivery reference, document version, line IDs/quantities | finance; command F31, workflow F34 |
+| `enterprise.create_replacement_shipment` | order/delivery, damaged line quantities, verified address ref | ops; command F38, workflow F42 |
+| `enterprise.create_return_authorization` | order/delivery, line quantities/reason enums | ops; command F37, workflow F42 |
+| `enterprise.create_credit_note_draft` | invoice/report ID/hash, exact positive amount, reason enum | finance; command F39, workflow F42 |
+| `enterprise.change_delivery_address` | order ID and bounded structured postal address | ops; command F40, workflow F42 |
 
 Prices/quantities/addresses are validated against authoritative records/eligibility and recomputed consequences; a model cannot invent an offer or pick a different customer. Financial commands independently check the simulator's own invoice/PO/receipt amounts/maximum draft amount; no undeclared report blob or cross-schema query is needed. Report ID/hash is an audit link, not a financial oracle. `reasonCode` is a per-action enum. Extra fields reject. Core status commands use exact pre-staged enterprise invoices; a new unregistered invoice can be extracted/compared but escalates for ERP registration, never gets a fabricated ID/general AP subsystem.
 
@@ -523,7 +523,7 @@ An AI recommendation is `{ findings, options, recommendedOptionId|null, draftCom
 
 `ModelGateway.invoke(request)` and `ModelGateway.stream(request)` accept role, capability requirements, validated messages/multimodal references, output schema ID, allowed tool names, workflow/budget context and cancellation signal. They return validated output or a typed failure plus selected provider/model, attempt IDs, usage/cost basis, prompt/config revision and redacted diagnostics. Business modules import the interface, not OpenRouter SDK objects or model names.
 
-Roles are `classify`, `extract`, `vision`, `embed`, `analyse`, `verify`, `write`. F14 implements replay; F23 supplies the live adapter; F25 implements embeddings. Specific model defaults and source evidence are in section 10. Server defaults are in `config/models.default.json`; runtime immutable revisions are stored in the DB and pinned by new runs. Configuration is not a license to use an unsupported capability.
+Roles are `classify`, `extract`, `vision`, `embed`, `analyse`, `verify`, `write`. F14 implements replay; F25 supplies the live adapter; F27 implements embeddings. Specific model defaults and source evidence are in section 10. Server defaults are in `config/models.default.json`; runtime immutable revisions are stored in the DB and pinned by new runs. Configuration is not a license to use an unsupported capability.
 
 - A route declares required structured JSON/tool/vision/embedding/streaming capabilities and a fixed model/provider allowlist. Validate availability/capabilities/prices before activating a revision. Never silently drop `response_format` or send image bytes to a text-only model.
 - OpenRouter implicit model/provider fallbacks and SDK retries are disabled. At most two physical attempts per gateway invocation: primary plus either one configured fallback for availability/rate-limit/timeout or one schema repair, never both. All count toward the run's shared attempt/dollar budget. Do not retry authorization, moderation, context-length, privacy-policy or deterministic business failures.
@@ -556,7 +556,7 @@ Parser output is itself untrusted: validate page counts, dimensions, text length
 
 ### 6.4. Knowledge Retrieval
 
-The stable `KnowledgeRetriever.search` port returns `{ mode, queryId, chunks: [{ id, documentVersionId, policyBundleVersion?, text, locator, score, evidenceId }] }` and a no-evidence outcome. F17 implements deterministic lexical FTS over approved text policies; the A workflow depends on this interface, not on a future embedding pipeline. F25 adds hybrid retrieval without changing callers.
+The stable `KnowledgeRetriever.search` port returns `{ mode, queryId, chunks: [{ id, documentVersionId, policyBundleVersion?, text, locator, score, evidenceId }] }` and a no-evidence outcome. F18 implements deterministic lexical FTS over approved text policies; the A workflow depends on this interface, not on a future embedding pipeline. F27 adds hybrid retrieval without changing callers.
 
 Chunk by section/paragraph, target 600 tokens, overlap 80, preserve page/heading/offset, maximum 1,200 tokens per chunk. Publish only schema-validated approved knowledge versions. Metadata filters include sandbox, document kind, policy ID, effective date and publication status, applied inside SQL before ranking. Expired/superseded versions are excluded from new recommendations, retained for historical traces.
 
@@ -566,9 +566,9 @@ Transactional inventory, PO/invoice values, permissions and current contract ter
 
 ### 6.5. Verification and Operational Memory
 
-Always run deterministic validation: schema, citation existence/version, arithmetic, policy rules, action feasibility, matching identities and required fields. A consequential recommendation, conflicting evidence or explicitly uncertain interpretation additionally gets one independent reviewer call after F26. The reviewer receives the original problem, bounded source evidence and structured proposed findings, not a private reasoning trace or a prompt telling it to agree. It cannot use write tools, change a policy or approve an action.
+Always run deterministic validation: schema, citation existence/version, arithmetic, policy rules, action feasibility, matching identities and required fields. A consequential recommendation, conflicting evidence or explicitly uncertain interpretation additionally gets one independent reviewer call after F28. The reviewer receives the original problem, bounded source evidence and structured proposed findings, not a private reasoning trace or a prompt telling it to agree. It cannot use write tools, change a policy or approve an action.
 
-Reviewer output is `{ verdict: 'supported'|'disputed'|'insufficient', findings: [{ code, evidenceIds, message }], missingFields }`. No recursive reviewer/reviser loop. A disputed/insufficient result blocks affected action revisions and enters human review. A human can correct inputs and request a new bounded analysis; a documented override can resolve a non-safety interpretive dispute, but cannot override missing identity, arithmetic, authorization, policy, budget or stale-state checks. Reviewer outages are visible; consequential live actions requiring review do not silently bypass it. Replay records the equivalent reviewer fixture after F26.
+Reviewer output is `{ verdict: 'supported'|'disputed'|'insufficient', findings: [{ code, evidenceIds, message }], missingFields }`. No recursive reviewer/reviser loop. A disputed/insufficient result blocks affected action revisions and enters human review. A human can correct inputs and request a new bounded analysis; a documented override can resolve a non-safety interpretive dispute, but cannot override missing identity, arithmetic, authorization, policy, budget or stale-state checks. Reviewer outages are visible; consequential live actions requiring review do not silently bypass it. Replay records the equivalent reviewer fixture after F28.
 
 Operational application memory is separate from this repository's `agent-memory/`. It stores reviewed summaries of closed cases, provenance, applicable products/suppliers, outcome, expiry/review date and author feedback. State is `candidate`, `approved`, `expired`, `revoked`. Only a human-approved summary becomes retrievable historical context; it is labeled experience, not current policy. A 180-day review limit and revocation checks apply before retrieval. Never automatically edit policies, prompts, model routing or business rules from a memory entry.
 
@@ -592,13 +592,13 @@ Operational application memory is separate from this repository's `agent-memory/
 
 Use a restrictive CSP (`default-src 'self'`, explicit required local asset/worker sources, no model-provided origins), secure headers and exact-origin policy. No permissive CORS; only the web origin reaches HTTP API through the proxy. CSRF defense is not delegated to CORS.
 
-Default retention is raw blobs 30 days, diagnostic traces/redacted model outputs 30 days, audit/decision/receipt/spend records at least 365 days, reviewed memory 180 days. Core does not automatically delete audit/approval/receipt/spend rows. Never delete a blob required by unresolved cases/unknown effects. F46A records eligibility/reference checks and tombstones expired eligible content, never fabricates evidence. Retention is an engineering policy, not regulatory compliance. An atomic 5 GiB configurable blob admission cap rejects new uploads rather than deleting arbitrary files.
+Default retention is raw blobs 30 days, diagnostic traces/redacted model outputs 30 days, audit/decision/receipt/spend records at least 365 days, reviewed memory 180 days. Core does not automatically delete audit/approval/receipt/spend rows. Never delete a blob required by unresolved cases/unknown effects. F57 records eligibility/reference checks and tombstones expired eligible content, never fabricates evidence. Retention is an engineering policy, not regulatory compliance. An atomic 5 GiB configurable blob admission cap rejects new uploads rather than deleting arbitrary files.
 
 ### 7.2. Trace and Telemetry
 
-The authoritative UI trace is in PostgreSQL: schema F05, journal F11, query/SSE F11B, UI F20. Record workflow/correlation/step IDs, mode, definition/prompt/model/config/policy revisions, redacted tool argument/result summaries, source IDs, validation/review/human decisions, retries/fallbacks, latency, tokens and estimated/reported/replay costs. Structured output is bounded/redacted/versioned, not a raw conversation or chain-of-thought dump.
+The authoritative UI trace is in PostgreSQL: schema F05, journal F11, query/SSE F11B, UI F21. Record workflow/correlation/step IDs, mode, definition/prompt/model/config/policy revisions, redacted tool argument/result summaries, source IDs, validation/review/human decisions, retries/fallbacks, latency, tokens and estimated/reported/replay costs. Structured output is bounded/redacted/versioned, not a raw conversation or chain-of-thought dump.
 
-OpenTelemetry adds distributed spans/metrics in F41: API -> outbox publish -> consume -> workflow -> gateway/tool -> simulator. Propagate W3C trace context and link asynchronous spans; keep correlation IDs available when a trace sample is absent. Expose readiness/liveness separately, counters for DLQ/failed/unknown actions, queue/outbox age, budget rejections, model latency, token/cost totals and pool saturation. Use structured JSON logs with allowlisted fields. Telemetry exporter failure cannot fail a business command or become an unbounded memory queue.
+OpenTelemetry adds distributed spans/metrics in F51: API -> outbox publish -> consume -> workflow -> gateway/tool -> simulator. Propagate W3C trace context and link asynchronous spans; keep correlation IDs available when a trace sample is absent. Expose readiness/liveness separately, counters for DLQ/failed/unknown actions, queue/outbox age, budget rejections, model latency, token/cost totals and pool saturation. Use structured JSON logs with allowlisted fields. Telemetry exporter failure cannot fail a business command or become an unbounded memory queue.
 
 An optional Compose profile starts local OTel collector + Jaeger; core works without it. No Langfuse, ClickHouse, external analytics or cloud trace account is required. Audit access is permissioned, and UI users see only redacted model data.
 
@@ -623,7 +623,7 @@ Evaluation is core, with versioned datasets and an offline default. Software cor
 
 Use an independent rubric-based model judge only for communication helpfulness/grounding that deterministic checks cannot measure. It has a separate disclosed budget, versioned prompt, no authority over security tests, and returns structured scores/evidence. Disagreement is reported, never hidden in a single composite number. Human spot-check at least six held-out outputs (two per scenario); until done, report `NOT RUN` and no full live-quality acceptance.
 
-Offline/smoke evaluation excludes actual judge inference and reports its judge metrics `NOT RUN`, never zero or passed. Only F44's opt-in live path (or explicitly labeled judge replay fixtures for harness tests) supplies those scores. Offline completion has no paid-judge prerequisite.
+Offline/smoke evaluation excludes actual judge inference and reports its judge metrics `NOT RUN`, never zero or passed. Only F54's opt-in live path (or explicitly labeled judge replay fixtures for harness tests) supplies those scores. Offline completion has no paid-judge prerequisite.
 
 Write JSONL per case and a JSON summary with dataset/config/prompt/software revision, seed, environment, actual mode, costs and timing; generate Markdown/HTML summaries from that data. Compare only compatible datasets/metrics, flag > 2 percentage-point quality regression or > 20% cost/latency increase against a human-selected baseline. Never make external nondeterministic quality thresholds a blocking ordinary PR test.
 
@@ -646,10 +646,10 @@ CLI wrappers accept a phase ID with optional single letter suffix and strip one 
 | `pnpm infra:up` | Starts the default local infra Compose profile; no destructive cleanup |
 | `pnpm db:migrate` | Applies reviewed migrations for both schemas with setup credentials; no ORM push |
 | `pnpm demo:init` | Generates ignored local credentials, migrates, seeds the initial sandbox idempotently, validates replay assets; never spends money |
-| `pnpm demo:reset -- --confirm-local` | F46 command; admin-confirmed non-destructive sandbox reset, refuses non-local or unresolved in-flight effects |
-| `pnpm eval:offline -- --dataset smoke-v1` / `--dataset v1` | F42 engine/smoke data; F43 full v1. Offline has no application-runtime external network, actual spend zero, empirical judge metrics NOT RUN. |
-| `pnpm retrieval:check -- --dataset retrieval-v1` | F25 standalone deterministic recall@6/MRR fixture runner, reused by F42; no dependency on future evaluation infrastructure |
-| `pnpm eval:live -- --dataset v1 --split holdout --config baseline --max-usd 5 --allow-paid` | F44 opt-in only, validates key, exact model/pricing/privacy config and global reservation ceiling before any call |
+| `pnpm demo:reset -- --confirm-local` | F56 command; admin-confirmed non-destructive sandbox reset, refuses non-local or unresolved in-flight effects |
+| `pnpm eval:offline -- --dataset smoke-v1` / `--dataset v1` | F52 engine/smoke data; F53 full v1. Offline has no application-runtime external network, actual spend zero, empirical judge metrics NOT RUN. |
+| `pnpm retrieval:check -- --dataset retrieval-v1` | F27 standalone deterministic recall@6/MRR fixture runner, reused by F52; no dependency on future evaluation infrastructure |
+| `pnpm eval:live -- --dataset v1 --split holdout --config baseline --max-usd 5 --allow-paid` | F54 opt-in only, validates key, exact model/pricing/privacy config and global reservation ceiling before any call |
 | `pnpm docs:check` | Broken local links, required ADR/spec links, phase IDs/dependency direction and generated OpenAPI drift |
 | `pnpm licenses:check` | Dependency/container license inventory and notices; policy rejects unknown/unapproved distribution obligations |
 | `pnpm audit --prod` | Explicit advisory-metadata network check in security/supply-chain maintenance; no model call. Record tool/database date, findings and triage; not part of network-isolated replay execution. |
@@ -669,15 +669,15 @@ Desktop has a persistent navigation rail and a case list/workbench split. At 768
 | Screen | Required content/interaction | First owner |
 |---|---|---|
 | Login/shell | Role/account indicator, sandbox, persistent replay/live badge, unavailable/read-only state | F06 |
-| Cases | Filtered/paginated list, status, type, supplier/customer, amount/uncertainty, accessible empty/loading/error states | F20 |
-| Case detail | Overview, source event/document, entity snapshots, fact/assumption labels, alternatives, evidence, history and timeline | F20; later scenario tabs reuse it |
-| Approval center | Exact revision/hash, before/after, impact, roles, source versions, stale/expired indicator, edit/clarify/reanalyse/approve/reject | F21 |
-| Document center | Secure upload, page preview/text, extracted field/source selection, correction revision, duplicate/discrepancy status | F30 |
-| Knowledge center | Upload/version/publish/revoke, bundle linkage, ingestion status, scoped hybrid search with citations | F38 |
-| Operations dashboard | Active/attention/resolved cases, approvals, alerts, processing, confirmed counts, source-backed briefing with as-of timestamp | F39 |
-| AI operations | Validated model/config revisions, usage with cost basis, run trace, DLQ/unknown executions, eval comparison | F40-F44 |
-| Demo launcher | Scenario description, expected situation, AI capabilities, replay/live choice, maximum/estimated cost, safe fresh sandbox | F22/F45-F46 |
-| Contextual assistant | Case-aware read investigation, citations and proposal drafts, provisional streaming, no approval button generated by model | F37 |
+| Cases | Filtered/paginated list, status, type, supplier/customer, amount/uncertainty, accessible empty/loading/error states | F21 |
+| Case detail | Overview, source event/document, entity snapshots, fact/assumption labels, alternatives, evidence, history and timeline | F21; later scenario tabs reuse it |
+| Approval center | Exact revision/hash, before/after, impact, roles, source versions, stale/expired indicator, edit/clarify/reanalyse/approve/reject | F22 |
+| Document center | Secure upload, page preview/text, extracted field/source selection, correction revision, duplicate/discrepancy status | F35 |
+| Knowledge center | Upload/version/publish/revoke, bundle linkage, ingestion status, scoped hybrid search with citations | F48 |
+| Operations dashboard | Active/attention/resolved cases, approvals, alerts, processing, confirmed counts, source-backed briefing with as-of timestamp | F49 |
+| AI operations | Validated model/config revisions, usage with cost basis, run trace, DLQ/unknown executions, eval comparison | F50-F54 |
+| Demo launcher | Scenario description, expected situation, AI capabilities, replay/live choice, maximum/estimated cost, safe fresh sandbox | F23/F55-F56 |
+| Contextual assistant | Case-aware read investigation, citations and proposal drafts, provisional streaming, no approval button generated by model | F47 |
 
 ### 8.2. Fixture Catalog and Expected Business Effects
 
@@ -697,17 +697,17 @@ Fixture generation is deterministic from a checked-in seed and business clock. G
 
 | Fixture ownership | Exact family/path and first usable owner |
 |---|---|
-| Supplier/customer mail and digital documents | `fixtures/documents/email/*.eml`, `fixtures/documents/digital/*`, including injection text/source variant: F15A; structured scenario bindings F16/F19/F33 |
-| Malicious knowledge/document variants | `fixtures/security/{inject-email,inject-pdf}.*` F15A and `fixtures/security/inject-policy.md` F17; no publication as executable policy; full abuse regression F48 |
-| Event/worker failures | `fixtures/failures/{duplicate-event,worker-crash}.json` and owned harness helpers F10/F11; no new failure feature deferred to F47 |
-| Provider/verification failures | `fixtures/failures/provider-*.json` and `fixtures/failures/budget-exhausted.json` F14; verification fixtures F26 |
+| Supplier/customer mail and digital documents | `fixtures/documents/email/*.eml`, `fixtures/documents/digital/*`, including injection text/source variant: F16; structured scenario bindings F17/F20/F42 |
+| Malicious knowledge/document variants | `fixtures/security/{inject-email,inject-pdf}.*` F16 and `fixtures/security/inject-policy.md` F18; no publication as executable policy; full abuse regression F62 |
+| Event/worker failures | `fixtures/failures/{duplicate-event,worker-crash}.json` and owned harness helpers F10/F11; no new failure feature deferred to F58 |
+| Provider/verification failures | `fixtures/failures/provider-*.json` and `fixtures/failures/budget-exhausted.json` F14; verification fixtures F28 |
 | Receipt/partial/cancel failures | `fixtures/failures/{receipt-timeout,partial-action,cancel-during-command}.json` and harness F13B |
-| Remaining safety variants | `fixtures/security/{forged-approval,cross-sandbox,malformed-tool}.json` and manifest bindings F22, existing auth/tool rejection paths; abuse expansion F48 |
-| Business scenario families | `fixtures/scenarios/{a,b,c}-*.json` first owned F18/F28/F32; initial manifest F22, full catalog F45 |
-| Imported historical cases | `fixtures/company/historical-cases.json` F35: 12 synthetic closed legacy cases referencing coherent enterprise records, clearly imported/seeded, never fake NEXUS run/approval/model evidence |
-| Full launcher bindings | F45 registers existing families only; `automatic` vs `guided_fault` variants are explicit. Guided crash/restart has manual local technical steps and test-harness process control, not a browser/model shell/kill tool. |
+| Remaining safety variants | `fixtures/security/{forged-approval,cross-sandbox,malformed-tool}.json` and manifest bindings F23, existing auth/tool rejection paths; abuse expansion F62 |
+| Business scenario families | `fixtures/scenarios/{a,b,c}-*.json` first owned F19/F33/F41; initial manifest F23, full catalog F55 |
+| Imported historical cases | `fixtures/company/historical-cases.json` F45: 12 synthetic closed legacy cases referencing coherent enterprise records, clearly imported/seeded, never fake NEXUS run/approval/model evidence |
+| Full launcher bindings | F55 registers existing families only; `automatic` vs `guided_fault` variants are explicit. Guided crash/restart has manual local technical steps and test-harness process control, not a browser/model shell/kill tool. |
 
-F47-F48B consolidate/adversarially expand existing controls; their later campaign files are not prerequisites for F45 demo variants. No demo launcher accepts arbitrary fault scripts, filesystem paths or destinations.
+F58-F64 consolidate/adversarially expand existing controls; their later campaign files are not prerequisites for F55 demo variants. No demo launcher accepts arbitrary fault scripts, filesystem paths or destinations.
 
 ## 9. Detailed Implementation Stages
 
@@ -723,7 +723,7 @@ The following universal completion gate applies to every stage in addition to it
 4. Run its `pnpm verify:phase Fnn` and additional commands. If a prerequisite cannot run, record `NOT RUN`, keep the phase incomplete, and stop before acceptance.
 5. Produce the Czech phase report and acceptance sentence from section 0, then stop. Do not automatically run the next phase or a paid evaluation.
 
-Load grades: **S** is narrow contract/UI/verification work; **M** is one focused subsystem/failure family; **M+** has explicitly ordered steps within one fixed protocol. No stage combines a new provider/protocol, new business algorithm and new UI. Mandatory suffix stages split journal/control/SSE, decisions/executor/recovery, upload/parser, review backend/UI, finance/customer commands, linked-case coordination, lifecycle, fault/security campaigns and final evidence/review. Every suffix has its own acceptance. F22A/F30/F34/F47-F47C/F48-F48B/F51B/F52 are checkpoints; defects block them for a scoped owner-stage repair rather than expanding an audit into unlimited feature work.
+Load grades: **S** is narrow contract/UI/verification work; **M** is one focused subsystem/failure family; **M+** has explicitly ordered steps within one fixed protocol. No stage combines a new provider/protocol, new business algorithm and new UI. Mandatory subdivisions split journal/control/SSE, decisions/executor/recovery, upload/parser, review backend/UI, finance/customer commands, linked-case coordination, lifecycle, fault/security campaigns and final evidence/review. Every stage has its own acceptance. F24/F35/F44/F58-F61/F62-F64/F69/F70 are checkpoints; defects block them for a scoped owner-stage repair rather than expanding an audit into unlimited feature work.
 
 ### F01 - Workspace and Verification Harness
 
@@ -879,7 +879,7 @@ Load grades: **S** is narrow contract/UI/verification work; **M** is one focused
 - **Acceptance:** A persisted test parent waits for an exact test child and resumes/escalates once correctly; input/approval waits cannot be bypassed with an unrelated event.
 - **Verification commands:** `pnpm verify:phase F11A`.
 - **Deliverables / documentation:** WORKFLOWS wait/reducer/control and EVENTS terminal event contracts.
-- **Stop condition:** Await F11A acceptance; automatic customer child-case intake belongs to F33A.
+- **Stop condition:** Await F11A acceptance; automatic customer child-case intake belongs to F43.
 
 ### F11B - Workflow Read API and Persisted SSE
 
@@ -892,7 +892,7 @@ Load grades: **S** is narrow contract/UI/verification work; **M** is one focused
 - **Acceptance:** A client sees persisted status after process restart without Redis or an open original HTTP request. No chain-of-thought/secret is streamed.
 - **Verification commands:** `pnpm verify:phase F11B`.
 - **Deliverables / documentation:** CONTRACTS implemented run/SSE routes and trace API examples.
-- **Stop condition:** Await F11B acceptance; workbench UI follows F20.
+- **Stop condition:** Await F11B acceptance; workbench UI follows F21.
 
 ### F12 - Action Proposals and Deterministic Policies
 
@@ -965,727 +965,727 @@ Load grades: **S** is narrow contract/UI/verification work; **M** is one focused
 - **Dependencies:** F05, F10, F11. **Preconditions:** Private blob parent volume configured; no public object URL.
 - **Scope / exclusions:** Streaming quarantine/type/byte/hash checks, metadata/status/job enqueue and download authorization; no PDF/email parser or extraction claim yet.
 - **Files:** `packages/db/src/schema/documents.ts`, migration; `packages/application/src/documents/{upload,blob-store,admission}.ts`; `apps/api/src/documents/controller.ts`; `fixtures/documents/intake/*`; `tests/integration/f15-intake.test.ts`.
-- **Contracts / instructions:** Stream actual bytes to quarantine, enforce 15MiB and blob admission cap, validate basic signatures/UTF-8/allowed media and escaped filename. Atomically finalize blob+version metadata/job identity; clean only orphaned owned temp objects after failed finalize. Never mark ready based on magic bytes: accepted input remains uploaded/validating until F15A parser. Authenticated attachment downloads require resource scope, nosniff and safe disposition. No in-process hostile document parsing in API/browser.
+- **Contracts / instructions:** Stream actual bytes to quarantine, enforce 15MiB and blob admission cap, validate basic signatures/UTF-8/allowed media and escaped filename. Atomically finalize blob+version metadata/job identity; clean only orphaned owned temp objects after failed finalize. Never mark ready based on magic bytes: accepted input remains uploaded/validating until F16 parser. Authenticated attachment downloads require resource scope, nosniff and safe disposition. No in-process hostile document parsing in API/browser.
 - **Required tests:** False content-length, magic/extension mismatch, path traversal, duplicate bytes scoped correctly, disk cap/admission race, midstream disconnect and orphan handling, unauthorized/cross-sandbox download, inert script filename/content.
 - **Acceptance:** Upload is durably queued with real hash/status or explicitly rejected; no raw file becomes public/executable or falsely marked extracted. Tests need no future parser service.
 - **Verification commands:** `pnpm verify:phase F15`.
 - **Deliverables / documentation:** DOCUMENTS upload/blob/admission/download contract; create `docs/adr/006-document-isolation.md` design section.
-- **Stop condition:** Await F15 acceptance; parsing is F15A, not a hidden acceptance dependency.
+- **Stop condition:** Await F15 acceptance; parsing is F16, not a hidden acceptance dependency.
 
-### F15A - Isolated Digital PDF, Email and Text Extraction
+### F16 - Isolated Digital PDF, Email and Text Extraction
 
 - **Objective / load:** Parse bounded sources in the privilege-separated service. M.
 - **Dependencies:** F11, F15. **Preconditions:** Parser network/resource/mount policy from section 2.4 enforced in Compose.
 - **Scope / exclusions:** Extractor service/private HTTP client, durable document-v1 processing, digital page text/email attachments; no OCR/vision/structured AI fields.
-- **Files:** `apps/document-extractor/src/{main,validate,digital-pdf,email,text}.ts`, `infra/Dockerfile.extractor`; `packages/application/src/documents/{processing,extractor-client}.ts`; `fixtures/documents/{digital,email}/*`, `fixtures/security/{inject-email.eml,inject-pdf.pdf}`; `tests/integration/f15a-extraction.test.ts`.
-- **Contracts / instructions:** Worker streams only current job bytes/token to extractor; no blob/DB/key mount. Use pinned pdfjs-dist/mailparser, validate pages/pixels/encryption and result locators/lengths. Store immutable page text and allowed email attachments through the existing intake path. No HTML/remote images/PDF actions/scripts/external URLs executed/fetched. Publish document.ready transactionally only for actual extracted valid content; a scan becomes needs_review/OCR_REQUIRED until F24. Jobs/timeouts survive restart via journal.
+- **Files:** `apps/document-extractor/src/{main,validate,digital-pdf,email,text}.ts`, `infra/Dockerfile.extractor`; `packages/application/src/documents/{processing,extractor-client}.ts`; `fixtures/documents/{digital,email}/*`, `fixtures/security/{inject-email.eml,inject-pdf.pdf}`; `tests/integration/f16-extraction.test.ts`.
+- **Contracts / instructions:** Worker streams only current job bytes/token to extractor; no blob/DB/key mount. Use pinned pdfjs-dist/mailparser, validate pages/pixels/encryption and result locators/lengths. Store immutable page text and allowed email attachments through the existing intake path. No HTML/remote images/PDF actions/scripts/external URLs executed/fetched. Publish document.ready transactionally only for actual extracted valid content; a scan becomes needs_review/OCR_REQUIRED until F26. Jobs/timeouts survive restart via journal.
 - **Required tests:** Digital text/page round trip, bounded EML attachments, encrypted/malformed PDFs, parser process timeout/kill, outbound network/DB access denied, restart/deduped job, valid source offsets and scanned-page honest status.
 - **Acceptance:** Digital/email/text sources are locatable and ready, or a typed safe review/rejection outcome; parser has no application privilege and is not a claim of antivirus certification.
-- **Verification commands:** `pnpm verify:phase F15A`.
+- **Verification commands:** `pnpm verify:phase F16`.
 - **Deliverables / documentation:** DOCUMENTS parser/result/job contracts/notices; update the existing ADR 006 as-built section, do not create another ADR file.
-- **Stop condition:** Await F15A acceptance before F16 structured extraction.
+- **Stop condition:** Await F16 acceptance before F17 structured extraction.
 
-### F16 - Structured Extraction and Human Corrections
+### F17 - Structured Extraction and Human Corrections
 
 - **Objective / load:** Turn source text into validated, locatable fields without invented business data. M.
-- **Dependencies:** F12, F13B, F14, F15A. **Preconditions:** Source page text and replay gateway available; downstream invalidation service exists.
+- **Dependencies:** F12, F13B, F14, F16. **Preconditions:** Source page text and replay gateway available; downstream invalidation service exists.
 - **Scope / exclusions:** Classification/extraction for supply notice, invoice/delivery note and customer text; correction API; no reconciliation or OCR algorithms.
-- **Files:** `packages/contracts/src/documents.ts`; `packages/application/src/documents/{classify,extract,validate-fields,correct}.ts`; extraction schema/migration; `apps/api/src/documents/corrections-controller.ts`; `fixtures/replay/v1/extraction/*`; `tests/integration/f16-extraction.test.ts`.
+- **Files:** `packages/contracts/src/documents.ts`; `packages/application/src/documents/{classify,extract,validate-fields,correct}.ts`; extraction schema/migration; `apps/api/src/documents/corrections-controller.ts`; `fixtures/replay/v1/extraction/*`; `tests/integration/f17-extraction.test.ts`.
 - **Contracts / instructions:** Implement section 6.3 field source/status contract, nullable required fields, exact source-span checks and human correction revision. Separate model extraction from deterministic arithmetic/identity checks. A correction stores actor/reason/prior value and invalidates downstream analysis/proposals referencing the old extraction, while preserving history. An executing/unknown action cannot be edited underneath; correction waits/escalates for reconciliation.
 - **Required tests:** Missing tax/price not zero, unsupported source span/page, contradictory date, invalid document schema, revision conflict, correction after approval invalidates it, unauthorized correction, unknown execution correction blocked.
 - **Acceptance:** A digital supply attachment reaches ready with verified source locators; ambiguous financial data stays needs_review; a correction is persisted and cannot inherit prior approval.
-- **Verification commands:** `pnpm verify:phase F16`.
+- **Verification commands:** `pnpm verify:phase F17`.
 - **Deliverables / documentation:** DOCUMENTS field schemas/correction/invalidation, CONTRACTS additive extraction formats and replay assets.
-- **Stop condition:** Await F16 acceptance; an extracted invoice is not yet a reconciled invoice.
+- **Stop condition:** Await F17 acceptance; an extracted invoice is not yet a reconciled invoice.
 
-### F17 - Versioned Knowledge and Lexical Policy Retrieval
+### F18 - Versioned Knowledge and Lexical Policy Retrieval
 
 - **Objective / load:** Provide real policy evidence through a stable retrieval port before A. M.
-- **Dependencies:** F05, F12, F15, F16. **Preconditions:** Executable policy bundles exist; source text/locators available.
+- **Dependencies:** F05, F12, F15, F17. **Preconditions:** Executable policy bundles exist; source text/locators available.
 - **Scope / exclusions:** Approved knowledge versions/chunks, lexical FTS, source attribution and policy linkage; no vector embeddings, knowledge UI or reranker.
-- **Files:** `packages/db/src/schema/knowledge.ts`, migration; `packages/application/src/knowledge/{ingest,chunk,publish,lexical-retriever}.ts`; `packages/application/src/ports/knowledge.ts`; `apps/api/src/knowledge/controller.ts`; read F12's `fixtures/knowledge/northstar-v1.md`, add informational `support-guide.md`, `fixtures/security/inject-policy.md`; knowledge changed event schema; `tests/integration/f17-knowledge.test.ts`.
+- **Files:** `packages/db/src/schema/knowledge.ts`, migration; `packages/application/src/knowledge/{ingest,chunk,publish,lexical-retriever}.ts`; `packages/application/src/ports/knowledge.ts`; `apps/api/src/knowledge/controller.ts`; read F12's `fixtures/knowledge/northstar-v1.md`, add informational `support-guide.md`, `fixtures/security/inject-policy.md`; knowledge changed event schema; `tests/integration/f18-knowledge.test.ts`.
 - **Contracts / instructions:** Implement section 6.4 port with `mode='lexical'`. Deterministically chunk source text and preserve exact locators. Only admin publishes/revokes; canonical text must hash-match F12's bundle. Do not create/rewrite a second policy source here. Seed published canonical sections, version/effective-date filters and source evidence. PostgreSQL FTS parameterized queries use explicit English configuration. Publication/revocation emits typed invalidation records via outbox; the service marks affected unexecuted proposals stale and changes retrieval generation now, not in future UI work. Return no-evidence instead of fabricated citation.
 - **Required tests:** Superseded/unpublished/expired/cross-sandbox chunks excluded, exact source-span round trip, policy text/bundle mismatch blocks publication, repeated ingest idempotent, keyword search known policy, prompt injection stays text.
 - **Acceptance:** A supply policy query retrieves actual published chunks/citations; old traces still resolve pinned versions after a new publication. Retrieval has no paid/network dependency.
-- **Verification commands:** `pnpm verify:phase F17`.
+- **Verification commands:** `pnpm verify:phase F18`.
 - **Deliverables / documentation:** `docs/KNOWLEDGE.md` port/version/chunk/publication contract and ADR 007 lexical-to-hybrid design.
-- **Stop condition:** Await F17 acceptance. Do not require F25 embeddings to pass this phase.
+- **Stop condition:** Await F18 acceptance. Do not require F27 embeddings to pass this phase.
 
-### F18 - Supply Calculations and Deterministic Verification
+### F19 - Supply Calculations and Deterministic Verification
 
 - **Objective / load:** Make A's options, costs and factual checks reproducible without AI judgment. M.
-- **Dependencies:** F03, F07, F09, F12, F16, F17. **Preconditions:** Exact extraction matches and authoritative read snapshots available.
+- **Dependencies:** F03, F07, F09, F12, F17, F18. **Preconditions:** Exact extraction matches and authoritative read snapshots available.
 - **Scope / exclusions:** Allocation/options/cost functions, A evidence package and deterministic verifier; no workflow wiring, AI reviewer or UI.
-- **Files:** `packages/domain/src/supply/{allocate,alternatives,impact}.ts`; `packages/application/src/verification/{deterministic,citations}.ts`; `packages/integrations/src/tools/supply-calculation.ts`; `packages/contracts/src/supply.ts`; `fixtures/scenarios/a-*.json`; `tests/unit/f18-supply.test.ts`, `tests/integration/f18-evidence.test.ts`.
+- **Files:** `packages/domain/src/supply/{allocate,alternatives,impact}.ts`; `packages/application/src/verification/{deterministic,citations}.ts`; `packages/integrations/src/tools/supply-calculation.ts`; `packages/contracts/src/supply.ts`; `fixtures/scenarios/a-*.json`; `tests/unit/f19-supply.test.ts`, `tests/integration/f19-evidence.test.ts`.
 - **Contracts / instructions:** Implement every supply rule in section 3.3, bounded two-supplier search, stable ranking, partial stock, wait-and-notify option and infeasible rejection reasons. A waiting option is valid only when the authoritative customer deadline/contract allows the delay. Report missing values separately. Record inputs, versions, exact outputs and rule version as calculation evidence. Validate material recommendation claims against evidence type/value, not merely the existence of a citation ID.
 - **Required tests:** Zero/partial/full on-hand, confirmed inbound affects coverageByDeadline but never availableForAllocation, overlapping demand, exact EUR500 boundary, missing agreement/late supplier/no option, exact costs/penalties, stable tie order/stale snapshot and invented cited amount rejected.
 - **Acceptance:** Every A fixture has an explicit allowed option set and exact impact; identical snapshots always produce identical result hashes. An unsupported recommendation cannot produce an executable proposal.
-- **Verification commands:** `pnpm verify:phase F18`.
+- **Verification commands:** `pnpm verify:phase F19`.
 - **Deliverables / documentation:** `docs/SCENARIOS.md` A formulas/input/output/branches, deterministic verification rules in AI_GATEWAY.
-- **Stop condition:** Await F18 acceptance; domain tests need no model call.
+- **Stop condition:** Await F19 acceptance; domain tests need no model call.
 
-### F19 - Supply Workflow End to End
+### F20 - Supply Workflow End to End
 
 - **Objective / load:** Complete the A backend using only already implemented shared services. M.
-- **Dependencies:** F10-F18. **Preconditions:** A branch fixtures/replay records match current prompt and schema hashes.
+- **Dependencies:** F10-F19. **Preconditions:** A branch fixtures/replay records match current prompt and schema hashes.
 - **Scope / exclusions:** `supply-v1` composition, clarification/resume, recommendation/drafts, proposals, approvals and execution history; no new engine/provider/retrieval architecture or UI.
-- **Files:** `packages/application/src/scenarios/supply/{definition,steps,recommendation}.ts`; `apps/worker/src/scenarios.module.ts`; `apps/api/src/cases/input-controller.ts`; `fixtures/replay/v1/supply/*`; `tests/integration/f19-supply-workflow.test.ts`.
+- **Files:** `packages/application/src/scenarios/supply/{definition,steps,recommendation}.ts`; `apps/worker/src/scenarios.module.ts`; `apps/api/src/cases/input-controller.ts`; `fixtures/replay/v1/supply/*`; `tests/integration/f20-supply-workflow.test.ts`.
 - **Contracts / instructions:** Implement section 5.4 in that order. Reuse intake/extraction, exact enterprise tools, calculation evidence, lexical policy retrieval, gateway and deterministic verifier. Materialize a bounded action DAG; supply buying precedes its dependent message. Missing/ambiguous identity asks for specific registered fields; human input changes a revision and reruns only invalidated downstream steps. Record no-action wait/escalation as explicit case outcome, never a successful purchase. Use the same action service for AI and human proposals.
 - **Required tests:** All six A variants through real DB/broker/simulator and replay, duplicate source, approval rejection/edit, input resume, stale target produces renewed proposal, worker restart during approval wait, dependency action failure.
 - **Acceptance:** An authorized completed A creates exactly one real simulated alternative PO/message and an explainable evidence/history trail; no-feasible and ambiguous cases stop safely without a business write. API-only flow works after browser/HTTP origin request ends.
-- **Verification commands:** `pnpm verify:phase F19`.
+- **Verification commands:** `pnpm verify:phase F20`.
 - **Deliverables / documentation:** A backend walkthrough, exact API commands with placeholder/redacted secrets, scenario trace sample generated from tests.
-- **Stop condition:** Await F19 acceptance; no additional framework or duplicate A-specific gateway may be introduced.
+- **Stop condition:** Await F20 acceptance; no additional framework or duplicate A-specific gateway may be introduced.
 
-### F20 - Case Workbench, Evidence and Execution Trace
+### F21 - Case Workbench, Evidence and Execution Trace
 
 - **Objective / load:** Make A investigation inspectable in the browser. M.
-- **Dependencies:** F06, F19. **Preconditions:** Actual case/evidence/proposal/trace APIs return the F19 run.
+- **Dependencies:** F06, F20. **Preconditions:** Actual case/evidence/proposal/trace APIs return the F20 run.
 - **Scope / exclusions:** Case list/detail, comparison/source/history/trace presentation and run cancellation; no approval mutation UI or document-correction center yet.
-- **Files:** `apps/web/app/cases/{page,[id]/page}.tsx`; `apps/web/src/features/cases/{case-table,overview,alternatives,evidence-panel,history,run-trace}.tsx`; `packages/ui/src/{data-table,tabs,source-locator}.tsx`; `tests/e2e/f20-case-workbench.spec.ts`.
+- **Files:** `apps/web/app/cases/{page,[id]/page}.tsx`; `apps/web/src/features/cases/{case-table,overview,alternatives,evidence-panel,history,run-trace}.tsx`; `packages/ui/src/{data-table,tabs,source-locator}.tsx`; `tests/e2e/f21-case-workbench.spec.ts`.
 - **Contracts / instructions:** Render structured facts/assumptions/uncertainties distinctly, exact computed EUR amounts, policy/source versions and rejected alternative reasons. Evidence panel resolves authenticated source text/page; no fabricated highlight if bbox is absent. Use persisted status/SSE or bounded polling fallback, cleanup connections on unmount, retain server run. Cancellation requires confirmation and shows partial/unknown effects honestly. Redacted trace shows cost basis, not raw model reasoning.
 - **Required tests:** Launch seeded backend flow, inspect citation and calculation, reconnect trace without duplicate rows, pagination/filter empty/error states, 360/1440 layout, keyboard tabs/source navigation, viewer cannot mutate.
 - **Acceptance:** A reviewer can explain why an option was chosen using only the UI and its sources; closed tab/reopen sees the same durable run. Missing source/failed step is visible, not a blank success panel.
-- **Verification commands:** `pnpm verify:phase F20`; `pnpm test:e2e F20`.
+- **Verification commands:** `pnpm verify:phase F21`; `pnpm test:e2e F21`.
 - **Deliverables / documentation:** Implemented workbench in UI, screenshot artifacts from real fixture states with no secret data.
-- **Stop condition:** Await F20 acceptance; approve buttons are not simulated or client-authorized.
+- **Stop condition:** Await F21 acceptance; approve buttons are not simulated or client-authorized.
 
-### F21 - Approval Center and Human Input UI
+### F22 - Approval Center and Human Input UI
 
 - **Objective / load:** Expose safe human control over exact proposals and missing information. M.
-- **Dependencies:** F13, F16, F20. **Preconditions:** Role-separated accounts and server revision/CSRF enforcement proven.
+- **Dependencies:** F13, F17, F21. **Preconditions:** Role-separated accounts and server revision/CSRF enforcement proven.
 - **Scope / exclusions:** Approval list/detail, bounded proposal editing, input/clarification/reanalysis, decision UI; no model administration or arbitrary workflow editor.
-- **Files:** `apps/web/app/approvals/page.tsx`; `apps/web/src/features/actions/{approval-table,proposal-review,proposal-editor,decision-form}.tsx`; `apps/web/src/features/cases/input-form.tsx`; `packages/ui/src/controlled-form.tsx`; `tests/e2e/f21-approvals.spec.ts`.
+- **Files:** `apps/web/app/approvals/page.tsx`; `apps/web/src/features/actions/{approval-table,proposal-review,proposal-editor,decision-form}.tsx`; `apps/web/src/features/cases/input-form.tsx`; `packages/ui/src/controlled-form.tsx`; `tests/e2e/f22-approvals.spec.ts`.
 - **Contracts / instructions:** Show whole revision/items/aggregate impact, before/after/evidence/roles/editor/expiry. Typed edits only; server recomputes policy/money. On 409 reload/compare, no silent old approval. Reject/clarify/reanalyse and human no-action resolution use existing services/allowed actions, with reason; no-action cannot hide a started/unknown/succeeded effect. Approval explicit, never navigation/generated UI. Freeze all partial-plan edits and explain recovery.
 - **Required tests:** Operator edits -> old approval invalid, ops cannot fill finance slot, last editor cannot self-approve, role switch via real login, expired/stale response, CSRF, reject/clarify/resume and duplicate click.
-- **Acceptance:** The complete F19 case can be resolved with the correct humans in the browser, and all unauthorized/old-revision attempts fail server-side. Every human decision appears in audit/history.
-- **Verification commands:** `pnpm verify:phase F21`; `pnpm test:e2e F21`.
+- **Acceptance:** The complete F20 case can be resolved with the correct humans in the browser, and all unauthorized/old-revision attempts fail server-side. Every human decision appears in audit/history.
+- **Verification commands:** `pnpm verify:phase F22`; `pnpm test:e2e F22`.
 - **Deliverables / documentation:** Approval/input UX and manual role-separated walkthrough in `docs/DEMO.md`.
-- **Stop condition:** Await F21 acceptance. UI state is never accepted as execution authority.
+- **Stop condition:** Await F22 acceptance. UI state is never accepted as execution authority.
 
-### F22 - First Supply Demo Launcher
+### F23 - First Supply Demo Launcher
 
 - **Objective / load:** Let an operator start the working A workflow without manual data preparation. S.
-- **Dependencies:** F01-F21. **Preconditions:** Earlier stages accepted; all A replay assets committed.
-- **Scope / exclusions:** Accessible A catalog/launch/status/cost label and idempotent conflict admission; architecture/regression gate is F22A. No live/OCR/vector/B/C additions.
-- **Files:** `apps/api/src/demo/controller.ts`, `packages/application/src/demo/{catalog,launcher}.ts`; `apps/web/app/demo/page.tsx`; `fixtures/scenarios/manifest.json`, `fixtures/security/{forged-approval,cross-sandbox,malformed-tool}.json`; `tests/e2e/f22-launcher.spec.ts`.
-- **Contracts / instructions:** Implement GET catalog and POST launch. Show A descriptions/capabilities, replay actual cost zero and expected situation, not a prewritten resolution. Persist launch ID/key, attach fixture source through ordinary document/intake services, block conflicting reuse of mutable fixture records; full reset follows F46. Only replay is enabled. No demo-specific workflow/executor.
+- **Dependencies:** F01-F22. **Preconditions:** Earlier stages accepted; all A replay assets committed.
+- **Scope / exclusions:** Accessible A catalog/launch/status/cost label and idempotent conflict admission; architecture/regression gate is F24. No live/OCR/vector/B/C additions.
+- **Files:** `apps/api/src/demo/controller.ts`, `packages/application/src/demo/{catalog,launcher}.ts`; `apps/web/app/demo/page.tsx`; `fixtures/scenarios/manifest.json`, `fixtures/security/{forged-approval,cross-sandbox,malformed-tool}.json`; `tests/e2e/f23-launcher.spec.ts`.
+- **Contracts / instructions:** Implement GET catalog and POST launch. Show A descriptions/capabilities, replay actual cost zero and expected situation, not a prewritten resolution. Persist launch ID/key, attach fixture source through ordinary document/intake services, block conflicting reuse of mutable fixture records; full reset follows F56. Only replay is enabled. No demo-specific workflow/executor.
 - **Required tests:** Launch correct file/PO/run, same key dedupe, conflicting launch, invalid fixture, viewer denied, mobile/keyboard launcher and zero inference requests.
 - **Acceptance:** Operator starts real A with no CLI/API key; progress uses the shared journal/workbench. The UI never overwrites a prior scenario to look successful.
-- **Verification commands:** `pnpm verify:phase F22`; `pnpm test:e2e F22`.
+- **Verification commands:** `pnpm verify:phase F23`; `pnpm test:e2e F23`.
 - **Deliverables / documentation:** Implemented launcher/catalog contract and initial replay-only DEMO/README path.
-- **Stop condition:** Await F22 acceptance; complete vertical integration evidence is F22A.
+- **Stop condition:** Await F23 acceptance; complete vertical integration evidence is F24.
 
-### F22A - First Vertical Integration and Architecture Gate
+### F24 - First Vertical Integration and Architecture Gate
 
 - **Objective / load:** Independently prove the first complete replay product before enhancements. M, checkpoint.
-- **Dependencies:** F01-F22. **Preconditions:** All A code/UI already implemented; this stage does not create missing product features.
+- **Dependencies:** F01-F23. **Preconditions:** All A code/UI already implemented; this stage does not create missing product features.
 - **Scope / exclusions:** Existing A end-to-end regression and bounded architecture inspection; no provider/OCR/vector/B/C addition or unbounded repair campaign.
-- **Files:** `tests/e2e/f22a-first-vertical.spec.ts`; `tests/integration/f22a-boundaries.test.ts`; `docs/checkpoints/F22A.md`.
+- **Files:** `tests/e2e/f24-first-vertical.spec.ts`; `tests/integration/f24-boundaries.test.ts`; `docs/checkpoints/F24.md`.
 - **Contracts / instructions:** Trace ordinary intake -> digital extraction -> deterministic options -> policy/recommendation -> whole-plan approvals -> item receipts -> history. Inspect shared imports, DB grants, revision hash/aggregate cost and restart wait. A defect blocks the gate and is repaired in a separately scoped owner-stage follow-up, then this gate reruns; do not conceal it in a fake demo path.
 - **Required tests:** Happy browser path, ambiguous/no-alternative escalation, offline network denial, two-PO aggregate finance approval, restart during human wait, duplicate launch/delivery; all prior integration/E2E suites.
 - **Acceptance:** Nontechnical five-minute path is usable; technical reviewer can inspect real effects, whole-plan authority and effectively-once receipts. Record actual timing/environment, not assumed target success.
-- **Verification commands:** `pnpm verify:phase F22A`; `pnpm test:e2e F22A`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F24`; `pnpm test:e2e F24`; `pnpm docs:check`.
 - **Deliverables / documentation:** First complete vertical checkpoint with commands/results/limitations and source-linked architecture review.
-- **Stop condition:** Await F22A acceptance before F23; only replay A is accepted at this milestone.
+- **Stop condition:** Await F24 acceptance before F25; only replay A is accepted at this milestone.
 
-### F23 - OpenRouter Adapter and Live Configuration Preflight
+### F25 - OpenRouter Adapter and Live Configuration Preflight
 
 - **Objective / load:** Add the real provider boundary without weakening budgets or validation. M.
-- **Dependencies:** F14, F22A. **Preconditions:** No paid calls authorized; checked-in section 10 metadata/price snapshots work offline. Free refresh is disclosed maintenance, not a test prerequisite.
+- **Dependencies:** F14, F24. **Preconditions:** No paid calls authorized; checked-in section 10 metadata/price snapshots work offline. Free refresh is disclosed maintenance, not a test prerequisite.
 - **Scope / exclusions:** Chat/tool/stream/vision-capability adapter, config/pricing validation and usage reconciliation; no live evaluation, new OCR logic or UI settings screen.
-- **Files:** `packages/ai/src/openrouter/{client,capabilities,pricing,usage,stream}.ts`; `packages/db/src/schema/model-config-validation.ts`, validation/attestation migration; `config/{pricing.snapshot,features}.json`; `packages/application/src/admin/{model-config,runtime-capabilities}.ts`; `apps/api/src/admin/models-controller.ts`; `apps/web/src/features/runtime/{mode-context,mode-badge}.tsx`, existing layout/shell mode slot; `tests/integration/f23-openrouter-contract.test.ts`.
-- **Contracts / instructions:** Native fetch, bounded abort/timeouts, explicit provider/privacy/max-price, no implicit/SDK fallback. Validate served route/schema/price/expiry/context. Worker stores validations/attestation refs; API serves no key/inference. `features.consequentialLive=false`; runtime availability intersects installed feature/config/privacy. Replace F06's **one** mode slot with the runtime wrapper, reuse its generic status-badge, no parallel indicator; show disabled reason/business date. F26 enables reviewer-backed live execution. Config content immutable/lifecycle metadata mutable; no arbitrary URL/key or mode fallback. Tests use checked-in/fake metadata, not Internet prerequisite.
+- **Files:** `packages/ai/src/openrouter/{client,capabilities,pricing,usage,stream}.ts`; `packages/db/src/schema/model-config-validation.ts`, validation/attestation migration; `config/{pricing.snapshot,features}.json`; `packages/application/src/admin/{model-config,runtime-capabilities}.ts`; `apps/api/src/admin/models-controller.ts`; `apps/web/src/features/runtime/{mode-context,mode-badge}.tsx`, existing layout/shell mode slot; `tests/integration/f25-openrouter-contract.test.ts`.
+- **Contracts / instructions:** Native fetch, bounded abort/timeouts, explicit provider/privacy/max-price, no implicit/SDK fallback. Validate served route/schema/price/expiry/context. Worker stores validations/attestation refs; API serves no key/inference. `features.consequentialLive=false`; runtime availability intersects installed feature/config/privacy. Replace F06's **one** mode slot with the runtime wrapper, reuse its generic status-badge, no parallel indicator; show disabled reason/business date. F28 enables reviewer-backed live execution. Config content immutable/lifecycle metadata mutable; no arbitrary URL/key or mode fallback. Tests use checked-in/fake metadata, not Internet prerequisite.
 - **Required tests:** Fake HTTP endpoints for good/malformed schema, stream truncation, tool loops, 429/5xx/403, missing usage/price, cancellation, incompatible endpoint, fallback/repair two-attempt cap, uncertain billing and no silent replay downgrade. No external paid request in acceptance tests.
 - **Acceptance:** Real protocol adapter can be selected through configuration; all error/accounting paths proven against the fake provider; replay still fully works without key/network. Live readiness and missing prerequisites are distinct visible states.
-- **Verification commands:** `pnpm verify:phase F23`. A manual paid smoke is `NOT RUN` unless separately authorized; F44 owns its budgeted recipe.
+- **Verification commands:** `pnpm verify:phase F25`. A manual paid smoke is `NOT RUN` unless separately authorized; F54 owns its budgeted recipe.
 - **Deliverables / documentation:** AI_GATEWAY/OpenRouter compatibility snapshot, key/privacy setup and COSTS reconciliation; record live quality as unverified.
-- **Stop condition:** Await F23 acceptance; possessing a key is not consent to spend it.
+- **Stop condition:** Await F25 acceptance; possessing a key is not consent to spend it.
 
-### F24 - OCR, Image Inputs and Bounded Vision Fallback
+### F26 - OCR, Image Inputs and Bounded Vision Fallback
 
 - **Objective / load:** Complete scanned/image document support with measured fallback behavior. M.
-- **Dependencies:** F15, F16, F23. **Preconditions:** Isolated extractor already deployed; pinned renderer/OCR binaries available in its image.
+- **Dependencies:** F15, F17, F25. **Preconditions:** Isolated extractor already deployed; pinned renderer/OCR binaries available in its image.
 - **Scope / exclusions:** PDF-page rasterization, image normalization, Tesseract OCR, source boxes and optional gateway vision fallback; no B business reconciliation or custom OCR model.
-- **Files:** `apps/document-extractor/src/{rasterize,normalize,ocr,limits}.ts`; extractor Dockerfile and tessdata manifest; `packages/application/src/documents/vision-fallback.ts`; `fixtures/documents/{scans,images}/*`; `tests/integration/f24-ocr.test.ts`.
+- **Files:** `apps/document-extractor/src/{rasterize,normalize,ocr,limits}.ts`; extractor Dockerfile and tessdata manifest; `packages/application/src/documents/vision-fallback.ts`; `fixtures/documents/{scans,images}/*`; `tests/integration/f26-ocr.test.ts`.
 - **Contracts / instructions:** Rasterize via the same pinned pdfjs-dist + @napi-rs/canvas, avoiding a second wrapper's mismatched pdfjs version. Normalize with sharp, bounded 300-DPI target subject to pixel cap; OCR `eng` using Tesseract CLI `tessdata_fast`. Density trigger is fewer than 40 non-whitespace characters per page. OCR review trigger is mean word confidence < 85 or missing required schema fields; confidence is not a correctness guarantee. Vision receives only selected page crops when enabled and priced within its cap; unsupported/unknown image pricing means needs_review, not an unbounded call. Replay has OCR plus recorded vision outcomes, no hosted embedding/vision request.
 - **Required tests:** Digital PDFs do not use OCR; known scan fields/boxes, rotated image, low-confidence missing fields -> review, image bomb/page/timeout caps, concurrent job limit, parser killed/retried safely, no network/secret mount, generated scan reproducibility.
 - **Acceptance:** Scans/images reach ready or an actionable review state with real locators; human correction preserves source/history. No invented OCR coordinates or success after timeout.
-- **Verification commands:** `pnpm verify:phase F24`; `pnpm licenses:check`.
+- **Verification commands:** `pnpm verify:phase F26`; `pnpm licenses:check`.
 - **Deliverables / documentation:** DOCUMENTS OCR thresholds/resources/license inventory; record measured fixture extraction accuracy, not a general OCR accuracy claim.
-- **Stop condition:** Await F24 acceptance. Unreadable fields remain a supported human-review outcome.
+- **Stop condition:** Await F26 acceptance. Unreadable fields remain a supported human-review outcome.
 
-### F25 - Embedding Index and Hybrid Retrieval
+### F27 - Embedding Index and Hybrid Retrieval
 
 - **Objective / load:** Extend the existing retrieval port without changing scenario callers. M.
-- **Dependencies:** F14, F17, F23. **Preconditions:** Current source/policy versions and 1,536-dimensional embedding config fixed.
+- **Dependencies:** F14, F18, F25. **Preconditions:** Current source/policy versions and 1,536-dimensional embedding config fixed.
 - **Scope / exclusions:** Embedding jobs/generations, pgvector index, RRF hybrid search, exact version-keyed cache and retrieval fixtures; no reranker or operational memory ingestion.
-- **Files:** `packages/db/src/schema/knowledge-vectors.ts`, vector/index migration; `packages/application/src/knowledge/{embedding-jobs,hybrid-retriever,index-generation}.ts`; `packages/domain/src/evaluation/retrieval-metrics.ts`; `tools/check-retrieval.mjs`; `packages/ai/src/openrouter/embeddings.ts`; `fixtures/replay/v1/embeddings/*`; `fixtures/evaluations/retrieval-v1.json`; `tests/integration/f25-hybrid.test.ts`.
-- **Contracts / instructions:** Implement dimensions/generation/RRF exactly. Live uses configured gateway; replay's checked-in deterministic vectors have their own `replay-fixture-1536-v1` space, never falsely labeled live OpenAI vectors or mixed into its index generation. Unknown replay queries use labeled lexical-only retrieval. Store model/space/dimension/generation; mismatch requires new generation. Filter access/publication/date before ranking and recheck SQL publication generation on cache use; keys include sandbox/permission/query/source/bundle/index/config. Valkey loss computes DB. Implement the standalone recall/MRR runner now; F42 imports its pure scorer rather than a future dependency.
+- **Files:** `packages/db/src/schema/knowledge-vectors.ts`, vector/index migration; `packages/application/src/knowledge/{embedding-jobs,hybrid-retriever,index-generation}.ts`; `packages/domain/src/evaluation/retrieval-metrics.ts`; `tools/check-retrieval.mjs`; `packages/ai/src/openrouter/embeddings.ts`; `fixtures/replay/v1/embeddings/*`; `fixtures/evaluations/retrieval-v1.json`; `tests/integration/f27-hybrid.test.ts`.
+- **Contracts / instructions:** Implement dimensions/generation/RRF exactly. Live uses configured gateway; replay's checked-in deterministic vectors have their own `replay-fixture-1536-v1` space, never falsely labeled live OpenAI vectors or mixed into its index generation. Unknown replay queries use labeled lexical-only retrieval. Store model/space/dimension/generation; mismatch requires new generation. Filter access/publication/date before ranking and recheck SQL publication generation on cache use; keys include sandbox/permission/query/source/bundle/index/config. Valkey loss computes DB. Implement the standalone recall/MRR runner now; F52 imports its pure scorer rather than a future dependency.
 - **Required tests:** Known synonym query improves over lexical-only on labeled fixtures; stale generation/mixed dims rejected; HNSW/FTS filters exclude revoked/cross-sandbox chunks; stable RRF tie order; cache invalidation on publish/revoke; embedding-budget exhaustion yields honest lexical mode.
-- **Acceptance:** Same port serves lexical/hybrid results with exact citations; labeled retrieval recall/MRR runner exists independently of F42 and reports actual fixture scores. Index rebuild never overwrites active vectors in place.
-- **Verification commands:** `pnpm verify:phase F25`; `pnpm retrieval:check -- --dataset retrieval-v1`.
+- **Acceptance:** Same port serves lexical/hybrid results with exact citations; labeled retrieval recall/MRR runner exists independently of F52 and reports actual fixture scores. Index rebuild never overwrites active vectors in place.
+- **Verification commands:** `pnpm verify:phase F27`; `pnpm retrieval:check -- --dataset retrieval-v1`.
 - **Deliverables / documentation:** KNOWLEDGE index/mode/cache/rebuild runbook; ADR 007 implemented hybrid details and separate replay vs live quality limitations.
-- **Stop condition:** Await F25 acceptance; no hidden model download or API call in offline retrieval tests.
+- **Stop condition:** Await F27 acceptance; no hidden model download or API call in offline retrieval tests.
 
-### F26 - Independent Reviewer Backend and Live Admission Gate
+### F28 - Independent Reviewer Backend and Live Admission Gate
 
 - **Objective / load:** Complete selective independent review and safe human escalation. M.
-- **Dependencies:** F18, F19, F23, F25. **Preconditions:** Deterministic verifier and provider budget/accounting already proven.
-- **Scope / exclusions:** One reviewer call, typed dispute/input resolution and live A admission backend; UI is F26A. No recursive agents, policy override or paid campaign.
-- **Files:** `packages/application/src/verification/{review-policy,independent-review,disagreement}.ts`; `packages/ai/src/prompts/verify/v1.ts`; `packages/application/src/scenarios/supply/definition.ts`, `apps/worker/src/scenarios.module.ts`, `config/features.json`; `apps/api/src/verification/controller.ts`; `fixtures/replay/v1/verification/*`; `tests/integration/f26-verification.test.ts`.
-- **Contracts / instructions:** Require independent review for live consequential recommendations, contradictory evidence, or uncertain interpretations affecting an action; skip routine validated classification/extraction and internal notes. Use separate configured reviewer role/prompt and verdict schema. Deterministic failures cannot be overruled. Human dispute resolution records reason and may correct input/reanalyse; only a non-safety interpretive dispute can be acknowledged. Insufficient evidence remains blocking. Remove F23's live-consequential admission flag only after this service is wired into supply-v1. Add the same reusable hook to later B/C definitions.
+- **Dependencies:** F19, F20, F25, F27. **Preconditions:** Deterministic verifier and provider budget/accounting already proven.
+- **Scope / exclusions:** One reviewer call, typed dispute/input resolution and live A admission backend; UI is F29. No recursive agents, policy override or paid campaign.
+- **Files:** `packages/application/src/verification/{review-policy,independent-review,disagreement}.ts`; `packages/ai/src/prompts/verify/v1.ts`; `packages/application/src/scenarios/supply/definition.ts`, `apps/worker/src/scenarios.module.ts`, `config/features.json`; `apps/api/src/verification/controller.ts`; `fixtures/replay/v1/verification/*`; `tests/integration/f28-verification.test.ts`.
+- **Contracts / instructions:** Require independent review for live consequential recommendations, contradictory evidence, or uncertain interpretations affecting an action; skip routine validated classification/extraction and internal notes. Use separate configured reviewer role/prompt and verdict schema. Deterministic failures cannot be overruled. Human dispute resolution records reason and may correct input/reanalyse; only a non-safety interpretive dispute can be acknowledged. Insufficient evidence remains blocking. Remove F25's live-consequential admission flag only after this service is wired into supply-v1. Add the same reusable hook to later B/C definitions.
 - **Required tests:** Supported/disputed/insufficient outputs, forged evidence, reviewer timeout/budget failure blocks affected action, one-call cap/no recursion, human correction invalidates analysis, deterministic failure override rejected, replay/live path share gate.
-- **Acceptance:** A consequential draft cannot reach execution while required review is missing/disputed; straightforward facts avoid unnecessary reviewer calls. Live A is structurally enabled, not empirically quality-validated. Existing UI can show typed blocked reason; specialized panel follows F26A.
-- **Verification commands:** `pnpm verify:phase F26`; `pnpm test:e2e F22A` with updated review fixture.
+- **Acceptance:** A consequential draft cannot reach execution while required review is missing/disputed; straightforward facts avoid unnecessary reviewer calls. Live A is structurally enabled, not empirically quality-validated. Existing UI can show typed blocked reason; specialized panel follows F29.
+- **Verification commands:** `pnpm verify:phase F28`; `pnpm test:e2e F24` with updated review fixture.
 - **Deliverables / documentation:** AI_GATEWAY/backend verification rubric/control routes and safe live-admission feature ownership.
-- **Stop condition:** Await F26 acceptance; no paid call is necessary to pass the software gate.
+- **Stop condition:** Await F28 acceptance; no paid call is necessary to pass the software gate.
 
-### F26A - Verification Evidence and Human Disagreement UI
+### F29 - Verification Evidence and Human Disagreement UI
 
 - **Objective / load:** Let humans inspect and safely resolve the existing typed verification outcomes. S.
-- **Dependencies:** F21, F26. **Preconditions:** Backend distinguishes non-safety interpretation from non-overridable failures.
+- **Dependencies:** F22, F28. **Preconditions:** Backend distinguishes non-safety interpretation from non-overridable failures.
 - **Scope / exclusions:** Source-backed reviewer panel, correction/reanalyse/narrow acknowledgement UX; no new review model, algorithm or authorization.
-- **Files:** `apps/web/src/features/cases/{verification-panel,disagreement-form}.tsx`; `tests/e2e/f26a-verification.spec.ts`.
+- **Files:** `apps/web/src/features/cases/{verification-panel,disagreement-form}.tsx`; `tests/e2e/f29-verification.spec.ts`.
 - **Contracts / instructions:** Show deterministic vs model checks, supported/disputed/insufficient findings and sources; no artificial confidence percentage. Only offer operations returned as allowed by the server. Human correction triggers a new analysis/revision; acknowledgement cannot override identity/arithmetic/policy/permission/budget/stale evidence or approve the plan.
 - **Required tests:** Supported/disputed/insufficient views, safe correction/new revision, forbidden override server rejection, viewer read-only, keyboard/mobile reason/source navigation.
-- **Acceptance:** User understands why an action is blocked and can provide a permitted resolution without hidden bypass; all interactions use F26 services.
-- **Verification commands:** `pnpm verify:phase F26A`; `pnpm test:e2e F26A`.
+- **Acceptance:** User understands why an action is blocked and can provide a permitted resolution without hidden bypass; all interactions use F28 services.
+- **Verification commands:** `pnpm verify:phase F29`; `pnpm test:e2e F29`.
 - **Deliverables / documentation:** UI verification/disagreement guide and screenshot states from replay.
-- **Stop condition:** Await F26A acceptance; future scenarios reuse this panel unchanged.
+- **Stop condition:** Await F29 acceptance; future scenarios reuse this panel unchanged.
 
-### F27 - Simulator Delivery and Invoice Read Context
+### F30 - Simulator Delivery and Invoice Read Context
 
 - **Objective / load:** Add the authoritative persisted read facts needed by B. M.
-- **Dependencies:** F08, F09, F26. **Preconditions:** Supply receipt transaction wrapper stable; B seed shares existing company IDs.
-- **Scope / exclusions:** Delivery/invoice line schema/seed/context/read tool; receipt mutation is F27A, status mutations F27B. No B algorithm/UI.
-- **Files:** `packages/enterprise-db/src/schema/finance.ts`, migration/seed; `apps/enterprise-sim/src/finance-read-controller.ts`; `packages/contracts/src/finance.ts`; `packages/integrations/src/tools/finance-reads.ts`; `fixtures/company/{deliveries,invoices}.json`; `tests/integration/f27-finance-reads.test.ts`.
+- **Dependencies:** F08, F09, F28. **Preconditions:** Supply receipt transaction wrapper stable; B seed shares existing company IDs.
+- **Scope / exclusions:** Delivery/invoice line schema/seed/context/read tool; receipt mutation is F31, status mutations F32. No B algorithm/UI.
+- **Files:** `packages/enterprise-db/src/schema/finance.ts`, migration/seed; `apps/enterprise-sim/src/finance-read-controller.ts`; `packages/contracts/src/finance.ts`; `packages/integrations/src/tools/finance-reads.ts`; `fixtures/company/{deliveries,invoices}.json`; `tests/integration/f30-finance-reads.test.ts`.
 - **Contracts / instructions:** Seed exactly 8 baseline deliveries/10 staged invoices with line/identity/document keys and coherent existing F07 refs. Return prior nonvoid totals excluding current candidate plus separate candidate/version. No double counting/fuzzy ID. Unknown unregistered invoice explicitly escalates later, no AP subsystem. Stored net/tax/gross bigint/exact; new approved receipts are runtime effects, not baseline count drift.
 - **Required tests:** Known context joins, current vs previous cumulative quantities, duplicate normalized key/hash, cross-sandbox read, bad currency/tax/overflow seed, exact context/tool response schemas.
 - **Acceptance:** B obtains real read facts through the existing REST adapter; no financial write handler is falsely available yet.
-- **Verification commands:** `pnpm verify:phase F27`.
+- **Verification commands:** `pnpm verify:phase F30`.
 - **Deliverables / documentation:** ENTERPRISE_API finance read contracts, DATA_MODEL and staged-invoice scope.
-- **Stop condition:** Await F27 acceptance; command stages follow.
+- **Stop condition:** Await F30 acceptance; command stages follow.
 
-### F27A - Verified Goods Receipt Command
+### F31 - Verified Goods Receipt Command
 
 - **Objective / load:** Post a finance-approved delivery exactly once without over-receiving. M.
-- **Dependencies:** F13B, F27. **Preconditions:** Shared command locks/deadlines/receipts and PO/stock tables proven.
+- **Dependencies:** F13B, F30. **Preconditions:** Shared command locks/deadlines/receipts and PO/stock tables proven.
 - **Scope / exclusions:** One goods-receipt command and adapter/catalog registration; no invoice status mutation or reconciliation algorithm.
-- **Files:** `apps/enterprise-sim/src/commands/post-goods-receipt.ts`; delivery identity constraint migration; `packages/contracts/src/enterprise-commands.ts`; finance command adapter/handler registration; `tests/integration/f27a-goods-receipt.test.ts`.
+- **Files:** `apps/enterprise-sim/src/commands/post-goods-receipt.ts`; delivery identity constraint migration; `packages/contracts/src/enterprise-commands.ts`; finance command adapter/handler registration; `tests/integration/f31-goods-receipt.test.ts`.
 - **Contracts / instructions:** Lock active sandbox/PO lines/inventory in stable order, verify document/delivery identity and expected versions, reject quantity above unreceived PO, update received/on-hand once, insert receipt/outbox atomically. Shared plan approval requires finance; read/propose tool registry never gets a post command.
 - **Required tests:** Partial/full/cumulative/duplicate delivery, two concurrent receipts, stale version, overflow, disconnect-after-commit and same-key replay; no mutation without finance approval in application integration.
 - **Acceptance:** Valid receipt makes one persistent stock/PO change; rejected/duplicate/late request never repeats it. Audit/source versions remain inspectable.
-- **Verification commands:** `pnpm verify:phase F27A`.
+- **Verification commands:** `pnpm verify:phase F31`.
 - **Deliverables / documentation:** ENTERPRISE_API receipt lifecycle and ACTIONS finance kind mapping.
-- **Stop condition:** Await F27A acceptance; parsing a note alone cannot post goods.
+- **Stop condition:** Await F31 acceptance; parsing a note alone cannot post goods.
 
-### F27B - Invoice Reconciled and Hold Commands
+### F32 - Invoice Reconciled and Hold Commands
 
 - **Objective / load:** Persist bounded invoice dispositions behind finance approval. S.
-- **Dependencies:** F27A. **Preconditions:** Invoice current/prior amounts and command wrapper available.
+- **Dependencies:** F31. **Preconditions:** Invoice current/prior amounts and command wrapper available.
 - **Scope / exclusions:** Mark reconciled/on hold, independently validate arithmetic/current record references, register handler availability; no payment or new invoice registration.
-- **Files:** `apps/enterprise-sim/src/commands/invoice-status.ts`; `packages/contracts/src/enterprise-commands.ts`; finance command adapter/handler registration; `tests/integration/f27b-invoice-status.test.ts`.
+- **Files:** `apps/enterprise-sim/src/commands/invoice-status.ts`; `packages/contracts/src/enterprise-commands.ts`; finance command adapter/handler registration; `tests/integration/f32-invoice-status.test.ts`.
 - **Contracts / instructions:** Require exact staged invoice/version and bounded report snapshot/hash reference; simulator rechecks its own PO/receipt/invoice constraints and allowed status transition. A report ID alone is not authority. Hold stores enum reason; no finance data deleted or paid status changed. Emit invoice changed + receipt atomically.
 - **Required tests:** Reconciled/hold transitions, wrong supplier/currency/reference, forged matching hash with incorrect money rejected, stale/duplicate command and worker/API credential boundary.
 - **Acceptance:** Only finance-approved correct current dispositions persist; unknown/duplicate document does not silently create/pay an invoice.
-- **Verification commands:** `pnpm verify:phase F27B`.
+- **Verification commands:** `pnpm verify:phase F32`.
 - **Deliverables / documentation:** Invoice status contract and independent simulator validation in ENTERPRISE_API/ACTIONS.
-- **Stop condition:** Await F27B acceptance before B workflow uses these commands.
+- **Stop condition:** Await F32 acceptance before B workflow uses these commands.
 
-### F28 - Deterministic Three-Way Reconciliation
+### F33 - Deterministic Three-Way Reconciliation
 
 - **Objective / load:** Implement B's financial/discrepancy logic as a pure, exact subsystem. M.
-- **Dependencies:** F16, F18, F27B. **Preconditions:** Extracted nullable fields and authoritative B context available.
+- **Dependencies:** F17, F19, F32. **Preconditions:** Extracted nullable fields and authoritative B context available.
 - **Scope / exclusions:** Normalization, duplicate checks, PO/receipt/invoice comparison, discrepancy reports/calculation evidence; no orchestration/UI/AI financial inference.
-- **Files:** `packages/domain/src/reconciliation/{normalize,duplicates,three-way,tolerances}.ts`; `packages/contracts/src/reconciliation.ts`; `packages/application/src/reconciliation/report-evidence.ts`; `packages/integrations/src/tools/reconciliation.ts`; `fixtures/scenarios/b-*.json`; `tests/unit/f28-reconciliation.test.ts`, `tests/integration/f28-finance-evidence.test.ts`.
+- **Files:** `packages/domain/src/reconciliation/{normalize,duplicates,three-way,tolerances}.ts`; `packages/contracts/src/reconciliation.ts`; `packages/application/src/reconciliation/report-evidence.ts`; `packages/integrations/src/tools/reconciliation.ts`; `fixtures/scenarios/b-*.json`; `tests/unit/f33-reconciliation.test.ts`, `tests/integration/f33-finance-evidence.test.ts`.
 - **Contracts / instructions:** Normalize invoice numbers with trim, Unicode normalization and case-folding but preserve punctuation; store original and normalized forms. Match product/PO line exactly, never by model price guess. Implement section 3.3 cumulative quantity/price/tax tolerance conditions; all conjunctive thresholds must pass. Report discrepancies with expected/observed/difference, severity, source fields, rule ID and required resolution. Credit proposals later may use only exact verified differences. A delivery note comparison does not itself post a receipt.
 - **Required tests:** Exact/rounding, one-cent-per-unit AND EUR 1 total boundary, cumulative partial invoices, quantity excess, wrong tax/currency, duplicate hash/number, absent PO/receipt, ambiguous line, incorrect arithmetic and missing field not zero.
 - **Acceptance:** All B fixture reports/amounts match checked-in exact expected JSON; failures and missing data cannot become clean reconciliation through a model opinion.
-- **Verification commands:** `pnpm verify:phase F28`.
+- **Verification commands:** `pnpm verify:phase F33`.
 - **Deliverables / documentation:** SCENARIOS B formulas, discrepancy schema/rule IDs and decision table.
-- **Stop condition:** Await F28 acceptance. No finance command is auto-executed by a calculation.
+- **Stop condition:** Await F33 acceptance. No finance command is auto-executed by a calculation.
 
-### F29 - Reconciliation Workflow and Finance Review
+### F34 - Reconciliation Workflow and Finance Review
 
 - **Objective / load:** Compose B end to end on the shared platform. M.
-- **Dependencies:** F24-F28. **Preconditions:** B source/replay fixtures and finance roles ready; shared verifier/executor supports finance kinds.
+- **Dependencies:** F26-F33. **Preconditions:** B source/replay fixtures and finance roles ready; shared verifier/executor supports finance kinds.
 - **Scope / exclusions:** `reconciliation-v1`, report/communications, correction waits, duplicate handling and finance proposals; no new document parser, gateway, journal or approval architecture.
-- **Files:** `packages/application/src/scenarios/reconciliation/{definition,steps,report}.ts`; scenario registration; `fixtures/replay/v1/reconciliation/*`; `tests/integration/f29-reconciliation-workflow.test.ts`.
+- **Files:** `packages/application/src/scenarios/reconciliation/{definition,steps,report}.ts`; scenario registration; `fixtures/replay/v1/reconciliation/*`; `tests/integration/f34-reconciliation-workflow.test.ts`.
 - **Contracts / instructions:** Implement section 5.4 sequence. Reuse DocumentVersion/ExtractionRevision, exact enterprise tool, pure reconcile result, policy citations, independent review and immutable action revisions. For duplicate/mismatch produce a hold/review recommendation, never a new posting. An approved delivery receipt is a separate command; invoice reconciliation must reread receipt versions after it succeeds. Supplier messages depend on the resulting approved disposition. All material financial values are formatted from calculations, not free-form generated numbers.
 - **Required tests:** Exact and tolerance approval, mismatch/hold, duplicate/no repost, missing receipt/input, scanned correction/resume, finance rejection/edit, posting timeout receipt, stale PO reapproval and reviewer disagreement.
 - **Acceptance:** A digital/scanned B case yields an evidence-backed report and only authorized persistent finance updates; duplicate and malicious files have zero unintended effects. Restart during review resumes correctly.
-- **Verification commands:** `pnpm verify:phase F29`.
+- **Verification commands:** `pnpm verify:phase F34`.
 - **Deliverables / documentation:** SCENARIOS B full walkthrough and documented finance/correction wait states.
-- **Stop condition:** Await F29 acceptance; UI work follows without backend placeholders.
+- **Stop condition:** Await F34 acceptance; UI work follows without backend placeholders.
 
-### F30 - Document Center and B Integration Gate
+### F35 - Document Center and B Integration Gate
 
 - **Objective / load:** Make B source review/correction/approval fully browser-operable. M, integration checkpoint.
-- **Dependencies:** F20-F21, F29. **Preconditions:** Real source download/correction/report APIs available.
+- **Dependencies:** F21-F22, F34. **Preconditions:** Real source download/correction/report APIs available.
 - **Scope / exclusions:** Document center, extracted-field/source comparison, reconciliation tab and B launcher entries; no knowledge admin or C behavior.
-- **Files:** `apps/web/app/documents/{page,[id]/page}.tsx`; `apps/web/src/features/documents/{upload,viewer,extracted-fields,correction,discrepancies}.tsx`; B additions to case/launcher catalogs; `tests/e2e/f30-documents.spec.ts`; `docs/checkpoints/F30.md`.
+- **Files:** `apps/web/app/documents/{page,[id]/page}.tsx`; `apps/web/src/features/documents/{upload,viewer,extracted-fields,correction,discrepancies}.tsx`; B additions to case/launcher catalogs; `tests/e2e/f35-documents.spec.ts`; `docs/checkpoints/F35.md`.
 - **Contracts / instructions:** Show page text and optional safe PDF preview, exact source location per selected field, original/corrected values, parser/revision/status and duplicate links. Save corrections with If-Match, require reason, explain invalidated proposals. Render deterministic report and finance approval links using existing components. Untrusted document content is escaped/restricted, no raw HTML. Add scan fixtures to offline launcher with honest OCR/replay labels.
 - **Required tests:** Upload -> processing -> source field -> correction -> reanalysis -> finance approval -> persisted result; duplicate, low confidence, 409 conflict, unauthorized correction, hostile filename/content, mobile and keyboard source navigation. Re-run A integration/E2E.
 - **Acceptance:** A reviewer can complete B without CLI or manual data edits; source values and discrepancy amounts are independently inspectable. A remains unchanged and uses the same platform modules.
-- **Verification commands:** `pnpm verify:phase F30`; `pnpm test:e2e F30`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F35`; `pnpm test:e2e F35`; `pnpm docs:check`.
 - **Deliverables / documentation:** B demo path and checkpoint evidence including A regression/dependency inspection.
-- **Stop condition:** Await F30 acceptance; B completion is not C completion.
+- **Stop condition:** Await F35 acceptance; B completion is not C completion.
 
-### F31 - Simulator Customer Context and Terms
+### F36 - Simulator Customer Context and Terms
 
 - **Objective / load:** Supply exact customer/order/delivery/history/terms context to C. M.
-- **Dependencies:** F08, F27, F30. **Preconditions:** Customer/order/delivery identities and command receipt wrapper accepted.
+- **Dependencies:** F08, F30, F35. **Preconditions:** Customer/order/delivery identities and command receipt wrapper accepted.
 - **Scope / exclusions:** Customer terms/history read schema/seed/tool/context; no resolution writes. Four narrow command stages follow.
-- **Files:** `packages/enterprise-db/src/schema/customer-terms.ts`, migration/seed; `apps/enterprise-sim/src/customer-read-controller.ts`; `packages/contracts/src/customer-resolution.ts`; `packages/integrations/src/tools/customer-context.ts`; `fixtures/company/{communications,customer-terms}.json`; `tests/integration/f31-customer-context.test.ts`.
-- **Contracts / instructions:** Exact customer/order/delivery/terms/current versions, no wrong-customer disclosure. Seed exactly 30 tagged prior communications, separate from runtime F08 sends. F31A/B seed prior claims in their actual tables, not fake pre-table JSON. Disabled handler availability remains until command owner stages; all business windows inherit sandbox time in both AI modes.
+- **Files:** `packages/enterprise-db/src/schema/customer-terms.ts`, migration/seed; `apps/enterprise-sim/src/customer-read-controller.ts`; `packages/contracts/src/customer-resolution.ts`; `packages/integrations/src/tools/customer-context.ts`; `fixtures/company/{communications,customer-terms}.json`; `tests/integration/f36-customer-context.test.ts`.
+- **Contracts / instructions:** Exact customer/order/delivery/terms/current versions, no wrong-customer disclosure. Seed exactly 30 tagged prior communications, separate from runtime F08 sends. F37/F38 seed prior claims in their actual tables, not fake pre-table JSON. Disabled handler availability remains until command owner stages; all business windows inherit sandbox time in both AI modes.
 - **Required tests:** Correct context/history ordering/pagination, exact ambiguous match outcome, stale references, wrong customer/sandbox, no write tool exposed and seed repeat.
 - **Acceptance:** Investigation can read authoritative facts, terms and prior communications through REST; no model guess establishes identity or command eligibility.
-- **Verification commands:** `pnpm verify:phase F31`.
+- **Verification commands:** `pnpm verify:phase F36`.
 - **Deliverables / documentation:** ENTERPRISE_API customer read contract and synthetic dataset context map.
-- **Stop condition:** Await F31 acceptance; resolution commands are separately tested next.
+- **Stop condition:** Await F36 acceptance; resolution commands are separately tested next.
 
-### F31A - Return Authorization Command
+### F37 - Return Authorization Command
 
 - **Objective / load:** Persist a bounded eligible return authorization, never a refund. S.
-- **Dependencies:** F13B, F31. **Preconditions:** Exact delivery/customer/terms and command transaction wrapper available.
+- **Dependencies:** F13B, F36. **Preconditions:** Exact delivery/customer/terms and command transaction wrapper available.
 - **Scope / exclusions:** Return table/migration, eligibility predicate, one command/adapter; no replacement/credit/address behavior.
-- **Files:** `packages/enterprise-db/src/schema/returns.ts`, migration; `packages/domain/src/customer/eligibility.ts` return predicate; `apps/enterprise-sim/src/commands/return-authorization.ts`; handler/contract additions; `tests/integration/f31a-returns.test.ts`.
+- **Files:** `packages/enterprise-db/src/schema/returns.ts`, migration; `packages/domain/src/customer/eligibility.ts` return predicate; `apps/enterprise-sim/src/commands/return-authorization.ts`; handler/contract additions; `tests/integration/f37-returns.test.ts`.
 - **Contracts / instructions:** Validate delivered/order/customer/product identity, returnability, effective business date <=30 calendar days and quantity minus prior authorized returns. Compute from locked authoritative rows, not application-supplied eligibility. Insert RMA+receipt/outbox atomically, require ops-approved plan. Expose prior RMAs in existing customer context after this migration.
 - **Required tests:** Day 30/31, missing date, nonreturnable, cumulative partial quantity, two concurrent returns, same-key repeat, wrong customer and rollback.
 - **Acceptance:** One eligible RMA persists; ineligible/duplicate commands cannot overauthorize or change money/stock as if goods were already returned.
-- **Verification commands:** `pnpm verify:phase F31A`.
+- **Verification commands:** `pnpm verify:phase F37`.
 - **Deliverables / documentation:** Return predicate/command/role semantics in SCENARIOS/ENTERPRISE_API.
-- **Stop condition:** Await F31A acceptance; actual reverse logistics/refund remains outside core.
+- **Stop condition:** Await F37 acceptance; actual reverse logistics/refund remains outside core.
 
-### F31B - Damaged-Item Replacement and Stock Reservation
+### F38 - Damaged-Item Replacement and Stock Reservation
 
 - **Objective / load:** Persist an eligible replacement without duplicate claims or overselling. M.
-- **Dependencies:** F31A. **Preconditions:** Return/delivery identity and existing stock row lock discipline proven.
+- **Dependencies:** F37. **Preconditions:** Return/delivery identity and existing stock row lock discipline proven.
 - **Scope / exclusions:** Replacement tables/migration, damage predicate and atomic shipment/reservation command; no shipped/delivered fiction or supplier procurement.
-- **Files:** `packages/enterprise-db/src/schema/replacements.ts`, migration; replacement predicate in `packages/domain/src/customer/eligibility.ts`; `apps/enterprise-sim/src/commands/replacement-shipment.ts`; adapter/contract additions; `tests/integration/f31b-replacements.test.ts`.
+- **Files:** `packages/enterprise-db/src/schema/replacements.ts`, migration; replacement predicate in `packages/domain/src/customer/eligibility.ts`; `apps/enterprise-sim/src/commands/replacement-shipment.ts`; adapter/contract additions; `tests/integration/f38-replacements.test.ts`.
 - **Contracts / instructions:** Lock sandbox/order/delivery/prior claims/inventory in stable order. Require confirmed damaged delivered quantity inside window, subtract prior claims, verify address reference and available stock. Atomically create replacement shipment in allocated state plus reservations/receipt/event; no immediate delivered state and no negative stock. Add resulting versions/history to customer context.
 - **Required tests:** Two concurrent replacements/competing reservations, cumulative damage limit, prior return overlap, missing/unverified damage, stock shortage, timeout-after-commit and unchanged same-key replay.
 - **Acceptance:** A permitted command creates one reservation/shipment with exact eligible quantity; insufficient stock causes a typed rejection/escalation, not phantom inventory.
-- **Verification commands:** `pnpm verify:phase F31B`.
+- **Verification commands:** `pnpm verify:phase F38`.
 - **Deliverables / documentation:** Replacement lifecycle/partial effect notes in ENTERPRISE_API/ACTIONS.
-- **Stop condition:** Await F31B acceptance; cancellation does not falsely release a committed reservation.
+- **Stop condition:** Await F38 acceptance; cancellation does not falsely release a committed reservation.
 
-### F31C - Verified Credit-Note Draft Command
+### F39 - Verified Credit-Note Draft Command
 
 - **Objective / load:** Create a bounded finance-approved draft from a real discrepancy. S.
-- **Dependencies:** F28, F31B. **Preconditions:** Report evidence contract and exact current invoice/PO/receipt facts available.
+- **Dependencies:** F33, F38. **Preconditions:** Report evidence contract and exact current invoice/PO/receipt facts available.
 - **Scope / exclusions:** Credit draft table/one command/adapter; no payment, refund, credit issuance or ledger mutation.
-- **Files:** `packages/enterprise-db/src/schema/credit-drafts.ts`, migration; `apps/enterprise-sim/src/commands/credit-note-draft.ts`; adapter/contract additions; `tests/integration/f31c-credit-drafts.test.ts`.
+- **Files:** `packages/enterprise-db/src/schema/credit-drafts.ts`, migration; `apps/enterprise-sim/src/commands/credit-note-draft.ts`; adapter/contract additions; `tests/integration/f39-credit-drafts.test.ts`.
 - **Contracts / instructions:** Require matching invoice/customer/sandbox, current versions, exact positive discrepancy/draft amount and report hash link. Simulator recomputes maximum eligible discrepancy from its records, including earlier drafts, instead of trusting the hash or model. Finance role approves whole plan; store draft status only with unique receipt/outbox.
 - **Required tests:** Over/negative amount, forged report refs/amount, prior draft reduces remaining amount, wrong invoice/customer, stale versions, duplicate command and no real money effect.
 - **Acceptance:** Only a supported draft persists once and downstream UI clearly says draft; no transfer/paid status changes.
-- **Verification commands:** `pnpm verify:phase F31C`.
+- **Verification commands:** `pnpm verify:phase F39`.
 - **Deliverables / documentation:** Credit draft scope/financial validation in ACTIONS/ENTERPRISE_API.
-- **Stop condition:** Await F31C acceptance; unregistered/ambiguous invoices escalate.
+- **Stop condition:** Await F39 acceptance; unregistered/ambiguous invoices escalate.
 
-### F31D - Pre-Dispatch Delivery Address Command
+### F40 - Pre-Dispatch Delivery Address Command
 
 - **Objective / load:** Support the single bounded order-edit use case safely. S.
-- **Dependencies:** F31C. **Preconditions:** Order allocation/shipment status and exact customer identity exposed.
+- **Dependencies:** F39. **Preconditions:** Order allocation/shipment status and exact customer identity exposed.
 - **Scope / exclusions:** Structured postal address predicate/command/adapter; no order quantities/prices/customer/payment edits.
-- **Files:** Address predicate in `packages/domain/src/customer/eligibility.ts`; `apps/enterprise-sim/src/commands/delivery-address.ts`; contracts/handler additions; `tests/integration/f31d-address.test.ts`.
+- **Files:** Address predicate in `packages/domain/src/customer/eligibility.ts`; `apps/enterprise-sim/src/commands/delivery-address.ts`; contracts/handler additions; `tests/integration/f40-address.test.ts`.
 - **Contracts / instructions:** Require confirmed, unallocated, unshipped order; exact customer/order/version; bounded validated country/postal/city/line strings. Lock state with command receipt transaction. Reject undeclared fields and do not log raw address. Ops approval binds the exact new address through whole-plan hash.
 - **Required tests:** Allocation/dispatch race, wrong customer/sandbox, XSS/control-character/oversized address, changed body after approval, same-key mismatch and redact canary.
 - **Acceptance:** Exactly approved address changes once before dispatch; no endpoint can alter price/quantity/payment or edit a shipped order.
-- **Verification commands:** `pnpm verify:phase F31D`.
+- **Verification commands:** `pnpm verify:phase F40`.
 - **Deliverables / documentation:** Address-only scope and privacy constraints in SCENARIOS/ENTERPRISE_API.
-- **Stop condition:** Await F31D acceptance; broader order management is not a hidden extension.
+- **Stop condition:** Await F40 acceptance; broader order management is not a hidden extension.
 
-### F32 - Customer Eligibility and Linked Investigation
+### F41 - Customer Eligibility and Linked Investigation
 
 - **Objective / load:** Determine C's valid resolutions and supporting business evidence without model authority. M.
-- **Dependencies:** F18, F28, F31D. **Preconditions:** Full customer context and existing A/B links are retrievable.
+- **Dependencies:** F19, F33, F40. **Preconditions:** Full customer context and existing A/B links are retrievable.
 - **Scope / exclusions:** Pure eligibility/impact functions, exact identity matching and linked-case evidence; no customer workflow/UI.
-- **Files:** `packages/domain/src/customer/{eligibility,resolution-options,impact}.ts`; `packages/application/src/scenarios/customer/{identity,investigation}.ts`; `packages/contracts/src/customer.ts`; `fixtures/scenarios/c-*.json`; `tests/unit/f32-customer-rules.test.ts`, `tests/integration/f32-investigation.test.ts`.
-- **Contracts / instructions:** Compose the already introduced return/damage/address predicates into resolution options, not duplicate them. Delay status reads current delivery and linked A impacts; billing discrepancy references persisted B report/current invoice. Cross-case links use exact same-sandbox refs. Unknown/multiple matches produce registered clarification fields. If A/B is missing, return typed `dependency_required` with exact proposed child intake data, not a fabricated completed investigation; F33 can safely escalate this, F33A adds automatic coordination. Exposed costs use exact stock/terms/prices, never model-estimated refunds.
+- **Files:** `packages/domain/src/customer/{eligibility,resolution-options,impact}.ts`; `packages/application/src/scenarios/customer/{identity,investigation}.ts`; `packages/contracts/src/customer.ts`; `fixtures/scenarios/c-*.json`; `tests/unit/f41-customer-rules.test.ts`, `tests/integration/f41-investigation.test.ts`.
+- **Contracts / instructions:** Compose the already introduced return/damage/address predicates into resolution options, not duplicate them. Delay status reads current delivery and linked A impacts; billing discrepancy references persisted B report/current invoice. Cross-case links use exact same-sandbox refs. Unknown/multiple matches produce registered clarification fields. If A/B is missing, return typed `dependency_required` with exact proposed child intake data, not a fabricated completed investigation; F42 can safely escalate this, F43 adds automatic coordination. Exposed costs use exact stock/terms/prices, never model-estimated refunds.
 - **Required tests:** Every supported intent, ambiguous identity, missing delivery date, ineligible/partial return, replacement stock shortage, prior compensation, existing/missing linked A/B, stale linked evidence, unsupported request escalation.
 - **Acceptance:** Each fixture yields explicit allowed resolution/action kinds and exact impacts or a specific needs-input/escalation reason. No scenario silently depends on a case that has not been created.
-- **Verification commands:** `pnpm verify:phase F32`.
+- **Verification commands:** `pnpm verify:phase F41`.
 - **Deliverables / documentation:** SCENARIOS C identity/eligibility/outcome matrix and cross-case link semantics.
-- **Stop condition:** Await F32 acceptance; a resolution option is not an approved action.
+- **Stop condition:** Await F41 acceptance; a resolution option is not an approved action.
 
-### F33 - Customer Workflow, Drafts and Escalation
+### F42 - Customer Workflow, Drafts and Escalation
 
 - **Objective / load:** Complete C with shared reasoning, review, human control and execution. M.
-- **Dependencies:** F26A, F29, F31-F32. **Preconditions:** Customer fixture/replay records and command catalog support all five bounded intents.
-- **Scope / exclusions:** `customer-v1`, personalized cited response drafts, existing linked evidence, approval/action DAG and explicit escalation. Creating/waiting for child A/B cases is F33A; no autonomous contact or unrestricted edits.
-- **Files:** `packages/application/src/scenarios/customer/{definition,steps,response}.ts`; scenario registration; `fixtures/replay/v1/customer/*`; `tests/integration/f33-customer-workflow.test.ts`.
-- **Contracts / instructions:** Compose section 5.4 with shared tools/RAG/gateway/verifier/executor. Tone may vary; material financial/status values use formatted verified claims/citations. Existing linked A/B evidence must be current. A `dependency_required` result currently escalates with exact reason and no effect; F33A adds durable automatic child coordination before C acceptance at F34. Communications follow approved action receipts. Clarifications reuse input/revision control.
+- **Dependencies:** F29, F34, F36-F41. **Preconditions:** Customer fixture/replay records and command catalog support all five bounded intents.
+- **Scope / exclusions:** `customer-v1`, personalized cited response drafts, existing linked evidence, approval/action DAG and explicit escalation. Creating/waiting for child A/B cases is F43; no autonomous contact or unrestricted edits.
+- **Files:** `packages/application/src/scenarios/customer/{definition,steps,response}.ts`; scenario registration; `fixtures/replay/v1/customer/*`; `tests/integration/f42-customer-workflow.test.ts`.
+- **Contracts / instructions:** Compose section 5.4 with shared tools/RAG/gateway/verifier/executor. Tone may vary; material financial/status values use formatted verified claims/citations. Existing linked A/B evidence must be current. A `dependency_required` result currently escalates with exact reason and no effect; F43 adds durable automatic child coordination before C acceptance at F44. Communications follow approved action receipts. Clarifications reuse input/revision control.
 - **Required tests:** All five intents with existing facts, unknown customer, insufficient stock and missing dependency safely escalate, reviewer disagreement, stale whole-plan approval, failed action suppresses message, cancel after reservation preserves effect.
 - **Acceptance:** C produces a personalized source-backed response and authorized real simulator records, or an explicit actionable escalation. No recursive case/agent loop or invented successful resolution.
-- **Verification commands:** `pnpm verify:phase F33`.
+- **Verification commands:** `pnpm verify:phase F42`.
 - **Deliverables / documentation:** SCENARIOS C workflow/wait/linked-case runbook and replay traces.
-- **Stop condition:** Await F33 acceptance; no live sending or payment processing is added.
+- **Stop condition:** Await F42 acceptance; no live sending or payment processing is added.
 
-### F33A - Durable Linked-Case Coordination
+### F43 - Durable Linked-Case Coordination
 
 - **Objective / load:** Connect C to missing A/B investigation without recursion or indefinite waits. M.
-- **Dependencies:** F11A, F19, F29, F32, F33. **Preconditions:** Generic dependency table/event/wake/deadline behavior already tested in F11A.
+- **Dependencies:** F11A, F20, F34, F41, F42. **Preconditions:** Generic dependency table/event/wake/deadline behavior already tested in F11A.
 - **Scope / exclusions:** Customer-specific child intake/dedupe/wait/resume integration; no new engine, AI role, domain algorithm or UI.
-- **Files:** `packages/application/src/scenarios/customer/{linked-case-coordinator,definition}.ts`; `packages/application/src/cases/links.ts`; `tests/integration/f33a-linked-cases.test.ts`.
+- **Files:** `packages/application/src/scenarios/customer/{linked-case-coordinator,definition}.ts`; `packages/application/src/cases/links.ts`; `tests/integration/f43-linked-cases.test.ts`.
 - **Contracts / instructions:** Convert exact dependency_required into one causally linked ordinary A/B intake using stable `(root_case_id,child_type,entity_ref)` key. Link an existing active compatible case rather than duplicate it. Store workflow_dependencies and enter waiting_dependency; only exact child terminal event/version wakes it. Re-read child evidence/enterprise versions before resume, rerun invalidated parent steps. Max depth one/root cycle guard; child escalation/cancel/deadline escalates parent, never spins or claims success. Parent cancellation does not silently cancel an independently shared child.
 - **Required tests:** Missing A/B creation -> child approval/result -> parent resume; duplicate child event/intake; child already active/closed; failure/cancellation/48h deadline; wrong child/version/sandbox; parent cancel/shared child and worker restart during dependency wait.
 - **Acceptance:** C obtains a real A/B outcome or explicit bounded escalation with inspectable causal links; no dependency on a future case service, recursive agents or synthetic result.
-- **Verification commands:** `pnpm verify:phase F33A`.
+- **Verification commands:** `pnpm verify:phase F43`.
 - **Deliverables / documentation:** SCENARIOS linked-case state/ownership/runbook and EVENTS completion consumer mapping.
-- **Stop condition:** Await F33A acceptance before F34 claims all C paths complete.
+- **Stop condition:** Await F43 acceptance before F44 claims all C paths complete.
 
-### F34 - Customer Workbench and Three-Scenario Gate
+### F44 - Customer Workbench and Three-Scenario Gate
 
 - **Objective / load:** Complete browser UX and verify the three scenarios form one product. M, integration checkpoint.
-- **Dependencies:** F20-F21, F30, F33A. **Preconditions:** All C APIs/outcomes ready; A/B unchanged.
+- **Dependencies:** F21-F22, F35, F43. **Preconditions:** All C APIs/outcomes ready; A/B unchanged.
 - **Scope / exclusions:** Customer request intake, context/communication/link tabs and C launcher variants; shared-platform architectural review. No assistant/memory/admin additions.
-- **Files:** `apps/web/src/features/customer/{request-intake,customer-context,resolution,response-draft,linked-cases}.tsx`; case/launcher registrations; `tests/e2e/f34-three-scenarios.spec.ts`; `docs/checkpoints/F34.md`.
+- **Files:** `apps/web/src/features/customer/{request-intake,customer-context,resolution,response-draft,linked-cases}.tsx`; case/launcher registrations; `tests/e2e/f44-three-scenarios.spec.ts`; `docs/checkpoints/F44.md`.
 - **Contracts / instructions:** Reuse workbench/evidence/approval/catalog, exact identity/mode and no generated-text approval. Demonstrate supply delay -> C and billing -> B. Inspect one shared gateway/journal/retrieval/verifier/executor. If duplicate infrastructure exists, report/block and assign a scoped owner-stage repair; do not turn this checkpoint into an unbounded refactor.
 - **Required tests:** All five C intents plus escalation, role separation, links across A/B/C, protected communications, keyboard/mobile critical flows. Run all integration/E2E suites; record shared-module import checks.
 - **Acceptance:** A reviewer completes each scenario and traces shared facts/authorized effects across cases. No financial/identity value originates solely from free-form AI output.
-- **Verification commands:** `pnpm verify:phase F34`; `pnpm test:e2e F34`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F44`; `pnpm test:e2e F44`; `pnpm docs:check`.
 - **Deliverables / documentation:** Three complete replay paths, checkpoint findings/resolutions and current system diagram.
-- **Stop condition:** Await F34 acceptance; all remaining features extend a working product rather than substitute for incomplete scenarios.
+- **Stop condition:** Await F44 acceptance; all remaining features extend a working product rather than substitute for incomplete scenarios.
 
-### F35 - Reviewed Operational Memory and Feedback
+### F45 - Reviewed Operational Memory and Feedback
 
 - **Objective / load:** Reuse historical experience without turning AI conclusions into rules. M.
-- **Dependencies:** F17, F25, F34. **Preconditions:** Closed cases have immutable outcome/evidence and knowledge lifecycle checks.
+- **Dependencies:** F18, F27, F44. **Preconditions:** Closed cases have immutable outcome/evidence and knowledge lifecycle checks.
 - **Scope / exclusions:** Candidate/reviewed case summaries, provenance/review/expiry/revocation and human feedback; no self-training, policy editing or repository agent-memory writes.
-- **Files:** `packages/db/src/schema/memory.ts`, migration including memory_evidence; `packages/application/src/memory/{candidate,review,retrieve,lifecycle}.ts`; `apps/api/src/memory/controller.ts`; `apps/web/src/features/cases/memory-review.tsx`; `fixtures/company/historical-cases.json`, seed/import validator; `tests/integration/f35-memory.test.ts`.
+- **Files:** `packages/db/src/schema/memory.ts`, migration including memory_evidence; `packages/application/src/memory/{candidate,review,retrieve,lifecycle}.ts`; `apps/api/src/memory/controller.ts`; `apps/web/src/features/cases/memory-review.tsx`; `fixtures/company/historical-cases.json`, seed/import validator; `tests/integration/f45-memory.test.ts`.
 - **Contracts / instructions:** Build candidate from closed facts/outcome, no extra AI call. Human reviews/edits; a distinct operator/admin approves with provenance/applicability/180-day review. Canonical text lives only in memory_revisions; knowledge versions/chunks are read-only derived projections with `source_kind=memory_revision` and source revision FK, never a second editable source. SQL retrieval also checks current approved/nonexpired memory revision, so delayed projection invalidation cannot expose revoked memory. Knowledge UI cannot publish/edit that projection. Reopen/revoke invalidates it/cache, preserves old history. Import 12 explicitly synthetic historical legacy cases with coherent source snapshots, no fabricated NEXUS workflow/model/approval receipts. Feedback is bounded data, no config update.
 - **Required tests:** Candidate cannot be retrieved, approved summary has provenance, expiry/revocation/reopen excluded, cross-sandbox filter, conflicting current policy wins, unsupported edited claim needs review, no automatic config/policy change.
 - **Acceptance:** A previous approved resolution can be cited as experience with date/source, never as present stock, permission or policy; there is no uncontrolled memory growth/automatic learning loop.
-- **Verification commands:** `pnpm verify:phase F35`.
+- **Verification commands:** `pnpm verify:phase F45`.
 - **Deliverables / documentation:** `docs/MEMORY.md` application memory lifecycle and explicit distinction from repository agent-memory.
-- **Stop condition:** Await F35 acceptance; do not alter agent-memory unless directly requested by the user.
+- **Stop condition:** Await F45 acceptance; do not alter agent-memory unless directly requested by the user.
 
-### F36 - Bounded Conversational Assistant Backend
+### F46 - Bounded Conversational Assistant Backend
 
 - **Objective / load:** Let operators investigate existing operations using the same safe platform. M.
-- **Dependencies:** F14, F25-F26, F34-F35. **Preconditions:** Tool/knowledge/memory/evidence services enforce context independently.
+- **Dependencies:** F14, F27-F28, F44-F45. **Preconditions:** Tool/knowledge/memory/evidence services enforce context independently.
 - **Scope / exclusions:** Persistent conversations/runs, read/compute/propose tools, source-backed final replies and streaming; no new business-write path or approval from chat.
-- **Files:** `packages/db/src/schema/assistant.ts`, migration; case-summary schema/index migration; `packages/application/src/assistant/{service,definition,tools,stream}.ts`; `apps/api/src/assistant/controller.ts`; `packages/contracts/src/assistant.ts`; `tests/integration/f36-assistant.test.ts`.
+- **Files:** `packages/db/src/schema/assistant.ts`, migration; case-summary schema/index migration; `packages/application/src/assistant/{service,definition,tools,stream}.ts`; `apps/api/src/assistant/controller.ts`; `packages/contracts/src/assistant.ts`; `tests/integration/f46-assistant.test.ts`.
 - **Contracts / instructions:** Implement bounded run/stream/cancel. Add typed cases.search(status/type/entity IDs/minimum verified discrepancy,limit<=25), get_evidence/approved-memory tools, never SQL. Add nullable `cases.verified_discrepancy_minor bigint`, `discrepancy_evidence_id` FK/version, index `(sandbox_id,status,verified_discrepancy_minor)`; backfill from current B report, keep invalidation/update in that same report-persist transaction, unknown=NULL not zero. Scope every reconnect/tool; current fact search cannot use imported history as a current completed dependency. Drafts use normal whole-plan proposal, no approve/send tools.
 - **Required tests:** Questions from the brief, >EUR 500 discrepancy query exact cents, current vs historical answer, citations, unsupported question abstention, prompt injection, cross-case/sandbox spoofing, unknown tool, max rounds/budget, browser disconnect does not cancel, Last-Event-ID and explicit cancellation.
 - **Acceptance:** The assistant retrieves actual existing facts and prepares safe drafts using shared modules; all executable actions still require the normal approval UI/service. Streamed provisional text cannot itself trigger a mutation.
-- **Verification commands:** `pnpm verify:phase F36`.
+- **Verification commands:** `pnpm verify:phase F46`.
 - **Deliverables / documentation:** `docs/ASSISTANT.md` tools/limits/stream/privacy/authority and replay fixtures for all example questions.
-- **Stop condition:** Await F36 acceptance; do not add a second autonomous agent runtime.
+- **Stop condition:** Await F46 acceptance; do not add a second autonomous agent runtime.
 
-### F37 - Assistant Panel and Controlled Contextual UI
+### F47 - Assistant Panel and Controlled Contextual UI
 
 - **Objective / load:** Add useful contextual assistance without replacing the workbench. M.
-- **Dependencies:** F21, F36. **Preconditions:** Persisted assistant streaming and closed UiDescriptor schemas available.
+- **Dependencies:** F22, F46. **Preconditions:** Persisted assistant streaming and closed UiDescriptor schemas available.
 - **Scope / exclusions:** Side panel, citations, draft links and controlled clarification/comparison/discrepancy cards; no AG-UI/A2UI runtime dependency or generated code.
-- **Files:** `apps/web/src/features/assistant/{panel,conversation,stream,citations}.tsx`; `packages/ui/src/descriptors/{renderer,clarification,alternatives,discrepancies,evidence,approval-summary}.tsx`; `tests/e2e/f37-assistant.spec.ts`.
+- **Files:** `apps/web/src/features/assistant/{panel,conversation,stream,citations}.tsx`; `packages/ui/src/descriptors/{renderer,clarification,alternatives,discrepancies,evidence,approval-summary}.tsx`; `tests/e2e/f47-assistant.spec.ts`.
 - **Contracts / instructions:** Render only allowlisted descriptors, reject unknown kinds/fields, escape labels and restrict markdown links to server-generated evidence routes. Approval summary is informational with a navigation link to the real approval screen, never an AI-bound approve callback. Reuse typed correction/input forms; submitting a clarification validates server-side and creates the appropriate input revision. Stream error/reconnect/cancel states remain visible; preserve case-workbench navigation and primary controls.
 - **Required tests:** Source-backed query and draft link, malformed descriptor/no HTML execution, forged action URL rejected, real clarification revision, replay label/zero spend, provisional vs final state, screen-reader announcements without reading every token, mobile focus management.
 - **Acceptance:** A user can investigate/clarify from a case while the deterministic application retains full control; generated content cannot render arbitrary UI or grant permissions.
-- **Verification commands:** `pnpm verify:phase F37`; `pnpm test:e2e F37`.
+- **Verification commands:** `pnpm verify:phase F47`; `pnpm test:e2e F47`.
 - **Deliverables / documentation:** UI catalog examples and ADR 009 practical AG-UI/A2UI evaluation with the chosen narrower equivalent.
-- **Stop condition:** Await F37 acceptance; protocol adoption remains a separately scoped future decision, not unfinished core work.
+- **Stop condition:** Await F47 acceptance; protocol adoption remains a separately scoped future decision, not unfinished core work.
 
-### F38 - Knowledge Center and Publication UX
+### F48 - Knowledge Center and Publication UX
 
 - **Objective / load:** Expose the existing knowledge lifecycle safely to administrators. M.
-- **Dependencies:** F24-F25, F30, F35. **Preconditions:** Ingestion/publish/revoke/index-generation APIs already work.
+- **Dependencies:** F26-F27, F35, F45. **Preconditions:** Ingestion/publish/revoke/index-generation APIs already work.
 - **Scope / exclusions:** Knowledge listing/upload/version/source/publish/revoke/search UI; no arbitrary executable policy editor, reranker or external crawling.
-- **Files:** `apps/web/app/knowledge/{page,[id]/page}.tsx`; `apps/web/src/features/knowledge/{upload,versions,publish,search,source}.tsx`; `tests/e2e/f38-knowledge.spec.ts`.
-- **Contracts / instructions:** Show publication/effective/version/index status, lexical/hybrid mode and historical labels. Use F17 `publish.ts` invalidation/revalidation and F25 generation/cache services as-is; no new server behavior is deferred to this UI stage. Policy canonical hash must match; other documents informational only. Derived memory projection is read-only with link to F35 review, never separately publishable. Rebuild uses existing background workflow/status, not browser execution.
+- **Files:** `apps/web/app/knowledge/{page,[id]/page}.tsx`; `apps/web/src/features/knowledge/{upload,versions,publish,search,source}.tsx`; `tests/e2e/f48-knowledge.spec.ts`.
+- **Contracts / instructions:** Show publication/effective/version/index status, lexical/hybrid mode and historical labels. Use F18 `publish.ts` invalidation/revalidation and F27 generation/cache services as-is; no new server behavior is deferred to this UI stage. Policy canonical hash must match; other documents informational only. Derived memory projection is read-only with link to F45 review, never separately publishable. Rebuild uses existing background workflow/status, not browser execution.
 - **Required tests:** Admin upload -> parse -> review -> publish -> scoped search -> revoke; ordinary operator cannot publish; superseded source excluded; failed embedding/rebuild status; malicious policy text cannot change thresholds; pagination/mobile/source navigation.
 - **Acceptance:** Knowledge management is functional and traceable, and no UI action can promote an AI-written business rule into executable authority.
-- **Verification commands:** `pnpm verify:phase F38`; `pnpm test:e2e F38`.
+- **Verification commands:** `pnpm verify:phase F48`; `pnpm test:e2e F48`.
 - **Deliverables / documentation:** Knowledge admin walkthrough and UI/operations publication/rebuild instructions.
-- **Stop condition:** Await F38 acceptance; do not implement policy scripting as a convenience feature.
+- **Stop condition:** Await F48 acceptance; do not implement policy scripting as a convenience feature.
 
-### F39 - Operations Dashboard and Source-Backed Briefings
+### F49 - Operations Dashboard and Source-Backed Briefings
 
 - **Objective / load:** Make the product understandable immediately from real operational state. M.
-- **Dependencies:** F26, F34-F35. **Preconditions:** Case/action/workflow outcome data and budgets available.
+- **Dependencies:** F28, F44-F45. **Preconditions:** Case/action/workflow outcome data and budgets available.
 - **Scope / exclusions:** Deterministic aggregates/alerts and bounded AI-written briefing; no predictive anomaly model or financial-savings claims.
-- **Files:** `packages/application/src/dashboard/{queries,alerts,briefing}.ts`; `apps/api/src/dashboard/controller.ts`; `apps/web/app/page.tsx`; `apps/web/src/features/dashboard/{metrics,attention,activity,briefing}.tsx`; `tests/integration/f39-dashboard.test.ts`, `tests/e2e/f39-dashboard.spec.ts`.
+- **Files:** `packages/application/src/dashboard/{queries,alerts,briefing}.ts`; `apps/api/src/dashboard/controller.ts`; `apps/web/app/page.tsx`; `apps/web/src/features/dashboard/{metrics,attention,activity,briefing}.tsx`; `tests/integration/f49-dashboard.test.ts`, `tests/e2e/f49-dashboard.spec.ts`.
 - **Contracts / instructions:** Compute counts/totals in SQL scoped to sandbox/status, with snapshot/as-of timestamp. Show active/attention/approval/resolved, DLQ/unknown actions, and AI activity/cost basis. Briefing is an explicit budgeted job over a bounded immutable metrics/evidence snapshot, never an invented live metric. Financial/statistical values are deterministically inserted/checked against snapshot IDs; no call on every page refresh. Cache deterministic snapshot 30s with sandbox/version key and invalidate on material changes; cache outage reads DB.
 - **Required tests:** Aggregate exactness including partial/unknown/cancelled cases, no double-counted actions/spend, stale as-of visible, unsupported generated number rejected, briefing budget/timeout, no external call on refresh, responsive access to attention items.
 - **Acceptance:** Every briefing's material statement opens its source case/metric snapshot; UI distinguishes pending/estimated/confirmed, does not present speculative savings as results.
-- **Verification commands:** `pnpm verify:phase F39`; `pnpm test:e2e F39`.
+- **Verification commands:** `pnpm verify:phase F49`; `pnpm test:e2e F49`.
 - **Deliverables / documentation:** Dashboard metric definitions, snapshot/briefing privacy/cost policy in UI/COSTS.
-- **Stop condition:** Await F39 acceptance; no business-critical decision depends on a generated briefing.
+- **Stop condition:** Await F49 acceptance; no business-critical decision depends on a generated briefing.
 
-### F40 - Model, Workflow-Limit and Cost Administration
+### F50 - Model, Workflow-Limit and Cost Administration
 
 - **Objective / load:** Give technical reviewers safe inspection/control of existing configuration and spend. M.
-- **Dependencies:** F23, F26, F39. **Preconditions:** Config revisions/pricing/usage ledger already implemented and immutable.
+- **Dependencies:** F25, F28, F49. **Preconditions:** Config revisions/pricing/usage ledger already implemented and immutable.
 - **Scope / exclusions:** Role model configuration, bounded workflow settings, usage/cost tables; no API-key editor, arbitrary provider URL, workflow graph designer or security-rule toggles.
-- **Files:** `apps/web/app/admin/{models,usage,workflows}/page.tsx`; `apps/web/src/features/admin/{model-config,capability-status,usage,limits}.tsx`; `packages/db/src/schema/runtime-limits.ts`, runtime_limit_revisions migration; `packages/application/src/admin/limits.ts`; `apps/api/src/admin/limits-controller.ts`; `tests/integration/f40-config.test.ts`, `tests/e2e/f40-admin.spec.ts`.
+- **Files:** `apps/web/app/admin/{models,usage,workflows}/page.tsx`; `apps/web/src/features/admin/{model-config,capability-status,usage,limits}.tsx`; `packages/db/src/schema/runtime-limits.ts`, runtime_limit_revisions migration; `packages/application/src/admin/limits.ts`; `apps/api/src/admin/limits-controller.ts`; `tests/integration/f50-config.test.ts`, `tests/e2e/f50-admin.spec.ts`.
 - **Contracts / instructions:** Use preflighted model/provider allowlists; show configured vs actually used roles/providers and config revision pinned to runs. Runtime workflow configuration may lower token/tool/attempt/time/concurrency/budget limits within hard schema bounds, not increase ceilings or remove approvals/review. A new config affects new runs only. Never expose key value, secret-bearing env, prompts with private inputs or an arbitrary request editor. Display replay zero actual cost, conservative estimates/uncertain reservations and provider-reported cost separately.
 - **Required tests:** Viewer/operator denied, unknown/incompatible model rejected, attempt to increase hard ceiling/disable approval rejected, revision conflict, existing run stays pinned, usage totals reconcile with fallback/uncertain calls, secret canary absent from page/bundle.
 - **Acceptance:** An admin can inspect and select a valid immutable config without code changes, but cannot bypass business safety or spend silently. Live-unavailable explanation does not disable replay.
-- **Verification commands:** `pnpm verify:phase F40`; `pnpm test:e2e F40`.
+- **Verification commands:** `pnpm verify:phase F50`; `pnpm test:e2e F50`.
 - **Deliverables / documentation:** Administrative field/limit dictionary and COSTS example reports from synthetic runs.
-- **Stop condition:** Await F40 acceptance; no configuration save executes a paid test call automatically.
+- **Stop condition:** Await F50 acceptance; no configuration save executes a paid test call automatically.
 
-### F41 - OpenTelemetry and Failure Inspection
+### F51 - OpenTelemetry and Failure Inspection
 
 - **Objective / load:** Add distributed observability without making it a business dependency. M.
-- **Dependencies:** F10-F14, F23, F40. **Preconditions:** DB trace/redaction/correlation already works without telemetry services.
+- **Dependencies:** F10-F14, F25, F50. **Preconditions:** DB trace/redaction/correlation already works without telemetry services.
 - **Scope / exclusions:** OTel instrumentation/local profile, metrics and admin failure/DLQ/unknown-execution inspection/retry; no new workflow recovery architecture or Langfuse deployment.
-- **Files:** `packages/observability/src/{otel,metrics,propagation}.ts`; app bootstrap hooks; `infra/telemetry/{collector,jaeger}.yaml`, Compose telemetry profile; `apps/api/src/admin/failures-controller.ts`; `apps/web/app/admin/failures/page.tsx`; `tests/integration/f41-observability.test.ts`.
+- **Files:** `packages/observability/src/{otel,metrics,propagation}.ts`; app bootstrap hooks; `infra/telemetry/{collector,jaeger}.yaml`, Compose telemetry profile; `apps/api/src/admin/failures-controller.ts`; `apps/web/app/admin/failures/page.tsx`; `tests/integration/f51-observability.test.ts`.
 - **Contracts / instructions:** Implement section 7.2 stable internal fields and W3C context/linking across broker and REST. Bound export queue and redaction at source; opt-in local exporter only, disabled during replay tests. Failure retry reuses original event/revision/key and underlying authorization/revalidation rules; corrected input creates a new linked record, not edited history. Unknown commands offer receipt reconciliation, not a force-success button.
 - **Required tests:** One trace links intake/publish/consume/tool/model/simulator IDs; redaction canary; exporter down/slow does not block command; metric cardinality excludes user/case IDs; unauthorized DLQ retry, poison repeat stays DLQ, unknown command cannot be forcibly marked succeeded.
 - **Acceptance:** The app trace remains useful with telemetry disabled, optional local Jaeger shows linked spans, and operator failure inspection describes safe next actions.
-- **Verification commands:** `pnpm verify:phase F41`; `pnpm licenses:check`.
+- **Verification commands:** `pnpm verify:phase F51`; `pnpm licenses:check`.
 - **Deliverables / documentation:** OBSERVABILITY signals/fields/redaction/local profile/runbook and ADR 008 DB trace + OTel vs Langfuse.
-- **Stop condition:** Await F41 acceptance; no cloud endpoint or external account is required.
+- **Stop condition:** Await F51 acceptance; no cloud endpoint or external account is required.
 
-### F42 - Offline Evaluation Engine and Scorers
+### F52 - Offline Evaluation Engine and Scorers
 
 - **Objective / load:** Implement a reproducible evaluation mechanism independently of benchmark curation. M.
-- **Dependencies:** F19, F25, F29, F33A, F41. **Preconditions:** All three actual registered scenario definitions and deterministic expectations exist; unknown definition/version is software error exit 2, never a skipped case.
+- **Dependencies:** F20, F27, F34, F43, F51. **Preconditions:** All three actual registered scenario definitions and deterministic expectations exist; unknown definition/version is software error exit 2, never a skipped case.
 - **Scope / exclusions:** Dataset/result schemas, offline runner, deterministic metric functions, budget/mode/exit-code separation; small smoke dataset only, no full 90-case claim, live calls or evaluation dashboard.
-- **Files:** `packages/contracts/src/evaluations.ts`; `packages/db/src/schema/evaluations.ts`, migration; `packages/application/src/evaluations/{runner,scorers,results}.ts`; `tools/eval-offline.mjs`; `fixtures/evaluations/smoke-v1/*`; `tests/integration/f42-evaluator.test.ts`.
+- **Files:** `packages/contracts/src/evaluations.ts`; `packages/db/src/schema/evaluations.ts`, migration; `packages/application/src/evaluations/{runner,scorers,results}.ts`; `tools/eval-offline.mjs`; `fixtures/evaluations/smoke-v1/*`; `tests/integration/f52-evaluator.test.ts`.
 - **Contracts / instructions:** Implement section 7.3 metrics as independent functions with explicit denominators, per-case failures and not-applicable handling. Use actual run/tool/evidence/receipt data, not a canned final score. Distinguish a software/infrastructure error from a quality miss/budget stop with defined exit codes. Store versioned JSONL and JSON summary with dataset hashes/config/prompts/seed/environment/mode, redacted outputs and cost basis. Run isolated fresh sandboxes per case. Smoke dataset is 12 existing synthetic cases, four per scenario, with known pass/fail counterexamples.
 - **Required tests:** Deliberately wrong classifier/field/citation/tool/action/abstention lowers the correct metric; empty dataset/zero denominator fails or reports explicit N/A; malformed run is software error; quality failure exits 3; replay cannot contact Internet; repeated runs produce identical non-timing results.
 - **Acceptance:** The harness reports real per-case evidence and correct separate statuses, and can detect a seeded regression. It cannot label replay as a live accuracy measurement.
-- **Verification commands:** `pnpm verify:phase F42`; `pnpm eval:offline -- --dataset smoke-v1`.
+- **Verification commands:** `pnpm verify:phase F52`; `pnpm eval:offline -- --dataset smoke-v1`.
 - **Deliverables / documentation:** `docs/EVALUATION.md` schemas, formulas, exit codes, smoke reproduction and uncertainty caveat.
-- **Stop condition:** Await F42 acceptance; do not invent benchmark quality from smoke fixtures.
+- **Stop condition:** Await F52 acceptance; do not invent benchmark quality from smoke fixtures.
 
-### F43 - Versioned Benchmark, Regression Reports and Results UI
+### F53 - Versioned Benchmark, Regression Reports and Results UI
 
 - **Objective / load:** Make the full evaluation dataset and results independently reviewable. M.
-- **Dependencies:** F34, F42. **Preconditions:** Scorers/runner can catch intentional errors before more fixtures are added.
+- **Dependencies:** F44, F52. **Preconditions:** Scorers/runner can catch intentional errors before more fixtures are added.
 - **Scope / exclusions:** 90-case v1 benchmark/splits, deterministic labels, report generation/baseline comparison and read/offline-run UI; no paid launch from browser or model-based judge yet.
-- **Files:** `fixtures/evaluations/v1/{manifest,cases,expected}/*`; `tools/{generate-eval-fixtures,eval-report}.mjs`; `packages/application/src/evaluations/{baselines,reports}.ts`; `apps/api/src/evaluations/controller.ts`; `apps/web/app/admin/evaluations/{page,[id]/page}.tsx`; `tests/integration/f43-benchmark.test.ts`.
-- **Contracts / instructions:** Construct the 30/30/30 scenario and 60/30 dev/holdout split with overlapping safety/failure tags from section 7.3. Generate variations from repository-owned templates, but manually inspect expected financial/source/approval labels; keep a label-source manifest. Ensure held-out cases are not byte-identical renamed training inputs. Reuse F25 retrieval labels. Report metrics, failures, missing runs, cost/latency basis and compatible-baseline deltas; do not collapse security failures into an average. UI may start offline runs only and compares persisted configurations/results.
+- **Files:** `fixtures/evaluations/v1/{manifest,cases,expected}/*`; `tools/{generate-eval-fixtures,eval-report}.mjs`; `packages/application/src/evaluations/{baselines,reports}.ts`; `apps/api/src/evaluations/controller.ts`; `apps/web/app/admin/evaluations/{page,[id]/page}.tsx`; `tests/integration/f53-benchmark.test.ts`.
+- **Contracts / instructions:** Construct the 30/30/30 scenario and 60/30 dev/holdout split with overlapping safety/failure tags from section 7.3. Generate variations from repository-owned templates, but manually inspect expected financial/source/approval labels; keep a label-source manifest. Ensure held-out cases are not byte-identical renamed training inputs. Reuse F27 retrieval labels. Report metrics, failures, missing runs, cost/latency basis and compatible-baseline deltas; do not collapse security failures into an average. UI may start offline runs only and compares persisted configurations/results.
 - **Required tests:** Dataset counts/split disjointness/hash/label/source validity, all required risk tags, deterministic run reproducibility, baseline incompatibility rejected, deliberate >2-point/>20% regression flagged, UI accessible failure/source drill-down and authorization.
 - **Acceptance:** `v1` is versioned/reproducible and every expected result has an inspectable basis. Offline reports clearly say they validate the harness/replays, not real-model quality.
-- **Verification commands:** `pnpm verify:phase F43`; `pnpm eval:offline -- --dataset v1`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F53`; `pnpm eval:offline -- --dataset v1`; `pnpm docs:check`.
 - **Deliverables / documentation:** Full EVALUATION dataset card/label provenance/split policy, human-readable report generated from machine results and read/offline dashboard.
-- **Stop condition:** Await F43 acceptance; do not use holdout outputs for automatic prompt tuning.
+- **Stop condition:** Await F53 acceptance; do not use holdout outputs for automatic prompt tuning.
 
-### F44 - Opt-In Live Comparisons and Independent Quality Rubric
+### F54 - Opt-In Live Comparisons and Independent Quality Rubric
 
 - **Objective / load:** Add controlled empirical model comparison without charging ordinary test runs. M.
-- **Dependencies:** F23, F26, F40, F42-F43. **Preconditions:** Explicit paid authorization is required for execution, but not for implementing/fake-testing this command.
+- **Dependencies:** F25, F28, F50, F52-F53. **Preconditions:** Explicit paid authorization is required for execution, but not for implementing/fake-testing this command.
 - **Scope / exclusions:** Live CLI admission/global budget, configuration comparison, selective model judge and human spot-check record; no browser paid launch or automated prompt optimization.
-- **Files:** `tools/eval-live.mjs`; `packages/application/src/evaluations/{live-budget,comparison,judge}.ts`; `packages/ai/src/prompts/evaluation-judge/v1.ts`; `config/evaluations/baseline.json`; `tests/integration/f44-live-eval-admission.test.ts`.
+- **Files:** `tools/eval-live.mjs`; `packages/application/src/evaluations/{live-budget,comparison,judge}.ts`; `packages/ai/src/prompts/evaluation-judge/v1.ts`; `config/evaluations/baseline.json`; `tests/integration/f54-live-eval-admission.test.ts`.
 - **Contracts / instructions:** Require `--allow-paid`, explicit `--max-usd`, dataset/split/config and valid server key; missing flags fail before any billable request. Global evaluation budget includes scenario calls, retries, embeddings and judge calls across all compared configs, not a separate full allowance per model. Default comparison permits at most two configs and hard maximum USD 5 per invocation; lower requested caps are honored. Reserve globally and per workflow atomically. Independent judge scores only communication helpfulness/grounding using versioned rubric/evidence, not authorization or arithmetic. Expose results in the existing UI, with a six-case human review checklist, never fake a completed check.
 - **Required tests:** No flags/key/price/privacy -> zero requests, concurrent global budget race, uncertain charge retention, disabled network in normal CI, fake judge mismatch/disagreement shown, incompatible baseline/config comparison rejected, all costs included.
 - **Acceptance:** Software admission/quality-report behavior passes using a fake provider. A separately authorized real run records actual results, budget and six human reviews; without it the live empirical gate is explicitly `NOT RUN`, not passed. No acceptance criterion silently requires an unapproved purchase.
-- **Verification commands:** `pnpm verify:phase F44`. Only after explicit authorization: `pnpm eval:live -- --dataset v1 --split holdout --config baseline --max-usd 5 --allow-paid`.
+- **Verification commands:** `pnpm verify:phase F54`. Only after explicit authorization: `pnpm eval:live -- --dataset v1 --split holdout --config baseline --max-usd 5 --allow-paid`.
 - **Deliverables / documentation:** Exact paid-evaluation recipe, model comparison methodology and human rubric in EVALUATION/COSTS; actual live evidence only if executed.
-- **Stop condition:** Await F44 acceptance; separate software completeness from live-quality validation.
+- **Stop condition:** Await F54 acceptance; separate software completeness from live-quality validation.
 
-### F45 - Complete Demo Catalog and Guided Paths
+### F55 - Complete Demo Catalog and Guided Paths
 
 - **Objective / load:** Make all normal/exceptional capabilities discoverable without manual preparation. S.
-- **Dependencies:** F22, F30, F34, F43-F44. **Preconditions:** All scenario variants/replay records and capability labels exist.
-- **Scope / exclusions:** Full launcher catalog, guided steps, conflict admission and cost/mode labeling; non-destructive reset is a separate F46 stage, not a hidden prerequisite for testing these catalog entries.
-- **Files:** `fixtures/scenarios/manifest.json`; `packages/application/src/demo/catalog.ts`; existing `apps/api/src/demo/controller.ts` catalog regression; `apps/web/src/features/demo/{catalog,guided-path,cost-preview}.tsx`; `tests/e2e/f45-demo-library.spec.ts`.
-- **Contracts / instructions:** Register every section 8.2 variant, required fixture IDs/AI capabilities and expected business situation without hardcoding a successful resolution. Display replay actual cost zero; live maximum and tariff-date estimate/unknown are distinct. Disable live launch if preflight/reviewer/privacy prerequisites fail. Prevent entity conflicts and offer an honest used-sandbox message until F46 is accepted. A 60-second overview and five-minute guided A path use actual screens, not disconnected slides.
+- **Dependencies:** F23, F35, F44, F53-F54. **Preconditions:** All scenario variants/replay records and capability labels exist.
+- **Scope / exclusions:** Full launcher catalog, guided steps, conflict admission and cost/mode labeling; non-destructive reset is a separate F56 stage, not a hidden prerequisite for testing these catalog entries.
+- **Files:** `fixtures/scenarios/manifest.json`; `packages/application/src/demo/catalog.ts`; existing `apps/api/src/demo/controller.ts` catalog regression; `apps/web/src/features/demo/{catalog,guided-path,cost-preview}.tsx`; `tests/e2e/f55-demo-library.spec.ts`.
+- **Contracts / instructions:** Register every section 8.2 variant, required fixture IDs/AI capabilities and expected business situation without hardcoding a successful resolution. Display replay actual cost zero; live maximum and tariff-date estimate/unknown are distinct. Disable live launch if preflight/reviewer/privacy prerequisites fail. Prevent entity conflicts and offer an honest used-sandbox message until F56 is accepted. A 60-second overview and five-minute guided A path use actual screens, not disconnected slides.
 - **Required tests:** No missing fixture/replay/source IDs; exact fresh baseline section 3.4 counts/links, seed vs runtime effects distinct. Every automatic variant runs to expected safe outcome; guided fault variants use owned test harness/manual instructions, not browser shell. No silent live->replay, conflicting launch, keyboard/mobile discovery.
 - **Acceptance:** Reviewer can find three complete paths plus ambiguous/failure/injection demonstrations, understands which work is real deterministic/simulated/live, and is not promised a hardcoded success.
-- **Verification commands:** `pnpm verify:phase F45`; `pnpm test:e2e F45`.
+- **Verification commands:** `pnpm verify:phase F55`; `pnpm test:e2e F55`.
 - **Deliverables / documentation:** Final scenario catalog and guided demo content in DEMO, fixture hashes/licenses in manifest.
-- **Stop condition:** Await F45 acceptance; no destructive data reset to make demos repeatable.
+- **Stop condition:** Await F55 acceptance; no destructive data reset to make demos repeatable.
 
-### F46 - Safe Sandbox Reset Saga
+### F56 - Safe Sandbox Reset Saga
 
 - **Objective / load:** Make demos repeatable without racing or deleting active business effects. M+.
-- **Dependencies:** F08, F13, F35, F45. **Preconditions:** Every simulator command already locks/checks sandbox state; unknown executions have receipt reconciliation.
-- **Scope / exclusions:** Admin reset state machine, fresh seed generation and retired read-only history; retention is F46A. No volume deletion, tenancy or remote reset.
-- **Files:** `packages/db/src/schema/reset.ts`, migration; `packages/application/src/demo/{reset,reset-recovery}.ts`; `apps/enterprise-sim/src/sandbox-controller.ts`; `apps/api/src/demo/reset-controller.ts`; `apps/web/src/features/demo/reset.tsx`; `tools/demo-reset.mjs`; `tests/integration/f46-reset.test.ts`.
+- **Dependencies:** F08, F13, F45, F55. **Preconditions:** Every simulator command already locks/checks sandbox state; unknown executions have receipt reconciliation.
+- **Scope / exclusions:** Admin reset state machine, fresh seed generation and retired read-only history; retention is F57. No volume deletion, tenancy or remote reset.
+- **Files:** `packages/db/src/schema/reset.ts`, migration; `packages/application/src/demo/{reset,reset-recovery}.ts`; `apps/enterprise-sim/src/sandbox-controller.ts`; `apps/api/src/demo/reset-controller.ts`; `apps/web/src/features/demo/reset.tsx`; `tools/demo-reset.mjs`; `tests/integration/f56-reset.test.ts`.
 - **Contracts / instructions:** Persist reset request/idempotency/step. In order: enter nexus maintenance (block admissions/executor starts) -> cancel/drain existing runs -> freeze old simulator sandbox under the command row lock -> reconcile all in-flight/unknown receipts -> seed new inactive simulator+nexus sandbox -> activate simulator -> atomically select new nexus active sandbox/exit maintenance -> retire old. Unknown effects or unavailable simulator keep reset blocked/read-only; resume the same saga after a crash, never unfreeze an uncertain old sandbox automatically. Lifecycle token exists only in worker lifecycle adapter, never tools. Each step is idempotent, has persisted receipt/expected prior state and no destructive action.
 - **Required tests:** Concurrent reset dedupe, approval/model/command race, crash at each step, saga resume, old messages/approvals cannot mutate new sandbox, unknown blocks, old history read-only, no dev/test volume deletion.
 - **Acceptance:** Browser admin can create a clean repeatable sandbox safely and inspect reset status; all prior effects remain accurate/read-only. CLI refuses non-local/without confirmation and uses the same service, not SQL truncation.
-- **Verification commands:** `pnpm verify:phase F46`; `pnpm demo:reset -- --confirm-local` on a disposable local acceptance sandbox only.
+- **Verification commands:** `pnpm verify:phase F56`; `pnpm demo:reset -- --confirm-local` on a disposable local acceptance sandbox only.
 - **Deliverables / documentation:** OPERATIONS reset/recovery states and local-only warnings; no historical deletion implied.
-- **Stop condition:** Await F46 acceptance; reset is not authorization to delete unrelated data.
+- **Stop condition:** Await F56 acceptance; reset is not authorization to delete unrelated data.
 
-### F46A - Retention, Evidence Holds and Disk Admission
+### F57 - Retention, Evidence Holds and Disk Admission
 
 - **Objective / load:** Bound local storage without destroying evidence of unresolved effects. M.
-- **Dependencies:** F15, F35, F46. **Preconditions:** Blob admission size counters, evidence joins and unknown-action state already exist.
+- **Dependencies:** F15, F45, F56. **Preconditions:** Blob admission size counters, evidence joins and unknown-action state already exist.
 - **Scope / exclusions:** Eligible blob/diagnostic cleanup, tombstone/reference checks, memory expiry and usage status; no reset rewrite or automatic audit/approval/receipt deletion.
-- **Files:** `packages/db/src/schema/retention.ts`, migration; `packages/application/src/lifecycle/{retention,holds,disk-usage}.ts`; worker job registration; `apps/api/src/admin/storage-controller.ts`; `tests/integration/f46a-retention.test.ts`.
-- **Contracts / instructions:** Apply section 7.1 minimum retention. Batch <=100 records, lease/fence cleanup, inspect concrete evidence relations/open cases/unknown executions before deletion. Tombstone expired content with original hash/provenance, never invent unavailable text. Never automatically delete audit/approval/command receipts/model spend ledger in core; 365 days is a minimum, not an instruction to weaken append-only grants. Use only a narrow blob/diagnostic-delete capability, not migration credentials. Keep raw admission cap atomic under concurrent upload; no arbitrary path unlink or whole-volume cleanup. Memory expiry/revocation uses existing F35 lifecycle.
+- **Files:** `packages/db/src/schema/retention.ts`, migration; `packages/application/src/lifecycle/{retention,holds,disk-usage}.ts`; worker job registration; `apps/api/src/admin/storage-controller.ts`; `tests/integration/f57-retention.test.ts`.
+- **Contracts / instructions:** Apply section 7.1 minimum retention. Batch <=100 records, lease/fence cleanup, inspect concrete evidence relations/open cases/unknown executions before deletion. Tombstone expired content with original hash/provenance, never invent unavailable text. Never automatically delete audit/approval/command receipts/model spend ledger in core; 365 days is a minimum, not an instruction to weaken append-only grants. Use only a narrow blob/diagnostic-delete capability, not migration credentials. Keep raw admission cap atomic under concurrent upload; no arbitrary path unlink or whole-volume cleanup. Memory expiry/revocation uses existing F45 lifecycle.
 - **Required tests:** Unknown/open-case/active-plan hold, expired eligible blob, referenced report preserved, crash between tombstone/delete, repeated cleanup, disk cap race, path traversal rejection, audit/approval/ledger deletion denied.
 - **Acceptance:** Storage can be reclaimed only by explicit reference-safe policy; old views show source unavailable truthfully and no unresolved audit/receipt/spend evidence disappears.
-- **Verification commands:** `pnpm verify:phase F46A`.
+- **Verification commands:** `pnpm verify:phase F57`.
 - **Deliverables / documentation:** OPERATIONS retention/hold/tombstone/admission runbook and measured local storage status.
-- **Stop condition:** Await F46A acceptance; any historical purge outside this policy requires separate authorization.
+- **Stop condition:** Await F57 acceptance; any historical purge outside this policy requires separate authorization.
 
-### F47 - Event and Infrastructure Recovery Gate
+### F58 - Event and Infrastructure Recovery Gate
 
 - **Objective / load:** Independently verify event/infrastructure durability, one bounded failure family. M, checkpoint.
-- **Dependencies:** F01-F46A. **Preconditions:** Earlier owner-stage fault helpers/fixtures already exist and own only isolated resources.
-- **Scope / exclusions:** Outbox/inbox/publish/ack, broker/cache outage/restart and DLQ; worker/model/commands have separate gates F47A-C. No architecture replacement or unbounded fixes.
-- **Files:** `tests/integration/f47-events-infrastructure.test.ts`; `tests/helpers/faults.ts` consolidation; `docs/checkpoints/F47.md`.
+- **Dependencies:** F01-F57. **Preconditions:** Earlier owner-stage fault helpers/fixtures already exist and own only isolated resources.
+- **Scope / exclusions:** Outbox/inbox/publish/ack, broker/cache outage/restart and DLQ; worker/model/commands have separate gates F59-F61. No architecture replacement or unbounded fixes.
+- **Files:** `tests/integration/f58-events-infrastructure.test.ts`; `tests/helpers/faults.ts` consolidation; `docs/checkpoints/F58.md`.
 - **Contracts / instructions:** Kill publisher after confirm/before mark and consumer after commit/before ack; interrupt broker/network/cache then restore. Assert accepted source, inbox, job and receipt identities; malformed/poison events remain DLQ. A defect blocks this gate and gets a narrow owner-stage repair, not a new subsystem in the checkpoint.
 - **Required tests:** Duplicates, causal/version mismatch, outage recovery, finite retry/DLQ and safe admin retry; repeat races three times; all earlier fast regressions.
 - **Acceptance:** No accepted input lost or duplicated job/effect, no permission granted by cache outage, no unexplained queue limbo; evidence links include actual IDs/timing.
-- **Verification commands:** `pnpm verify:phase F47`; `pnpm eval:offline -- --dataset v1`.
+- **Verification commands:** `pnpm verify:phase F58`; `pnpm eval:offline -- --dataset v1`.
 - **Deliverables / documentation:** Event/infrastructure fault matrix and runbook; no single-node HA claim.
-- **Stop condition:** Await F47 acceptance before the next failure family.
+- **Stop condition:** Await F58 acceptance before the next failure family.
 
-### F47A - Workflow Lease, Wait and Deadline Recovery Gate
+### F59 - Workflow Lease, Wait and Deadline Recovery Gate
 
 - **Objective / load:** Independently verify durable control after worker loss. M, checkpoint.
-- **Dependencies:** F47. **Preconditions:** F11-F11B journal/control/SSE and linked-case coordinator complete.
+- **Dependencies:** F58. **Preconditions:** F11-F11B journal/control/SSE and linked-case coordinator complete.
 - **Scope / exclusions:** Claims/leases/step commits/waits/cancel/deadlines; no provider billing or business command transport tests.
-- **Files:** `tests/integration/f47a-workflow-recovery.test.ts`; `docs/checkpoints/F47A.md`.
-- **Contracts / instructions:** Kill/restart before/after pure commit, expire lease/lose heartbeat, deliver duplicate/irrelevant human/child resume, disconnect browser, expire active/dependency deadlines. Verify stale fencing token cannot commit, immutable same-input success not repeated and only real causes resume. Check partial-effect hooks by typed fixture, leaving real command transport to F47C.
+- **Files:** `tests/integration/f59-workflow-recovery.test.ts`; `docs/checkpoints/F59.md`.
+- **Contracts / instructions:** Kill/restart before/after pure commit, expire lease/lose heartbeat, deliver duplicate/irrelevant human/child resume, disconnect browser, expire active/dependency deadlines. Verify stale fencing token cannot commit, immutable same-input success not repeated and only real causes resume. Check partial-effect hooks by typed fixture, leaving real command transport to F61.
 - **Required tests:** Three concurrent worker repeats, wait survives restart, terminal run cannot resume, child escalation/deadline bounded, cancellation doesn't claim rollback, Last-Event-ID stable.
 - **Acceptance:** Every run is terminal or has a justified bounded/recoverable wait; no stale/duplicate worker produces an unauthorized state transition.
-- **Verification commands:** `pnpm verify:phase F47A`.
+- **Verification commands:** `pnpm verify:phase F59`.
 - **Deliverables / documentation:** Workflow fault matrix and actual recovery evidence.
-- **Stop condition:** Await F47A acceptance; route defects to scoped owner-stage repairs.
+- **Stop condition:** Await F59 acceptance; route defects to scoped owner-stage repairs.
 
-### F47B - Provider, Budget and Verification Failure Gate
+### F60 - Provider, Budget and Verification Failure Gate
 
 - **Objective / load:** Independently stress AI admission/accounting and disagreement behavior. M, checkpoint.
-- **Dependencies:** F47A. **Preconditions:** Fake provider and uncertainty/budget fixtures exist; all tests deny actual inference.
+- **Dependencies:** F59. **Preconditions:** Fake provider and uncertainty/budget fixtures exist; all tests deny actual inference.
 - **Scope / exclusions:** Model/stream/schema/rate/fallback/cost concurrency and verifier failure; no new prompt/model selection or paid evaluation.
-- **Files:** `tests/integration/f47b-ai-failures.test.ts`; `docs/checkpoints/F47B.md`.
+- **Files:** `tests/integration/f60-ai-failures.test.ts`; `docs/checkpoints/F60.md`.
 - **Contracts / instructions:** Return 429/5xx/auth/context/moderation/schema errors, cut stream before terminal usage, kill after provider request/before settle, exhaust parent/document/eval budgets concurrently. Count physical attempts, reservations, hard caps and no implicit fallback. Contradictory/insufficient/no-source review blocks affected plan, never asks model to override policy.
 - **Required tests:** Three concurrency repetitions, uncertain charge retained after recovery, exactly two attempts/invocation maximum, duplicate settlement idempotent, no live->replay switch, reviewer outage/budget leads visible stop.
 - **Acceptance:** No erased possible spend, budget race, unbounded retry/verification loop, fabricated usage/success or action despite required failed verification.
-- **Verification commands:** `pnpm verify:phase F47B`; `pnpm eval:offline -- --dataset v1`.
+- **Verification commands:** `pnpm verify:phase F60`; `pnpm eval:offline -- --dataset v1`.
 - **Deliverables / documentation:** AI failure/cost basis matrix and caveats, software vs quality status evidence.
-- **Stop condition:** Await F47B acceptance; live empirical metrics are unchanged/not implied.
+- **Stop condition:** Await F60 acceptance; live empirical metrics are unchanged/not implied.
 
-### F47C - Command, Partial-Plan and Reset Recovery Gate
+### F61 - Command, Partial-Plan and Reset Recovery Gate
 
 - **Objective / load:** Independently prove effectively-once effects under the hardest cross-service races. M, checkpoint.
-- **Dependencies:** F47B. **Preconditions:** F13B deadlines/absent-final and F46 reset handshake complete.
+- **Dependencies:** F60. **Preconditions:** F13B deadlines/absent-final and F56 reset handshake complete.
 - **Scope / exclusions:** Actual simulator writes/receipts, multi-item plan, partial cancel/reanalysis and reset races; no automatic compensating command expansion.
-- **Files:** `tests/integration/f47c-command-recovery.test.ts`; `docs/checkpoints/F47C.md`.
+- **Files:** `tests/integration/f61-command-recovery.test.ts`; `docs/checkpoints/F61.md`.
 - **Contracts / instructions:** Exercise two POs+message with aggregate finance requirement; lose second response, cancel/expire/revoke/change input, restart both workers, retry same plan and start reset. Check each immutable plan/item/attempt hash/key, deadline proof, found-vs-unknown-vs-absent-final, stable prior effects and newly approved linked reanalysis. Simulator freeze uses command sandbox lock. No succeeds-by-force or blind new-key retry.
 - **Required tests:** Crash at each local/remote commit boundary, 404 while in flight, old delayed request after deadline, duplicate jobs, stale target, failed prerequisite suppresses message, partial correction and frozen/retired sandbox; three race repetitions; cumulative prior integration/E2E regressions.
 - **Acceptance:** Zero duplicate/unauthorized effects, truthful partial outcome, no fictional rollback and no reset while unresolved; every failure has tested reconciliation/escalation path.
-- **Verification commands:** `pnpm verify:phase F47C`.
-- **Deliverables / documentation:** Complete base sections 8/9/13 fault traceability assembled from F47-F47C evidence; residual limitations explicit.
-- **Stop condition:** Await F47C acceptance; unresolved durability defects block security/final gates.
+- **Verification commands:** `pnpm verify:phase F61`.
+- **Deliverables / documentation:** Complete base sections 8/9/13 fault traceability assembled from F58-F61 evidence; residual limitations explicit.
+- **Stop condition:** Await F61 acceptance; unresolved durability defects block security/final gates.
 
-### F48 - Authorization and AI-Abuse Security Gate
+### F62 - Authorization and AI-Abuse Security Gate
 
 - **Objective / load:** Adversarially test human/model/tool authority and data scope. M, security checkpoint.
-- **Dependencies:** F34-F47C. **Preconditions:** Owner-stage controls/attack fixtures already implemented; no delayed auth design.
-- **Scope / exclusions:** Auth/RBAC/IDOR/CSRF/prompt injection/generated UI/privacy/cost abuse; parser/container/supply chain are F48A/B. No external penetration testing/real private data.
-- **Files:** `tests/integration/f48-{auth,authorization,injection,redaction}.test.ts`; `tests/e2e/f48-browser-abuse.spec.ts`; `docs/checkpoints/F48.md`; SECURITY control matrix.
+- **Dependencies:** F44-F61. **Preconditions:** Owner-stage controls/attack fixtures already implemented; no delayed auth design.
+- **Scope / exclusions:** Auth/RBAC/IDOR/CSRF/prompt injection/generated UI/privacy/cost abuse; parser/container/supply chain are F63/F64. No external penetration testing/real private data.
+- **Files:** `tests/integration/f62-{auth,authorization,injection,redaction}.test.ts`; `tests/e2e/f62-browser-abuse.spec.ts`; `docs/checkpoints/F62.md`; SECURITY control matrix.
 - **Contracts / instructions:** Test malicious source/knowledge/tool output/descriptors, forged whole-plan approvals/roles/status, cross-sandbox IDs and stale evidence, CSRF/XSS/SSRF attempts/secret canaries. Verify policy/permission/budget cannot be overridden by reviewer/human interpretation acknowledgement/memory. Fake endpoint proves privacy/capability fail-closed, not actual external contract compliance. Block reachable high/critical flaws for scoped repair or explicit user-approved exception.
 - **Required tests:** Zero unauthorized receipts/canary disclosures; all primary route/session/Origin checks; no command/key/lifecycle tool, no model-chosen approval; A/B/C attacks and exact adverse audit outcomes.
 - **Acceptance:** Application authority threats have passing named tests and honest residual caveats, not just prompt instructions or hidden UI controls.
-- **Verification commands:** `pnpm verify:phase F48`; `pnpm test:e2e F48`.
+- **Verification commands:** `pnpm verify:phase F62`; `pnpm test:e2e F62`.
 - **Deliverables / documentation:** Authorization/AI safety evidence and control-to-test map.
-- **Stop condition:** Await F48 acceptance; this is local-only evidence, not production certification.
+- **Stop condition:** Await F62 acceptance; this is local-only evidence, not production certification.
 
-### F48A - Parser, Browser and Container Isolation Gate
+### F63 - Parser, Browser and Container Isolation Gate
 
 - **Objective / load:** Independently verify untrusted bytes cannot escape their intended boundaries. M, security checkpoint.
-- **Dependencies:** F48. **Preconditions:** Isolated extractor and safe source UI implemented; owned test images/resources only.
+- **Dependencies:** F62. **Preconditions:** Isolated extractor and safe source UI implemented; owned test images/resources only.
 - **Scope / exclusions:** Upload/resource/egress/mount/browser/content-security boundary; no new OCR feature or broad framework change.
-- **Files:** `tests/integration/f48a-parser-isolation.test.ts`; `tests/e2e/f48a-content-security.spec.ts`; `docs/checkpoints/F48A.md`.
+- **Files:** `tests/integration/f63-parser-isolation.test.ts`; `tests/e2e/f63-content-security.spec.ts`; `docs/checkpoints/F63.md`.
 - **Contracts / instructions:** Test malformed/encrypted/polyglot/oversize/pixel-bomb fixtures, parser process/resource termination, outbound URL attempts, unavailable DB/model credentials, nonroot/read-only/cap-drop/tmpfs/no-host-mount controls and authenticated attachment disposition. Browser raw HTML/PDF action/external resources never execute; inspect CSP/frame/worker sources and mobile viewer safety.
 - **Required tests:** File limit despite lying headers, no traversal, no parser Internet/DB access, no secret in image/browser bundle, no download IDOR, no orphan infinite process, no unsafe fallback after parser error.
 - **Acceptance:** All byte/process/network/browser boundaries have executable evidence and identified parser residual risk; this is not antivirus certification.
-- **Verification commands:** `pnpm verify:phase F48A`; `pnpm test:e2e F48A`.
+- **Verification commands:** `pnpm verify:phase F63`; `pnpm test:e2e F63`.
 - **Deliverables / documentation:** Isolation matrix, exact image/network/mount/resource observations and source rendering caveats.
-- **Stop condition:** Await F48A acceptance; public upload hosting remains outside scope.
+- **Stop condition:** Await F63 acceptance; public upload hosting remains outside scope.
 
-### F48B - Supply Chain, License and Secret Inventory Gate
+### F64 - Supply Chain, License and Secret Inventory Gate
 
 - **Objective / load:** Verify actual installed/transitive/native/image obligations and vulnerabilities. M, security checkpoint.
-- **Dependencies:** F48A. **Preconditions:** Exact lockfile/image hashes and notice mechanism exist.
+- **Dependencies:** F63. **Preconditions:** Exact lockfile/image hashes and notice mechanism exist.
 - **Scope / exclusions:** Inventory/advisory/license/secret/binary checks and triage, no external app attack or automatic major upgrades/publishing.
-- **Files:** `tools/{check-licenses,scan-images,scan-secrets}.mjs`; `infra/versions.json`; `THIRD_PARTY_NOTICES`; `tests/unit/f48b-inventory.test.ts`; `docs/checkpoints/F48B.md`.
+- **Files:** `tools/{check-licenses,scan-images,scan-secrets}.mjs`; `infra/versions.json`; `THIRD_PARTY_NOTICES`; `tests/unit/f64-inventory.test.ts`; `docs/checkpoints/F64.md`.
 - **Contracts / instructions:** Inventory actual package graph/base OS/native libraries, including MPL Rabbit/axe and LGPL libvips, separately from wrapper MIT/Apache. Record scanner/advisory data date and reachable high/critical issues; preserve notices/license/replacement/source obligations as applicable. Inspect repository/images/config/log/trace exports for canary secrets; never print actual secret values. Unknown obligations or reachable high/critical vulnerabilities block acceptance pending narrow fix/explicit user exception. Metadata downloads are disclosed maintenance network, no inference.
 - **Required tests:** Deliberately missing notice/unknown dependency/secret fixture is detected with redaction; actual graph matches inventory; rejected frameworks not falsely listed as installed; no migration/service credential baked into runtime image.
 - **Acceptance:** Threat table and distribution inventory have no undisclosed blocking findings, license statements are precise and scans are not claimed as proof of zero vulnerabilities.
-- **Verification commands:** `pnpm verify:phase F48B`; `pnpm audit --prod`; `pnpm licenses:check`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F64`; `pnpm audit --prod`; `pnpm licenses:check`; `pnpm docs:check`.
 - **Deliverables / documentation:** Supply-chain/license checkpoint, actual versions/results/triage/notices and ADR 012 original-source MIT vs third-party distribution obligations.
-- **Stop condition:** Await F48B acceptance; no public distribution/deployment authorization implied.
+- **Stop condition:** Await F64 acceptance; no public distribution/deployment authorization implied.
 
-### F49 - Performance, Accessibility and Responsive Verification
+### F65 - Performance, Accessibility and Responsive Verification
 
 - **Objective / load:** Measure and fix the product's bounded local usability/performance targets. M.
-- **Dependencies:** F38-F48B. **Preconditions:** Reference environment/profile recorded and functional/security suites green.
+- **Dependencies:** F48-F64. **Preconditions:** Reference environment/profile recorded and functional/security suites green.
 - **Scope / exclusions:** Query indexes/bounds, connection/concurrency limits, keyboard/screen-reader/responsive checks and measured optimization; no speculative cache layer or new AI model.
-- **Files:** `tests/performance/local-baseline.ts`; `tests/e2e/f49-{responsive,accessibility}.spec.ts`; `tests/helpers/accessibility.ts`; targeted query/UI fixes; `docs/checkpoints/F49.md`.
+- **Files:** `tests/performance/local-baseline.ts`; `tests/e2e/f65-{responsive,accessibility}.spec.ts`; `tests/helpers/accessibility.ts`; targeted query/UI fixes; `docs/checkpoints/F65.md`.
 - **Contracts / instructions:** Measure section 1.5 API/replay/RAM targets with recorded hardware/seed/concurrency, warmup and sample count >=100 reads; report p50/p95 and errors, not only averages. Profile query plans, add missing scoped indexes, cap pools and preserve version-keyed caches. Use Playwright/axe integration plus manual keyboard/focus/screen-reader checks of launch, source correction and approval. Test 360/768/1440 widths, 200% zoom and reduced motion. AI latency/cost is separate and unmeasured live unless authorized.
 - **Required tests:** No unbounded list/search/export; revoked knowledge not served by cache; dashboard refresh no paid calls; no serious/critical automated accessibility issues, manual action/source flow usable, no clipped consequential controls.
 - **Acceptance:** Measured local targets pass on the stated environment or a concrete limitation is escalated rather than disguised; functional/security tests still pass after optimizations. No WCAG certification/scalability claim.
-- **Verification commands:** `pnpm verify:phase F49`; `pnpm test:e2e F49`.
-- **Deliverables / documentation:** Actual measurements, environment and manual a11y evidence in F49 checkpoint, operation/resource tuning notes.
-- **Stop condition:** Await F49 acceptance; an unexecuted manual check remains `NOT RUN`, not a green automated substitute.
+- **Verification commands:** `pnpm verify:phase F65`; `pnpm test:e2e F65`.
+- **Deliverables / documentation:** Actual measurements, environment and manual a11y evidence in F65 checkpoint, operation/resource tuning notes.
+- **Stop condition:** Await F65 acceptance; an unexecuted manual check remains `NOT RUN`, not a green automated substitute.
 
-### F50 - Clean Local Packaging and Onboarding
+### F66 - Clean Local Packaging and Onboarding
 
 - **Objective / load:** Prove a reviewer can reproduce the complete product from a clean checkout. M.
-- **Dependencies:** F46-F49. **Preconditions:** Existing services/contracts stable; no dependency on an agent's local cache/memory.
+- **Dependencies:** F56-F65. **Preconditions:** Existing services/contracts stable; no dependency on an agent's local cache/memory.
 - **Scope / exclusions:** Production-shaped local Dockerfiles/app profile/init/health/onboarding/troubleshooting; no hosted deployment, registry publishing or paid setup call.
-- **Files:** `infra/Dockerfile.{web,api,worker,enterprise-sim,extractor}`, `infra/compose.yaml`, `.dockerignore`, `.env.example`; `tools/{doctor,demo-init}.mjs`; `tests/integration/f50-{clean-start,restore}.test.ts`; OPERATIONS/DEVELOPMENT.
+- **Files:** `infra/Dockerfile.{web,api,worker,enterprise-sim,extractor}`, `infra/compose.yaml`, `.dockerignore`, `.env.example`; `tools/{doctor,demo-init}.mjs`; `tests/integration/f66-{clean-start,restore}.test.ts`; OPERATIONS/DEVELOPMENT.
 - **Contracts / instructions:** Use multi-stage pinned builds, nonroot runtime, health/readiness and dependency readiness/retry without assuming Compose order equals service health. Bind only intended ports, no baked keys/migration credentials in runtime. Default `app` profile includes web/API/worker/simulator/extractor plus infra; telemetry remains optional. `demo:init` is idempotent, generates local credentials, migrates/seeds and validates replay assets, never calls a model. Add explicit offline/replay start, live key/mode/preflight instructions and safe reset; shutdown never deletes volumes.
 - **Required tests:** Fresh cache/volumes in a disposable labeled test project -> build/init/start -> A/B/C browser flows -> app/worker/broker restart -> reset -> repeat. Test missing env/port conflict/insufficient dependency with actionable error and no secret leak. No undeclared fixture downloads/CDNs/API calls.
 - **Acceptance:** Another environment needs only the documented prerequisites, repo and generated local env, not files in ignored agent-memory. After images are built/pulled, replay business operation has no Internet dependency. Cold image/package download requirements are disclosed.
-- **Verification commands:** `pnpm verify:phase F50`; `docker compose -f infra/compose.yaml --profile app up --build --wait` in the disposable acceptance project; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F66`; `docker compose -f infra/compose.yaml --profile app up --build --wait` in the disposable acceptance project; `pnpm docs:check`.
 - **Deliverables / documentation:** Complete setup/troubleshooting/backup-and-restore instructions; distinguish persistent named volumes from an actual tested backup. Add restore test for PostgreSQL plus referenced blobs; replay receipts/history must survive the restore together.
-- **Stop condition:** Await F50 acceptance; no `down -v`, push or deployment outside the owned test project.
+- **Stop condition:** Await F66 acceptance; no `down -v`, push or deployment outside the owned test project.
 
-### F51 - Portfolio Documentation and Decision Records
+### F67 - Portfolio Documentation and Decision Records
 
 - **Objective / load:** Present verified engineering/product value without overstating results. S.
-- **Dependencies:** F22, F34, F43-F44, F48-F50. **Preconditions:** Implementation/evidence/limitations available; no fabricated screenshots/benchmarks.
+- **Dependencies:** F23, F44, F53-F54, F62-F66. **Preconditions:** Implementation/evidence/limitations available; no fabricated screenshots/benchmarks.
 - **Scope / exclusions:** README, three review paths, final diagrams/ADRs/license notices and evidence links; no new application feature or public publishing.
-- **Files:** `README.md`, `docs/{ARCHITECTURE,DEMO,EVALUATION,COSTS,SECURITY,OPERATIONS}.md`, `docs/adr/001-012*.md`, `THIRD_PARTY_NOTICES`, architecture diagrams in Mermaid; `tests/unit/f51-docs.test.ts` (registered unit path, no missing docs-runner selector).
+- **Files:** `README.md`, `docs/{ARCHITECTURE,DEMO,EVALUATION,COSTS,SECURITY,OPERATIONS}.md`, `docs/adr/001-012*.md`, `THIRD_PARTY_NOTICES`, architecture diagrams in Mermaid; `tests/unit/f67-docs.test.ts` (registered unit path, no missing docs-runner selector).
 - **Contracts / instructions:** Include business problem/value, where AI helps and where deterministic logic controls, quick start/reset, replay/live distinction, tests/evals/budget instructions, system/domain/event/approval diagrams, failure/partial-effect example, trade-offs, supported platforms and known limits. Provide 60-second overview, five-minute scenario guide and source-linked technical deep dive. State observed vs target vs `NOT RUN` metrics. Verify links/snippets against actual commands/schema/route manifest; do not copy planned behavior and label it implemented. Preserve dependency license obligations and avoid claiming MIT for third-party binaries.
-- **Required tests:** Local links/anchors/images, command/route/schema drift, no secrets, required topics and diagram source syntax, setup recipe replayed using F50 evidence.
+- **Required tests:** Local links/anchors/images, command/route/schema drift, no secrets, required topics and diagram source syntax, setup recipe replayed using F66 evidence.
 - **Acceptance:** A technical reviewer can find any safety/quality/cost claim's evidence and distinguish unavailable live validation; nontechnical reader can explain the product in a minute.
-- **Verification commands:** `pnpm verify:phase F51`; `pnpm docs:check`; `pnpm licenses:check`.
+- **Verification commands:** `pnpm verify:phase F67`; `pnpm docs:check`; `pnpm licenses:check`.
 - **Deliverables / documentation:** Complete truthful public-repository presentation, not a claim of deployment/production readiness.
-- **Stop condition:** Await F51 acceptance; no commit, push, release or PR unless separately requested.
+- **Stop condition:** Await F67 acceptance; no commit, push, release or PR unless separately requested.
 
-### F51A - Final Requirement and Evidence Assembly
+### F68 - Final Requirement and Evidence Assembly
 
 - **Objective / load:** Assemble proof of core coverage before independent code review/final acceptance. S.
-- **Dependencies:** F01-F51. **Preconditions:** Prior implementation/checkpoints accepted and evidence available.
+- **Dependencies:** F01-F67. **Preconditions:** Prior implementation/checkpoints accepted and evidence available.
 - **Scope / exclusions:** Requirement/phase/screen/test/artifact matrix and missing-evidence detection; no application feature or unbounded fixes.
-- **Files:** `docs/checkpoints/F51A.md`; traceability matrix in PROGRESS; `tests/unit/f51a-coverage.test.ts`.
+- **Files:** `docs/checkpoints/F68.md`; traceability matrix in PROGRESS; `tests/unit/f68-coverage.test.ts`.
 - **Contracts / instructions:** Map every section 11 requirement to exact implemented file/API/screen/test/result and relevant checkpoint. Distinguish software pass, live quality NOT RUN, target vs measured and actual user acceptance. Any missing required behavior/evidence blocks this phase for a scoped owner-stage repair; do not write a success narrative over it.
 - **Required tests:** Broken/missing links/results, unknown stage IDs, unsupported completed claim and incomplete mandatory matrix row fail; live evidence cannot be labeled validated without actual run/human review.
 - **Acceptance:** All core implementation claims have independent observable evidence; limits and optional/deferred work are explicit, no missing coverage is hidden.
-- **Verification commands:** `pnpm verify:phase F51A`; `pnpm docs:check`.
+- **Verification commands:** `pnpm verify:phase F68`; `pnpm docs:check`.
 - **Deliverables / documentation:** Complete evidence map, not a code/security quality assertion on its own.
-- **Stop condition:** Await F51A acceptance before final independent review.
+- **Stop condition:** Await F68 acceptance before final independent review.
 
-### F51B - Independent Final Architecture and Code Review
+### F69 - Independent Final Architecture and Code Review
 
 - **Objective / load:** Review high-risk implementation independently from the author and test narrative. M, architecture checkpoint.
-- **Dependencies:** F51A. **Preconditions:** Actual code and evidence map, not just a plan, exist.
+- **Dependencies:** F68. **Preconditions:** Actual code and evidence map, not just a plan, exist.
 - **Scope / exclusions:** Dependency/authority/transaction/recovery/budget/parser/identity/replay-live code review; no new feature or self-approved risk exception.
-- **Files:** `docs/checkpoints/F51B.md`; targeted regression tests only when reproducing a finding, with fixes assigned to a bounded owner-stage follow-up.
+- **Files:** `docs/checkpoints/F69.md`; targeted regression tests only when reproducing a finding, with fixes assigned to a bounded owner-stage follow-up.
 - **Contracts / instructions:** Independently inspect whole-plan/item hashes, immutable decision binding, key/deadline/receipt protocol, cancellation/reset, app/DB/module boundaries, budgets/uncertain cost, source truth, parser privilege and no alternate demo/assistant write path. Read current code, not memory approval claims. Rank findings with exact lines/reproduction and required regression. Stop for unresolved blocking findings; recheck fixes before passing.
 - **Required tests:** Reproduce each blocking finding in targeted tests and verify correction; module/grant checks and all affected suites. A review's existence is not proof that every defect is absent.
 - **Acceptance:** No unresolved blocking architecture/security/correctness finding; residual risks explicitly disclosed and any exception granted only by the user. Review does not substitute for final suites/manual paths.
-- **Verification commands:** `pnpm verify:phase F51B`; `pnpm docs:check` plus exact finding regressions.
+- **Verification commands:** `pnpm verify:phase F69`; `pnpm docs:check` plus exact finding regressions.
 - **Deliverables / documentation:** Independent findings/resolutions/recheck, review scope/limitations and evidence links.
-- **Stop condition:** Await F51B acceptance; no automatic deployment or paid run.
+- **Stop condition:** Await F69 acceptance; no automatic deployment or paid run.
 
-### F52 - Final Product and Architectural Acceptance Gate
+### F70 - Final Product and Architectural Acceptance Gate
 
 - **Objective / load:** Independently verify complete core coverage and readiness for the declared local use. S, final integration/architecture checkpoint.
-- **Dependencies:** F01-F51B. **Preconditions:** All stages accepted; evidence assembly/review completed, blocking defects closed or explicitly accepted within scope.
+- **Dependencies:** F01-F69. **Preconditions:** All stages accepted; evidence assembly/review completed, blocking defects closed or explicitly accepted within scope.
 - **Scope / exclusions:** Final cumulative verification/manual product gate only; evidence assembly/review already completed, no new feature/deployment/unbounded repair or automatic paid run.
-- **Files:** `tests/e2e/f52-final-acceptance.spec.ts`; `docs/checkpoints/F52.md`; traceability matrix in `docs/PROGRESS.md`; defect fixes only in their owner modules.
+- **Files:** `tests/e2e/f70-final-acceptance.spec.ts`; `docs/checkpoints/F70.md`; traceability matrix in `docs/PROGRESS.md`; defect fixes only in their owner modules.
 - **Contracts / instructions:** Check every base requirement through section 11's map and named test/screen/artifact. Review dependency graph, DB grants, finite execution limits, identical replay/live application path, three interconnected scenarios, recovery/receipt proof, evidence correctness, a11y/setup/docs/license boundaries. Independently inspect high-risk approval/executor/budget/parser/identity code rather than relying solely on author tests. Run complete offline suites/evaluation and clean-start recipe. Record manual stakeholder paths and live empirical gate separately.
 - **Required tests:** All unit/integration/E2E/offline evaluation/architecture/docs checks, zero unauthorized/duplicate business effects, full scenario normal/exception coverage and reset/restart. Live holdout thresholds plus six human reviews are required only to claim `live-quality-validated`; without authorized execution label `live-quality-NOT-RUN` and do not claim measured live accuracy.
 - **Acceptance:** Core implementation is accepted as `replay-validated / live-unverified` or, with actual authorized evidence, `replay-validated / live-quality-validated`. Both labels require implemented live adapter/config/budgets and passing software contract tests; neither means production-ready. No failed required offline/security/recovery/manual gate may be hidden by this distinction.
-- **Verification commands:** `pnpm verify:phase F52`; `pnpm test:e2e F52`; `pnpm eval:offline -- --dataset v1`; `pnpm docs:check`; `pnpm licenses:check`. Paid command from F44 is `NOT RUN` unless explicitly authorized and executed.
+- **Verification commands:** `pnpm verify:phase F70`; `pnpm test:e2e F70`; `pnpm eval:offline -- --dataset v1`; `pnpm docs:check`; `pnpm licenses:check`. Paid command from F54 is `NOT RUN` unless explicitly authorized and executed.
 - **Deliverables / documentation:** Evidence-backed final report with exact state/files/commands/results/limitations and any remaining user-approved risks, plus reproducible demo/evaluation artifacts.
-- **Stop condition:** Request F52 acceptance using section 0's sentence and stop. Final acceptance does not authorize deployment, paid extensions, policy self-modification or broader scope.
+- **Stop condition:** Request F70 acceptance using section 0's sentence and stop. Final acceptance does not authorize deployment, paid extensions, policy self-modification or broader scope.
 
 ## 10. Verified Technology Baseline and Sources
 
@@ -1730,9 +1730,9 @@ The chosen server format is ESM with TypeScript `module/moduleResolution=NodeNex
 | Email parsing | mailparser 3.15.0; MIT | [Metadata](https://registry.npmjs.org/mailparser/3.15.0). Node >=20; parse streams with bounded attachments. No SMTP transport or remote HTML loading; transitive nodemailer is a parsing dependency, not consent to send mail. |
 | Synthetic PDF generation | pdf-lib 1.17.1; MIT, development fixture generation only | [Metadata](https://registry.npmjs.org/pdf-lib/1.17.1). No recent release since 2021; do not call it actively maintained or use it to parse hostile runtime input. Trusted fixture generation is the narrow accepted use. |
 | OTel JS | api 1.10.0; sdk-node/exporter-trace-otlp-http 0.301.2; Apache-2.0 | [API](https://registry.npmjs.org/@opentelemetry/api/1.10.0), [SDK](https://registry.npmjs.org/@opentelemetry/sdk-node/0.301.2), [exporter](https://registry.npmjs.org/@opentelemetry/exporter-trace-otlp-http/0.301.2). Align SDK/exporter line; stable application AI fields do not depend on evolving GenAI semantic conventions. |
-| Local optional telemetry | collector-contrib 0.166.0 + Jaeger 2.23.0; Apache-2.0 | [Collector release](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.166.0), [Jaeger release](https://github.com/jaegertracing/jaeger/releases/tag/v2.23.0), [Jaeger docs](https://www.jaegertracing.io/docs/). Use local `otel/opentelemetry-collector-contrib:0.166.0` and `jaegertracing/jaeger:2.23.0`, resolve digests in F41. |
+| Local optional telemetry | collector-contrib 0.166.0 + Jaeger 2.23.0; Apache-2.0 | [Collector release](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.166.0), [Jaeger release](https://github.com/jaegertracing/jaeger/releases/tag/v2.23.0), [Jaeger docs](https://www.jaegertracing.io/docs/). Use local `otel/opentelemetry-collector-contrib:0.166.0` and `jaegertracing/jaeger:2.23.0`, resolve digests in F51. |
 
-Use exact `ioredis`/`amqplib` pins in F02/F10 and record their lockfile/notices; no obsolete external AMQP declarations over package types or framework queue replacing outbox/inbox. Transitive/native/base packages are inventoried in F48B/F50; unknown/reciprocal obligations need review, not a blanket MIT claim.
+Use exact `ioredis`/`amqplib` pins in F02/F10 and record their lockfile/notices; no obsolete external AMQP declarations over package types or framework queue replacing outbox/inbox. Transitive/native/base packages are inventoried in F64/F66; unknown/reciprocal obligations need review, not a blanket MIT claim.
 
 ### 10.4. Live Model Defaults
 
@@ -1785,37 +1785,37 @@ Only actual installed code/images enter the software bill of materials. Evaluate
 
 | Source brief requirement | Design/implementation owners | Final independently observable evidence |
 |---|---|---|
-| Sections 2-4 product/audiences/AI not authority | Sections 1-5, F22/F34/F51 | Three review paths, source-backed workbench and denied direct-write attempt |
-| 4.3 automation levels | F12/F13A/F21/F26 | Inform-only, validated recommendation, human-approved plan and policy-authorized internal-note automation; no other automatic business write |
-| 5 A supply exception | F07-F22, F26 | Six branches, exact comparisons, approval hash, persisted PO/message and trace |
-| 5 B reconciliation | F24, F27-F30 | Source/correction + exact report + finance-reviewed receipt/status, duplicate safety |
-| 5 C customer resolution | F31-F34 | Five bounded intents, successful effects and explicit clarification/escalation, linked A/B |
-| 6.1 shared model gateway/routing | F14/F23/F40/F44 | Role/capability config, fallback/timeout/schema tests, ledger and priced opt-in recipe |
-| 6.2 document intelligence | F15/F16/F24/F30 | Text/email/digital/scan/image fixtures, locators, review/correction/version/status |
-| 6.3 RAG | F17/F25/F38 | Approved versioned sources, FTS/vector/RRF filters, citations and retrieval evaluation |
-| 6.4 enterprise tools/MCP consideration | F08/F09/F13/F27/F31, ADR 005 | REST replacement port, closed tools, denied write call; MCP explicitly deferred with rationale |
-| 6.5 persistent orchestration | F10/F11/F13/F47 | Journal/lease/restart/wait/cancel/partial-effect evidence, framework comparison |
-| 6.6 independent verification | F18/F26/F44 | Deterministic fact checks, selective one-call reviewer, dispute escalation, no recursion |
-| 6.7 operational memory | F35 | Reviewed provenance/lifecycle, revoked history not retrieved, current policies win |
-| 6.8 conversational assistant | F36/F37 | Real multi-system questions, sources, bounded read/propose, no approval authority |
-| 6.9 AG-UI/A2UI evaluation | Sections 1.4/10, F37, ADR 009 | Explicit comparison, closed descriptor cards/forms, arbitrary code rejected |
+| Sections 2-4 product/audiences/AI not authority | Sections 1-5, F23/F44/F67 | Three review paths, source-backed workbench and denied direct-write attempt |
+| 4.3 automation levels | F12/F13A/F22/F28 | Inform-only, validated recommendation, human-approved plan and policy-authorized internal-note automation; no other automatic business write |
+| 5 A supply exception | F07-F23, F28 | Six branches, exact comparisons, approval hash, persisted PO/message and trace |
+| 5 B reconciliation | F26, F30-F35 | Source/correction + exact report + finance-reviewed receipt/status, duplicate safety |
+| 5 C customer resolution | F36-F44 | Five bounded intents, successful effects and explicit clarification/escalation, linked A/B |
+| 6.1 shared model gateway/routing | F14/F25/F50/F54 | Role/capability config, fallback/timeout/schema tests, ledger and priced opt-in recipe |
+| 6.2 document intelligence | F15/F17/F26/F35 | Text/email/digital/scan/image fixtures, locators, review/correction/version/status |
+| 6.3 RAG | F18/F27/F48 | Approved versioned sources, FTS/vector/RRF filters, citations and retrieval evaluation |
+| 6.4 enterprise tools/MCP consideration | F08/F09/F13/F30/F36, ADR 005 | REST replacement port, closed tools, denied write call; MCP explicitly deferred with rationale |
+| 6.5 persistent orchestration | F10/F11/F13/F58 | Journal/lease/restart/wait/cancel/partial-effect evidence, framework comparison |
+| 6.6 independent verification | F19/F28/F54 | Deterministic fact checks, selective one-call reviewer, dispute escalation, no recursion |
+| 6.7 operational memory | F45 | Reviewed provenance/lifecycle, revoked history not retrieved, current policies win |
+| 6.8 conversational assistant | F46/F47 | Real multi-system questions, sources, bounded read/propose, no approval authority |
+| 6.9 AG-UI/A2UI evaluation | Sections 1.4/10, F47, ADR 009 | Explicit comparison, closed descriptor cards/forms, arbitrary code rejected |
 | 6.10 additional technologies | Section 1.4 | Every listed technology classified; none silently becomes a core dependency |
-| 7 enterprise simulation/dataset | F07/F08/F27/F31/F45 | Stateful reads/commands, coherent synthetic records/files and edge cases |
-| 8 event architecture | F10/F11/F47 | Publisher confirms/outbox/inbox/DLQ/idempotence/correlation and crash tests |
-| 9 HITL/action execution | F12/F13/F21/F47 | Exact revision/human roles/edit/clarify/reanalyse, stale/expired/unknown protections |
-| 10 security/trust boundaries | F04/F09/F13/F15/F23/F37/F48 | Threat-to-test map, parser isolation, exfiltration/CSRF/IDOR/injection/cost tests |
-| 11 observability/auditability | F05/F11/F14/F20/F41 | In-app trace and audit, optional linked OTel, cost basis, no chain-of-thought |
-| 12 evaluation | F25/F42-F44 | Versioned labeled splits/scorers/reports/regression/budgets; real vs replay results distinct |
-| 13 failures/reliability | F11/F13/F14/F26/F46-F47 | Entire fault matrix with bounded recovery, unknown outcomes and no fake rollback |
-| 14 UI | F06/F20/F21/F30/F34/F37-F41/F43/F45-F46 | All named centers plus responsive/a11y/manual evidence from F49 |
-| 15 stack/current compatibility/licenses | Section 10, F01/F02/F24/F48 | Dated first-party evidence, locked graph, license notices and actual build checks |
-| 16 public local distribution/replay/live | F14/F23/F46/F50 | Clean Compose setup/init/reset, server-only key, offline no-key complete product |
-| 17 portfolio/docs/ADRs | F51 | Honest README, architecture/state/event/approval diagrams, 12 ADRs, demo/deep-dive links |
-| 18 practical scope | Sections 1.2/1.4, F22A before live/OCR/vector | First complete vertical slice precedes enhancements; no ERP/microservice/framework sprawl |
-| 19 incremental agent-executable stages | Section 9, F52 | IDs/files/contracts/tests/commands/gates and no forward technical dependency |
+| 7 enterprise simulation/dataset | F07/F08/F30/F36/F55 | Stateful reads/commands, coherent synthetic records/files and edge cases |
+| 8 event architecture | F10/F11/F58 | Publisher confirms/outbox/inbox/DLQ/idempotence/correlation and crash tests |
+| 9 HITL/action execution | F12/F13/F22/F58 | Exact revision/human roles/edit/clarify/reanalyse, stale/expired/unknown protections |
+| 10 security/trust boundaries | F04/F09/F13/F15/F25/F47/F62 | Threat-to-test map, parser isolation, exfiltration/CSRF/IDOR/injection/cost tests |
+| 11 observability/auditability | F05/F11/F14/F21/F51 | In-app trace and audit, optional linked OTel, cost basis, no chain-of-thought |
+| 12 evaluation | F27/F52-F54 | Versioned labeled splits/scorers/reports/regression/budgets; real vs replay results distinct |
+| 13 failures/reliability | F11/F13/F14/F28/F56-F58 | Entire fault matrix with bounded recovery, unknown outcomes and no fake rollback |
+| 14 UI | F06/F21/F22/F35/F44/F47-F51/F53/F55-F56 | All named centers plus responsive/a11y/manual evidence from F65 |
+| 15 stack/current compatibility/licenses | Section 10, F01/F02/F26/F62 | Dated first-party evidence, locked graph, license notices and actual build checks |
+| 16 public local distribution/replay/live | F14/F25/F56/F66 | Clean Compose setup/init/reset, server-only key, offline no-key complete product |
+| 17 portfolio/docs/ADRs | F67 | Honest README, architecture/state/event/approval diagrams, 12 ADRs, demo/deep-dive links |
+| 18 practical scope | Sections 1.2/1.4, F24 before live/OCR/vector | First complete vertical slice precedes enhancements; no ERP/microservice/framework sprawl |
+| 19 incremental agent-executable stages | Section 9, F70 | IDs/files/contracts/tests/commands/gates and no forward technical dependency |
 | 20 recommended deliverables | Sections 1-12 + named docs owners | Product, NFR, architecture/domain/DB/API/event/workflow/AI/security/eval/UI/setup/risk/ADR coverage |
 | 21 planning validation | Sections 10/12 | Source checks, separate critical audit, explicit defect resolution and static validation |
-| 22 success | F52 | Complete coherent operational platform with inspectable engineering evidence, not a collection of chat demos |
+| 22 success | F70 | Complete coherent operational platform with inspectable engineering evidence, not a collection of chat demos |
 
 ### 11.2. Completed-Product Acceptance Checklist
 
@@ -1834,8 +1834,8 @@ Only actual installed code/images enter the software bill of materials. Evaluate
 
 | Risk | Consequence | Mitigation / owner |
 |---|---|---|
-| Too much infrastructure before business value | Portfolio stalls as a framework demo | No generic ERP/agent framework; first full replay A at F22; later features cannot block it |
-| Custom workflow engine under-specified | Lost/repeated work or unsafe cancellation | Explicit journal/fencing/attempt identity, command receipt protocol and early F11/F13 crash tests; independent F47 gate |
+| Too much infrastructure before business value | Portfolio stalls as a framework demo | No generic ERP/agent framework; first full replay A at F23; later features cannot block it |
+| Custom workflow engine under-specified | Lost/repeated work or unsafe cancellation | Explicit journal/fencing/attempt identity, command receipt protocol and early F11/F13 crash tests; independent F58 gate |
 | PostgreSQL and simulator command not one transaction | Ambiguous remote outcome/partial action | Stable revision idempotency key, committed receipt, unknown state and ordered DAG, never claim distributed atomicity |
 | Model/API/catalog/prices change | Broken live mode, budget drift | Exact config revisions, free per-endpoint preflight, expiry horizon, tariff ceiling, fail-closed admission, no rolling aliases |
 | Strict ZDR endpoint availability differs by provider | Some model configuration unusable | Explicit privacy/endpoint choices and documented setup; refuse live route rather than disable privacy; replay remains available |
@@ -1844,13 +1844,13 @@ Only actual installed code/images enter the software bill of materials. Evaluate
 | Replay overstates AI quality | Misleading portfolio metrics | Persistent mode badge, zero-spend basis, strict replay keys, separate live gate and held-out empirical reporting |
 | Knowledge/memory becomes stale authority | Invalid permission/policy/business claim | Current-bundle linkage, date/version filters, revoke/cache invalidation, reviewed history label, exact REST reads |
 | Seed/reset race or test leakage | Data loss or effect in wrong sandbox | Stable sandbox scope in all refs, simulator sandbox lock, non-destructive reset saga, owned disposable test resources |
-| License/native-image burden | Inadvertent redistribution obligation or broken builds | Pinned releases/images, binary notices, LGPL/MPL obligations tracked, no unreviewed AGPL renderer; F48B/F50 checks |
-| Local resource use grows | Reviewer cannot start project | Optional telemetry, bounded OCR/concurrency/pools, page/blob caps, measured F49 profile and reference-safe retention |
+| License/native-image burden | Inadvertent redistribution obligation or broken builds | Pinned releases/images, binary notices, LGPL/MPL obligations tracked, no unreviewed AGPL renderer; F64/F66 checks |
+| Local resource use grows | Reviewer cannot start project | Optional telemetry, bounded OCR/concurrency/pools, page/blob caps, measured F65 profile and reference-safe retention |
 | Stage grows during execution | A weaker agent invents gaps/architecture | File-level contracts/gates, narrow stage scope, stop and propose subdivision instead of guessing |
 
 ### 11.4. Future Production Extensions
 
-Outside F01-F52: real ERP/CRM/WMS/email adapters, federated identity/MFA, tenant isolation, infrastructure secrets manager, malware-scanning service, durable external object storage/backup automation, encrypted storage/key rotation, independent audit store, multi-node Rabbit/PostgreSQL HA, SLO/on-call/incident response, managed deployment, legal/privacy review, formal accessibility review, richer reconciliation/localization/tax, stock/PO corrective actions with separately approved compensations, MCP interoperability, optional reranking and measured model-routing experiments.
+Outside F01-F70: real ERP/CRM/WMS/email adapters, federated identity/MFA, tenant isolation, infrastructure secrets manager, malware-scanning service, durable external object storage/backup automation, encrypted storage/key rotation, independent audit store, multi-node Rabbit/PostgreSQL HA, SLO/on-call/incident response, managed deployment, legal/privacy review, formal accessibility review, richer reconciliation/localization/tax, stock/PO corrective actions with separately approved compensations, MCP interoperability, optional reranking and measured model-routing experiments.
 
 These are not unimplemented architecture choices inside a core stage and are not preauthorized. A production adoption needs a new threat model, scale targets, data contracts, budget and deployment approval. The present project demonstrates reusable patterns without claiming production readiness.
 
@@ -1864,11 +1864,11 @@ Two readable full-document review reports and subsequent independent rechecks we
 
 ### 12.2. Scope Normalization Before Independent Review
 
-This subsection records **pre-subdivision draft history**, not current ownership. Section 9 is canonical, including F22A, F46A and all mandatory suffix stages.
+This subsection records **pre-subdivision draft history**, not current ownership. Section 9 is canonical, including F24/F57 and the remaining pre-F15 suffix stages F11A/F11B/F13A/F13B.
 
-- Separate the first complete replay vertical (F22) from live provider/OCR/hybrid/reviewer additions; explicitly prevent later functionality from becoming an early acceptance requirement.
-- Separate evaluation mechanism, benchmark/reporting and paid-mode admission into F42/F43/F44; split demo catalog UX from distributed reset/lifecycle work into F45/F46.
-- Fix the first-introduction ownership of policy bundles (F12), lexical knowledge (F17), document references (F15), durable pending inbox work (F10) and journal jobs (F11).
+- Separate the first complete replay vertical (F23) from live provider/OCR/hybrid/reviewer additions; explicitly prevent later functionality from becoming an early acceptance requirement.
+- Separate evaluation mechanism, benchmark/reporting and paid-mode admission into F52/F53/F54; split demo catalog UX from distributed reset/lifecycle work into F55/F56.
+- Fix the first-introduction ownership of policy bundles (F12), lexical knowledge (F18), document references (F15), durable pending inbox work (F10) and journal jobs (F11).
 - Keep model/transport/workflow retries finite and separately accounted, including one two-attempt gateway limit and retained uncertain charges.
 - Distinguish additional procurement commitment from a hypothetical replacement-price difference: original POs are not automatically cancelled, so the plan cannot claim their cost was avoided.
 - Distinguish replay software/evaluation evidence from unexecuted empirical live quality, privacy attestation from automated proof, and planned architecture from implemented/accepted behavior.
@@ -1877,8 +1877,8 @@ This subsection records **pre-subdivision draft history**, not current ownership
 
 | Audit finding | Concrete resolution in this revision | Verification state |
 |---|---|---|
-| Early phases required unspecified future data/services | Explicit first owners: F05 trace, F10 pending inbox, F11/A/B journal/waits/SSE, F12 policy/text, F23 config/attestation, F28 canonical report evidence, F42 actual three scenario definitions | Closed by whole-plan feasibility recheck |
-| Oversized phases/campaigns | 22 independently gated suffix stages; separate decisions/executor/recovery, upload/parser, command families, linked cases, reviewer UI, retention, fault/security families and final evidence/review | Closed by feasibility recheck; 74-stage load accepted by reviewer |
+| Early phases required unspecified future data/services | Explicit first owners: F05 trace, F10 pending inbox, F11/A/B journal/waits/SSE, F12 policy/text, F25 config/attestation, F33 canonical report evidence, F52 actual three scenario definitions | Closed by whole-plan feasibility recheck |
+| Oversized phases/campaigns | 74 independently gated stages; separate decisions/executor/recovery, upload/parser, command families, linked cases, reviewer UI, retention, fault/security families and final evidence/review | Closed by feasibility recheck; 74-stage load accepted by reviewer |
 | Whole-plan finance approval vs commands | Revision hashes all items/aggregate impact; per-item keys/receipts, closed bindings/own-version chains; partial plans freeze | Closed; independently traced/rechecked |
 | Own changes expired approval or invalidated second item | Exempt only proven same-revision chain; F12 invalidation, F08 origin, F13A exemption; external changes block | Closed; architecture recheck B1/B2 |
 | Same-key retry vs raw-body equality | Private business hash vs validated transport; composite key/proof set; renewal creates no second effect | Closed; architecture recheck B3/D1 |
@@ -1886,7 +1886,7 @@ This subsection records **pre-subdivision draft history**, not current ownership
 | Availability/automatic note | On-hand allocation vs deadline coverage; only note uses audited policy_auto, F13A execution | Closed; architecture recheck C3/C4 |
 | Cumulative threshold/message too early | Prior success+new POs, EUR400+400/300/exact500 tests; all required predecessors, zero message receipt while unknown | Closed; architecture recheck C2/C5 |
 | Protocol assumptions | Shared physical PG/clock, capped deadline, reconciliation after cancellation, offline judge NOT RUN | Closed; architecture recheck D2-D4 |
-| Stage IDs/ranges/fixtures/counts | Exact suffix owners, manifest slices/examples, early safety/failure owners, seed assertions | Closed; feasibility recheck N1/N2/N4-N6/N10 |
+| Stage IDs/ranges/fixtures/counts | Exact stage owners, manifest slices/examples, early safety/failure owners, seed assertions | Closed; feasibility recheck N1/N2/N4-N6/N10 |
 | Files/selectors/config/projection | Explicit schema/limits/summary, retrieval runner, one mode slot, canonical memory/projection, restore/docs/E2E selectors | Closed; feasibility N7-N9/prior partials |
 | Clock drift/no-action exception | Same simulated date in both modes; real security/pricing clock; no-action cannot hide effects | Closed; both final rechecks |
 | Stale executed-check counts | New actual structural run below; 11 named labels (including Preconditions) across 10 bullets per stage, not an inferred runtime result | Applied; latest run PASS |
@@ -1916,4 +1916,4 @@ The temporary planning validator is outside the repository; F01 implements the m
 
 ### 12.5. Explicitly Not Executed During Planning
 
-`pnpm install`, application compilation/lint/unit/integration/E2E, migrations/seed, Docker image builds or Compose operation, OCR performance, actual model/tool inference, live embeddings, paid evaluation, manual product usability/acceptance, deployment, commit/push and all F01-F52 implementation work: **NOT RUN**. Proposed commands/tests/targets elsewhere in this document are future instructions, not historical results. No phase or product acceptance is inferred from this plan or its audit.
+`pnpm install`, application compilation/lint/unit/integration/E2E, migrations/seed, Docker image builds or Compose operation, OCR performance, actual model/tool inference, live embeddings, paid evaluation, manual product usability/acceptance, deployment, commit/push and all F01-F70 implementation work: **NOT RUN**. Proposed commands/tests/targets elsewhere in this document are future instructions, not historical results. No phase or product acceptance is inferred from this plan or its audit.

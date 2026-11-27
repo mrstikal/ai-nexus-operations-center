@@ -2002,7 +2002,7 @@
       "artifacts": []
     },
     {
-      "id": "F15A",
+      "id": "F16",
       "name": "Isolated Digital PDF, Email and Text Extraction",
       "dependencies": [
         "F11",
@@ -2015,27 +2015,12 @@
       "artifacts": []
     },
     {
-      "id": "F16",
+      "id": "F17",
       "name": "Structured Extraction and Human Corrections",
       "dependencies": [
         "F12",
         "F13B",
         "F14",
-        "F15A"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F17",
-      "name": "Versioned Knowledge and Lexical Policy Retrieval",
-      "dependencies": [
-        "F05",
-        "F12",
-        "F15",
         "F16"
       ],
       "checkpoint": false,
@@ -2046,13 +2031,11 @@
     },
     {
       "id": "F18",
-      "name": "Supply Calculations and Deterministic Verification",
+      "name": "Versioned Knowledge and Lexical Policy Retrieval",
       "dependencies": [
-        "F03",
-        "F07",
-        "F09",
+        "F05",
         "F12",
-        "F16",
+        "F15",
         "F17"
       ],
       "checkpoint": false,
@@ -2063,6 +2046,23 @@
     },
     {
       "id": "F19",
+      "name": "Supply Calculations and Deterministic Verification",
+      "dependencies": [
+        "F03",
+        "F07",
+        "F09",
+        "F12",
+        "F17",
+        "F18"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F20",
       "name": "Supply Workflow End to End",
       "dependencies": [
         "F10",
@@ -2075,22 +2075,9 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
-        "F18"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F20",
-      "name": "Case Workbench, Evidence and Execution Trace",
-      "dependencies": [
-        "F06",
+        "F18",
         "F19"
       ],
       "checkpoint": false,
@@ -2101,10 +2088,9 @@
     },
     {
       "id": "F21",
-      "name": "Approval Center and Human Input UI",
+      "name": "Case Workbench, Evidence and Execution Trace",
       "dependencies": [
-        "F13",
-        "F16",
+        "F06",
         "F20"
       ],
       "checkpoint": false,
@@ -2115,6 +2101,20 @@
     },
     {
       "id": "F22",
+      "name": "Approval Center and Human Input UI",
+      "dependencies": [
+        "F13",
+        "F17",
+        "F21"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F23",
       "name": "First Supply Demo Launcher",
       "dependencies": [
         "F01",
@@ -2136,13 +2136,13 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
         "F18",
         "F19",
         "F20",
-        "F21"
+        "F21",
+        "F22"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2151,7 +2151,7 @@
       "artifacts": []
     },
     {
-      "id": "F22A",
+      "id": "F24",
       "name": "First Vertical Integration and Architecture Gate",
       "dependencies": [
         "F01",
@@ -2173,14 +2173,14 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
         "F18",
         "F19",
         "F20",
         "F21",
-        "F22"
+        "F22",
+        "F23"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2189,39 +2189,11 @@
       "artifacts": []
     },
     {
-      "id": "F23",
+      "id": "F25",
       "name": "OpenRouter Adapter and Live Configuration Preflight",
       "dependencies": [
         "F14",
-        "F22A"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F24",
-      "name": "OCR, Image Inputs and Bounded Vision Fallback",
-      "dependencies": [
-        "F15",
-        "F16",
-        "F23"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F25",
-      "name": "Embedding Index and Hybrid Retrieval",
-      "dependencies": [
-        "F14",
-        "F17",
-        "F23"
+        "F24"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2231,11 +2203,10 @@
     },
     {
       "id": "F26",
-      "name": "Independent Reviewer Backend and Live Admission Gate",
+      "name": "OCR, Image Inputs and Bounded Vision Fallback",
       "dependencies": [
-        "F18",
-        "F19",
-        "F23",
+        "F15",
+        "F17",
         "F25"
       ],
       "checkpoint": false,
@@ -2245,50 +2216,12 @@
       "artifacts": []
     },
     {
-      "id": "F26A",
-      "name": "Verification Evidence and Human Disagreement UI",
-      "dependencies": [
-        "F21",
-        "F26"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
       "id": "F27",
-      "name": "Simulator Delivery and Invoice Read Context",
+      "name": "Embedding Index and Hybrid Retrieval",
       "dependencies": [
-        "F08",
-        "F09",
-        "F26"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F27A",
-      "name": "Verified Goods Receipt Command",
-      "dependencies": [
-        "F13B",
-        "F27"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F27B",
-      "name": "Invoice Reconciled and Hold Commands",
-      "dependencies": [
-        "F27A"
+        "F14",
+        "F18",
+        "F25"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2298,11 +2231,12 @@
     },
     {
       "id": "F28",
-      "name": "Deterministic Three-Way Reconciliation",
+      "name": "Independent Reviewer Backend and Live Admission Gate",
       "dependencies": [
-        "F16",
-        "F18",
-        "F27B"
+        "F19",
+        "F20",
+        "F25",
+        "F27"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2312,15 +2246,9 @@
     },
     {
       "id": "F29",
-      "name": "Reconciliation Workflow and Finance Review",
+      "name": "Verification Evidence and Human Disagreement UI",
       "dependencies": [
-        "F24",
-        "F25",
-        "F26",
-        "F26A",
-        "F27",
-        "F27A",
-        "F27B",
+        "F22",
         "F28"
       ],
       "checkpoint": false,
@@ -2331,13 +2259,13 @@
     },
     {
       "id": "F30",
-      "name": "Document Center and B Integration Gate",
+      "name": "Simulator Delivery and Invoice Read Context",
       "dependencies": [
-        "F20",
-        "F21",
-        "F29"
+        "F08",
+        "F09",
+        "F28"
       ],
-      "checkpoint": true,
+      "checkpoint": false,
       "unitTests": [],
       "integrationTests": [],
       "e2eTests": [],
@@ -2345,10 +2273,9 @@
     },
     {
       "id": "F31",
-      "name": "Simulator Customer Context and Terms",
+      "name": "Verified Goods Receipt Command",
       "dependencies": [
-        "F08",
-        "F27",
+        "F13B",
         "F30"
       ],
       "checkpoint": false,
@@ -2358,10 +2285,9 @@
       "artifacts": []
     },
     {
-      "id": "F31A",
-      "name": "Return Authorization Command",
+      "id": "F32",
+      "name": "Invoice Reconciled and Hold Commands",
       "dependencies": [
-        "F13B",
         "F31"
       ],
       "checkpoint": false,
@@ -2371,67 +2297,11 @@
       "artifacts": []
     },
     {
-      "id": "F31B",
-      "name": "Damaged-Item Replacement and Stock Reservation",
-      "dependencies": [
-        "F31A"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F31C",
-      "name": "Verified Credit-Note Draft Command",
-      "dependencies": [
-        "F28",
-        "F31B"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F31D",
-      "name": "Pre-Dispatch Delivery Address Command",
-      "dependencies": [
-        "F31C"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F32",
-      "name": "Customer Eligibility and Linked Investigation",
-      "dependencies": [
-        "F18",
-        "F28",
-        "F31D"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
       "id": "F33",
-      "name": "Customer Workflow, Drafts and Escalation",
+      "name": "Deterministic Three-Way Reconciliation",
       "dependencies": [
-        "F26A",
-        "F29",
-        "F31",
-        "F31A",
-        "F31B",
-        "F31C",
-        "F31D",
+        "F17",
+        "F19",
         "F32"
       ],
       "checkpoint": false,
@@ -2441,12 +2311,15 @@
       "artifacts": []
     },
     {
-      "id": "F33A",
-      "name": "Durable Linked-Case Coordination",
+      "id": "F34",
+      "name": "Reconciliation Workflow and Finance Review",
       "dependencies": [
-        "F11A",
-        "F19",
+        "F26",
+        "F27",
+        "F28",
         "F29",
+        "F30",
+        "F31",
         "F32",
         "F33"
       ],
@@ -2457,13 +2330,12 @@
       "artifacts": []
     },
     {
-      "id": "F34",
-      "name": "Customer Workbench and Three-Scenario Gate",
+      "id": "F35",
+      "name": "Document Center and B Integration Gate",
       "dependencies": [
-        "F20",
         "F21",
-        "F30",
-        "F33A"
+        "F22",
+        "F34"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2472,27 +2344,11 @@
       "artifacts": []
     },
     {
-      "id": "F35",
-      "name": "Reviewed Operational Memory and Feedback",
-      "dependencies": [
-        "F17",
-        "F25",
-        "F34"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
       "id": "F36",
-      "name": "Bounded Conversational Assistant Backend",
+      "name": "Simulator Customer Context and Terms",
       "dependencies": [
-        "F14",
-        "F25",
-        "F26",
-        "F34",
+        "F08",
+        "F30",
         "F35"
       ],
       "checkpoint": false,
@@ -2503,9 +2359,9 @@
     },
     {
       "id": "F37",
-      "name": "Assistant Panel and Controlled Contextual UI",
+      "name": "Return Authorization Command",
       "dependencies": [
-        "F21",
+        "F13B",
         "F36"
       ],
       "checkpoint": false,
@@ -2516,12 +2372,9 @@
     },
     {
       "id": "F38",
-      "name": "Knowledge Center and Publication UX",
+      "name": "Damaged-Item Replacement and Stock Reservation",
       "dependencies": [
-        "F24",
-        "F25",
-        "F30",
-        "F35"
+        "F37"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2531,11 +2384,10 @@
     },
     {
       "id": "F39",
-      "name": "Operations Dashboard and Source-Backed Briefings",
+      "name": "Verified Credit-Note Draft Command",
       "dependencies": [
-        "F26",
-        "F34",
-        "F35"
+        "F33",
+        "F38"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2545,10 +2397,8 @@
     },
     {
       "id": "F40",
-      "name": "Model, Workflow-Limit and Cost Administration",
+      "name": "Pre-Dispatch Delivery Address Command",
       "dependencies": [
-        "F23",
-        "F26",
         "F39"
       ],
       "checkpoint": false,
@@ -2559,6 +2409,156 @@
     },
     {
       "id": "F41",
+      "name": "Customer Eligibility and Linked Investigation",
+      "dependencies": [
+        "F19",
+        "F33",
+        "F40"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F42",
+      "name": "Customer Workflow, Drafts and Escalation",
+      "dependencies": [
+        "F29",
+        "F34",
+        "F36",
+        "F37",
+        "F38",
+        "F39",
+        "F40",
+        "F41"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F43",
+      "name": "Durable Linked-Case Coordination",
+      "dependencies": [
+        "F11A",
+        "F20",
+        "F34",
+        "F41",
+        "F42"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F44",
+      "name": "Customer Workbench and Three-Scenario Gate",
+      "dependencies": [
+        "F21",
+        "F22",
+        "F35",
+        "F43"
+      ],
+      "checkpoint": true,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F45",
+      "name": "Reviewed Operational Memory and Feedback",
+      "dependencies": [
+        "F18",
+        "F27",
+        "F44"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F46",
+      "name": "Bounded Conversational Assistant Backend",
+      "dependencies": [
+        "F14",
+        "F27",
+        "F28",
+        "F44",
+        "F45"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F47",
+      "name": "Assistant Panel and Controlled Contextual UI",
+      "dependencies": [
+        "F22",
+        "F46"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F48",
+      "name": "Knowledge Center and Publication UX",
+      "dependencies": [
+        "F26",
+        "F27",
+        "F35",
+        "F45"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F49",
+      "name": "Operations Dashboard and Source-Backed Briefings",
+      "dependencies": [
+        "F28",
+        "F44",
+        "F45"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F50",
+      "name": "Model, Workflow-Limit and Cost Administration",
+      "dependencies": [
+        "F25",
+        "F28",
+        "F49"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F51",
       "name": "OpenTelemetry and Failure Inspection",
       "dependencies": [
         "F10",
@@ -2570,8 +2570,8 @@
         "F13A",
         "F13B",
         "F14",
-        "F23",
-        "F40"
+        "F25",
+        "F50"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2580,59 +2580,14 @@
       "artifacts": []
     },
     {
-      "id": "F42",
+      "id": "F52",
       "name": "Offline Evaluation Engine and Scorers",
       "dependencies": [
-        "F19",
-        "F25",
-        "F29",
-        "F33A",
-        "F41"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F43",
-      "name": "Versioned Benchmark, Regression Reports and Results UI",
-      "dependencies": [
-        "F34",
-        "F42"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F44",
-      "name": "Opt-In Live Comparisons and Independent Quality Rubric",
-      "dependencies": [
-        "F23",
-        "F26",
-        "F40",
-        "F42",
-        "F43"
-      ],
-      "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
-      "e2eTests": [],
-      "artifacts": []
-    },
-    {
-      "id": "F45",
-      "name": "Complete Demo Catalog and Guided Paths",
-      "dependencies": [
-        "F22",
-        "F30",
+        "F20",
+        "F27",
         "F34",
         "F43",
-        "F44"
+        "F51"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2641,13 +2596,58 @@
       "artifacts": []
     },
     {
-      "id": "F46",
+      "id": "F53",
+      "name": "Versioned Benchmark, Regression Reports and Results UI",
+      "dependencies": [
+        "F44",
+        "F52"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F54",
+      "name": "Opt-In Live Comparisons and Independent Quality Rubric",
+      "dependencies": [
+        "F25",
+        "F28",
+        "F50",
+        "F52",
+        "F53"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F55",
+      "name": "Complete Demo Catalog and Guided Paths",
+      "dependencies": [
+        "F23",
+        "F35",
+        "F44",
+        "F53",
+        "F54"
+      ],
+      "checkpoint": false,
+      "unitTests": [],
+      "integrationTests": [],
+      "e2eTests": [],
+      "artifacts": []
+    },
+    {
+      "id": "F56",
       "name": "Safe Sandbox Reset Saga",
       "dependencies": [
         "F08",
         "F13",
-        "F35",
-        "F45"
+        "F45",
+        "F55"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2656,12 +2656,12 @@
       "artifacts": []
     },
     {
-      "id": "F46A",
+      "id": "F57",
       "name": "Retention, Evidence Holds and Disk Admission",
       "dependencies": [
         "F15",
-        "F35",
-        "F46"
+        "F45",
+        "F56"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2670,7 +2670,7 @@
       "artifacts": []
     },
     {
-      "id": "F47",
+      "id": "F58",
       "name": "Event and Infrastructure Recovery Gate",
       "dependencies": [
         "F01",
@@ -2692,7 +2692,6 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
         "F18",
@@ -2700,26 +2699,17 @@
         "F20",
         "F21",
         "F22",
-        "F22A",
         "F23",
         "F24",
         "F25",
         "F26",
-        "F26A",
         "F27",
-        "F27A",
-        "F27B",
         "F28",
         "F29",
         "F30",
         "F31",
-        "F31A",
-        "F31B",
-        "F31C",
-        "F31D",
         "F32",
         "F33",
-        "F33A",
         "F34",
         "F35",
         "F36",
@@ -2733,7 +2723,17 @@
         "F44",
         "F45",
         "F46",
-        "F46A"
+        "F47",
+        "F48",
+        "F49",
+        "F50",
+        "F51",
+        "F52",
+        "F53",
+        "F54",
+        "F55",
+        "F56",
+        "F57"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2742,10 +2742,10 @@
       "artifacts": []
     },
     {
-      "id": "F47A",
+      "id": "F59",
       "name": "Workflow Lease, Wait and Deadline Recovery Gate",
       "dependencies": [
-        "F47"
+        "F58"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2754,10 +2754,10 @@
       "artifacts": []
     },
     {
-      "id": "F47B",
+      "id": "F60",
       "name": "Provider, Budget and Verification Failure Gate",
       "dependencies": [
-        "F47A"
+        "F59"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2766,10 +2766,10 @@
       "artifacts": []
     },
     {
-      "id": "F47C",
+      "id": "F61",
       "name": "Command, Partial-Plan and Reset Recovery Gate",
       "dependencies": [
-        "F47B"
+        "F60"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2778,27 +2778,27 @@
       "artifacts": []
     },
     {
-      "id": "F48",
+      "id": "F62",
       "name": "Authorization and AI-Abuse Security Gate",
       "dependencies": [
-        "F34",
-        "F35",
-        "F36",
-        "F37",
-        "F38",
-        "F39",
-        "F40",
-        "F41",
-        "F42",
-        "F43",
         "F44",
         "F45",
         "F46",
-        "F46A",
         "F47",
-        "F47A",
-        "F47B",
-        "F47C"
+        "F48",
+        "F49",
+        "F50",
+        "F51",
+        "F52",
+        "F53",
+        "F54",
+        "F55",
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2807,10 +2807,10 @@
       "artifacts": []
     },
     {
-      "id": "F48A",
+      "id": "F63",
       "name": "Parser, Browser and Container Isolation Gate",
       "dependencies": [
-        "F48"
+        "F62"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2819,10 +2819,10 @@
       "artifacts": []
     },
     {
-      "id": "F48B",
+      "id": "F64",
       "name": "Supply Chain, License and Secret Inventory Gate",
       "dependencies": [
-        "F48A"
+        "F63"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2831,26 +2831,26 @@
       "artifacts": []
     },
     {
-      "id": "F49",
+      "id": "F65",
       "name": "Performance, Accessibility and Responsive Verification",
       "dependencies": [
-        "F38",
-        "F39",
-        "F40",
-        "F41",
-        "F42",
-        "F43",
-        "F44",
-        "F45",
-        "F46",
-        "F46A",
-        "F47",
-        "F47A",
-        "F47B",
-        "F47C",
         "F48",
-        "F48A",
-        "F48B"
+        "F49",
+        "F50",
+        "F51",
+        "F52",
+        "F53",
+        "F54",
+        "F55",
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2859,19 +2859,19 @@
       "artifacts": []
     },
     {
-      "id": "F50",
+      "id": "F66",
       "name": "Clean Local Packaging and Onboarding",
       "dependencies": [
-        "F46",
-        "F46A",
-        "F47",
-        "F47A",
-        "F47B",
-        "F47C",
-        "F48",
-        "F48A",
-        "F48B",
-        "F49"
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2880,18 +2880,18 @@
       "artifacts": []
     },
     {
-      "id": "F51",
+      "id": "F67",
       "name": "Portfolio Documentation and Decision Records",
       "dependencies": [
-        "F22",
-        "F34",
-        "F43",
+        "F23",
         "F44",
-        "F48",
-        "F48A",
-        "F48B",
-        "F49",
-        "F50"
+        "F53",
+        "F54",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2900,7 +2900,7 @@
       "artifacts": []
     },
     {
-      "id": "F51A",
+      "id": "F68",
       "name": "Final Requirement and Evidence Assembly",
       "dependencies": [
         "F01",
@@ -2922,7 +2922,6 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
         "F18",
@@ -2930,26 +2929,17 @@
         "F20",
         "F21",
         "F22",
-        "F22A",
         "F23",
         "F24",
         "F25",
         "F26",
-        "F26A",
         "F27",
-        "F27A",
-        "F27B",
         "F28",
         "F29",
         "F30",
         "F31",
-        "F31A",
-        "F31B",
-        "F31C",
-        "F31D",
         "F32",
         "F33",
-        "F33A",
         "F34",
         "F35",
         "F36",
@@ -2963,17 +2953,27 @@
         "F44",
         "F45",
         "F46",
-        "F46A",
         "F47",
-        "F47A",
-        "F47B",
-        "F47C",
         "F48",
-        "F48A",
-        "F48B",
         "F49",
         "F50",
-        "F51"
+        "F51",
+        "F52",
+        "F53",
+        "F54",
+        "F55",
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66",
+        "F67"
       ],
       "checkpoint": false,
       "unitTests": [],
@@ -2982,10 +2982,10 @@
       "artifacts": []
     },
     {
-      "id": "F51B",
+      "id": "F69",
       "name": "Independent Final Architecture and Code Review",
       "dependencies": [
-        "F51A"
+        "F68"
       ],
       "checkpoint": true,
       "unitTests": [],
@@ -2994,7 +2994,7 @@
       "artifacts": []
     },
     {
-      "id": "F52",
+      "id": "F70",
       "name": "Final Product and Architectural Acceptance Gate",
       "dependencies": [
         "F01",
@@ -3016,7 +3016,6 @@
         "F13B",
         "F14",
         "F15",
-        "F15A",
         "F16",
         "F17",
         "F18",
@@ -3024,26 +3023,17 @@
         "F20",
         "F21",
         "F22",
-        "F22A",
         "F23",
         "F24",
         "F25",
         "F26",
-        "F26A",
         "F27",
-        "F27A",
-        "F27B",
         "F28",
         "F29",
         "F30",
         "F31",
-        "F31A",
-        "F31B",
-        "F31C",
-        "F31D",
         "F32",
         "F33",
-        "F33A",
         "F34",
         "F35",
         "F36",
@@ -3057,19 +3047,29 @@
         "F44",
         "F45",
         "F46",
-        "F46A",
         "F47",
-        "F47A",
-        "F47B",
-        "F47C",
         "F48",
-        "F48A",
-        "F48B",
         "F49",
         "F50",
         "F51",
-        "F51A",
-        "F51B"
+        "F52",
+        "F53",
+        "F54",
+        "F55",
+        "F56",
+        "F57",
+        "F58",
+        "F59",
+        "F60",
+        "F61",
+        "F62",
+        "F63",
+        "F64",
+        "F65",
+        "F66",
+        "F67",
+        "F68",
+        "F69"
       ],
       "checkpoint": true,
       "unitTests": [],

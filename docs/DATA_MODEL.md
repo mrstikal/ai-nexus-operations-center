@@ -35,7 +35,7 @@ resolves the active sandbox server-side and returns 404 for foreign-sandbox reso
 
 The model supports one company with isolated synthetic sandboxes. It is not a multi-tenant
 security claim. Users, sessions, migration state and server configuration are global.
-Retired sandboxes are read-only; F46 introduces non-destructive sandbox reset by creating a
+Retired sandboxes are read-only; F56 introduces non-destructive sandbox reset by creating a
 new sandbox rather than truncating existing data.
 
 ## Cases

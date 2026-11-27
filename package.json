@@ -22,10 +22,10 @@
     "infra:up": "node tools/infra-up.mjs",
     "db:migrate": "pnpm --filter @nexus/db --filter @nexus/enterprise-db build && node tools/demo-init.mjs --migrate-only",
     "demo:init": "pnpm --filter @nexus/db --filter @nexus/enterprise-db --filter @nexus/application build && node tools/demo-init.mjs",
-    "demo:reset": "node tools/not-implemented.mjs demo:reset F46",
-    "eval:offline": "node tools/not-implemented.mjs eval:offline F42",
-    "retrieval:check": "node tools/not-implemented.mjs retrieval:check F25",
-    "eval:live": "node tools/not-implemented.mjs eval:live F44",
+    "demo:reset": "node tools/not-implemented.mjs demo:reset F56",
+    "eval:offline": "node tools/not-implemented.mjs eval:offline F52",
+    "retrieval:check": "node tools/not-implemented.mjs retrieval:check F27",
+    "eval:live": "node tools/not-implemented.mjs eval:live F54",
     "openapi:generate": "pnpm --filter @nexus/contracts build && node tools/generate-openapi.mjs"
   },
   "devDependencies": {
