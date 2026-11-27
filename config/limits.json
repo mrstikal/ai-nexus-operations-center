@@ -1,0 +1,13 @@
+{
+  "revision": "limits-v1",
+  "maxPhysicalAttempts": 2,
+  "maxToolRounds": 2,
+  "maxToolCalls": 12,
+  "maxInputTokens": 16000,
+  "maxOutputTokens": 4000,
+  "imageInputTokenEstimate": 1000,
+  "messageOverheadTokens": 4,
+  "maxPriceMicrousdPerCall": "1000000",
+  "maxAccountDepth": 3,
+  "maxActiveMs": 300000
+}

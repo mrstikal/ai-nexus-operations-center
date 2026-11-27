@@ -1,0 +1,250 @@
+{
+  "version": "replay-v1",
+  "records": [
+    {
+      "recordId": "classify-success",
+      "request": {
+        "role": "classify",
+        "capabilities": [
+          "structured_json"
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "F14 fixture: synthetic customer request about a delayed delivery."
+              }
+            ]
+          }
+        ],
+        "outputSchemaId": "document.classification.v1",
+        "allowedToolNames": [],
+        "workflowRunId": null,
+        "budgetAccountId": null,
+        "maxOutputTokens": 400,
+        "stream": false
+      },
+      "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+      "configRevision": "models-default-2026-11-26",
+      "schemaVersion": 1,
+      "route": {
+        "provider": "replay",
+        "model": "replay-v1"
+      },
+      "outcome": {
+        "kind": "success",
+        "output": {
+          "kind": "customer_request",
+          "evidenceIds": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "missingFields": []
+        },
+        "recordedUsage": {
+          "inputTokens": 120,
+          "outputTokens": 24
+        }
+      }
+    },
+    {
+      "recordId": "classify-schema-repair-primary",
+      "request": {
+        "role": "classify",
+        "capabilities": [
+          "structured_json"
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "F14 fixture: schema repair source."
+              }
+            ]
+          }
+        ],
+        "outputSchemaId": "document.classification.v1",
+        "allowedToolNames": [],
+        "workflowRunId": null,
+        "budgetAccountId": null,
+        "maxOutputTokens": 400,
+        "stream": false
+      },
+      "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+      "configRevision": "models-default-2026-11-26",
+      "schemaVersion": 1,
+      "route": {
+        "provider": "replay",
+        "model": "replay-v1"
+      },
+      "outcome": {
+        "kind": "success",
+        "output": {
+          "kind": "not_a_supported_kind",
+          "evidenceIds": [],
+          "missingFields": []
+        },
+        "recordedUsage": {
+          "inputTokens": 100,
+          "outputTokens": 12
+        }
+      }
+    },
+    {
+      "recordId": "classify-schema-repair-repaired",
+      "request": {
+        "role": "classify",
+        "capabilities": [
+          "structured_json"
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "F14 fixture: schema repair source."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "The previous response did not validate against the requested output schema. Return only a JSON value that validates against that exact schema; do not repeat this instruction. Schema: document.classification.v1"
+              }
+            ]
+          }
+        ],
+        "outputSchemaId": "document.classification.v1",
+        "allowedToolNames": [],
+        "workflowRunId": null,
+        "budgetAccountId": null,
+        "maxOutputTokens": 400,
+        "stream": false
+      },
+      "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+      "configRevision": "models-default-2026-11-26",
+      "schemaVersion": 1,
+      "route": {
+        "provider": "replay",
+        "model": "replay-v1"
+      },
+      "outcome": {
+        "kind": "success",
+        "output": {
+          "kind": "customer_request",
+          "evidenceIds": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "missingFields": []
+        },
+        "recordedUsage": {
+          "inputTokens": 140,
+          "outputTokens": 24
+        }
+      }
+    },
+    {
+      "recordId": "classify-timeout-fallback-fallback",
+      "request": {
+        "role": "classify",
+        "capabilities": [
+          "structured_json"
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "F14 fixture: provider timeout with configured fallback."
+              }
+            ]
+          }
+        ],
+        "outputSchemaId": "document.classification.v1",
+        "allowedToolNames": [],
+        "workflowRunId": null,
+        "budgetAccountId": null,
+        "maxOutputTokens": 400,
+        "stream": false
+      },
+      "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+      "configRevision": "models-default-2026-11-26",
+      "schemaVersion": 1,
+      "route": {
+        "provider": "replay-fallback",
+        "model": "replay-fallback-v1"
+      },
+      "outcome": {
+        "kind": "success",
+        "output": {
+          "kind": "customer_request",
+          "evidenceIds": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "missingFields": []
+        },
+        "recordedUsage": {
+          "inputTokens": 120,
+          "outputTokens": 24
+        }
+      }
+    },
+    {
+      "recordId": "classify-stale-prompt",
+      "request": {
+        "role": "classify",
+        "capabilities": [
+          "structured_json"
+        ],
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "kind": "text",
+                "text": "F14 fixture: stale prompt revision must not replay."
+              }
+            ]
+          }
+        ],
+        "outputSchemaId": "document.classification.v1",
+        "allowedToolNames": [],
+        "workflowRunId": null,
+        "budgetAccountId": null,
+        "maxOutputTokens": 400,
+        "stream": false
+      },
+      "promptVersion": "0000000000000000000000000000000000000000000000000000000000000000",
+      "configRevision": "models-default-2026-11-26",
+      "schemaVersion": 1,
+      "route": {
+        "provider": "replay",
+        "model": "replay-v1"
+      },
+      "outcome": {
+        "kind": "success",
+        "output": {
+          "kind": "customer_request",
+          "evidenceIds": [
+            "11111111-1111-4111-8111-111111111111"
+          ],
+          "missingFields": []
+        },
+        "recordedUsage": null
+      }
+    }
+  ],
+  "failureFixtures": [
+    "../../failures/provider-timeout.json",
+    "../../failures/provider-rate-limit.json",
+    "../../failures/provider-schema-invalid.json",
+    "../../failures/budget-exhausted.json"
+  ]
+}

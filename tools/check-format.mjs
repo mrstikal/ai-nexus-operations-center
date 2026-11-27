@@ -26,6 +26,7 @@ const INCLUDED_NAMES = new Set([
   'LICENSE',
 ]);
 const SKIP_DIRECTORIES = new Set([
+  '.autopilot',
   '.git',
   '.idea',
   '.next',

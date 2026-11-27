@@ -1,0 +1,63 @@
+{
+  "revision": "models-default-2026-11-26",
+  "mode": "replay",
+  "roles": {
+    "classify": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 800,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "extract": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 2000,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "vision": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json", "vision"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 1000,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "embed": {
+      "provider": "replay",
+      "model": "replay-embed-v1",
+      "capabilities": ["embedding"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 1,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "analyse": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 4000,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "verify": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 1000,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    },
+    "write": {
+      "provider": "replay",
+      "model": "replay-v1",
+      "capabilities": ["structured_json"],
+      "promptVersion": "v1",
+      "maxOutputTokens": 2000,
+      "pricing": { "inputMicrousdPerToken": "0", "outputMicrousdPerToken": "0" }
+    }
+  },
+  "fallback": null
+}

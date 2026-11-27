@@ -1983,9 +1983,117 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f14-gateway.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/ai/src/gateway.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "packages/ai/src/router.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/ai/src/budgets.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/ai/src/errors.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/ai/src/replay.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/ai/src/prompts/index.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/ai/package.json",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/contracts/src/ai-outputs.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/schema/budget-accounts.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/db/src/schema/model-calls.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/db/migrations/0012_model_calls.sql",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/db/src/repositories/model-calls.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "config/models.default.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "config/limits.json",
+          "minBytes": 250
+        },
+        {
+          "path": "fixtures/replay/v1/manifest.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "fixtures/failures/provider-timeout.json",
+          "minBytes": 100
+        },
+        {
+          "path": "fixtures/failures/provider-rate-limit.json",
+          "minBytes": 100
+        },
+        {
+          "path": "fixtures/failures/provider-schema-invalid.json",
+          "minBytes": 100
+        },
+        {
+          "path": "fixtures/failures/budget-exhausted.json",
+          "minBytes": 100
+        },
+        {
+          "path": "tests/integration/f14-gateway.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "docs/AI_GATEWAY.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/COSTS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/adr/010-shared-live-replay-gateway.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F15",

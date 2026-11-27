@@ -80,9 +80,15 @@ export const ModelMessageContentSchema = z.discriminatedUnion('kind', [
 ]);
 export type ModelMessageContent = z.infer<typeof ModelMessageContentSchema>;
 
+/**
+ * Caller-supplied messages. The `system` role is deliberately absent: trusted
+ * instructions live in the versioned prompt owned by the gateway, so document
+ * or email text can never be submitted as a system instruction. Provider
+ * adapters place the resolved prompt in their own system slot.
+ */
 export const ModelMessageSchema = z
   .object({
-    role: z.enum(['system', 'user', 'assistant', 'tool']),
+    role: z.enum(['user', 'assistant', 'tool']),
     content: z.array(ModelMessageContentSchema).min(1).max(50),
   })
   .strict();
@@ -102,6 +108,8 @@ export const GatewayRequestSchema = z
   })
   .strict();
 export type GatewayRequest = z.infer<typeof GatewayRequestSchema>;
+
+export type ModelUsage = z.infer<typeof ModelUsageSchema>;
 
 export const MODEL_FAILURE_CODES = [
   'UNAUTHORIZED',
@@ -192,9 +200,26 @@ export const ToolCallSchema = z
   .strict();
 export type ToolCall = z.infer<typeof ToolCallSchema>;
 
+export interface GatewayInvocationOptions {
+  /**
+   * Stable logical attempt identity supplied by a workflow or retry loop.
+   * Reusing it returns the recorded attempt instead of issuing provider I/O
+   * again. When absent, the gateway generates one for a single invocation.
+   */
+  readonly invocationId?: string | null;
+  /** Aborts admission before a reservation and is forwarded to provider I/O. */
+  readonly signal?: AbortSignal | undefined;
+}
+
 export interface ModelGateway {
-  invoke(request: GatewayRequest): Promise<GatewayResult>;
-  stream(request: GatewayRequest): AsyncIterable<
+  invoke(
+    request: GatewayRequest,
+    options?: GatewayInvocationOptions,
+  ): Promise<GatewayResult>;
+  stream(
+    request: GatewayRequest,
+    options?: GatewayInvocationOptions,
+  ): AsyncIterable<
     | { kind: 'text_delta'; text: string }
     | { kind: 'status'; status: string }
     | { kind: 'final'; result: GatewayResult }

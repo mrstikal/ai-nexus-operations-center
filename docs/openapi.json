@@ -15107,7 +15107,6 @@
                 "role": {
                   "type": "string",
                   "enum": [
-                    "system",
                     "user",
                     "assistant",
                     "tool"

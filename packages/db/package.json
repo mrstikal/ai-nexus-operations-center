@@ -119,6 +119,18 @@
     "./schema/execution-attempts": {
       "types": "./dist/schema/execution-attempts.d.ts",
       "default": "./dist/schema/execution-attempts.js"
+    },
+    "./schema/budget-accounts": {
+      "types": "./dist/schema/budget-accounts.d.ts",
+      "default": "./dist/schema/budget-accounts.js"
+    },
+    "./schema/model-calls": {
+      "types": "./dist/schema/model-calls.d.ts",
+      "default": "./dist/schema/model-calls.js"
+    },
+    "./repositories/model-calls": {
+      "types": "./dist/repositories/model-calls.d.ts",
+      "default": "./dist/repositories/model-calls.js"
     }
   },
   "scripts": {
@@ -126,6 +138,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@nexus/ai": "workspace:*",
     "@nexus/application": "workspace:*",
     "@nexus/contracts": "workspace:*",
     "@nexus/observability": "workspace:*",

@@ -12,5 +12,6 @@ export * from './policies.js';
 export * from './enterprise-commands.js';
 export * from './tools.js';
 export * from './models.js';
+export * from './ai-outputs.js';
 export * from './ui.js';
 export * from './events/index.js';

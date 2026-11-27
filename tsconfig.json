@@ -284,6 +284,36 @@
       ],
       "@nexus/domain/actions/item-hash": [
         "./packages/domain/src/actions/item-hash.ts"
+      ],
+      "@nexus/ai/gateway": [
+        "./packages/ai/src/gateway.ts"
+      ],
+      "@nexus/ai/router": [
+        "./packages/ai/src/router.ts"
+      ],
+      "@nexus/ai/budgets": [
+        "./packages/ai/src/budgets.ts"
+      ],
+      "@nexus/ai/errors": [
+        "./packages/ai/src/errors.ts"
+      ],
+      "@nexus/ai/replay": [
+        "./packages/ai/src/replay.ts"
+      ],
+      "@nexus/ai/prompts": [
+        "./packages/ai/src/prompts/index.ts"
+      ],
+      "@nexus/db/schema/budget-accounts": [
+        "./packages/db/src/schema/budget-accounts.ts"
+      ],
+      "@nexus/db/schema/model-calls": [
+        "./packages/db/src/schema/model-calls.ts"
+      ],
+      "@nexus/db/repositories/model-calls": [
+        "./packages/db/src/repositories/model-calls.ts"
+      ],
+      "@nexus/contracts/ai-outputs": [
+        "./packages/contracts/src/ai-outputs.ts"
       ]
     },
     "skipLibCheck": true

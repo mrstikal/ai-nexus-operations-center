@@ -1,0 +1,39 @@
+{
+  "recordId": "provider-rate-limit",
+  "request": {
+    "role": "classify",
+    "capabilities": [
+      "structured_json"
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "kind": "text",
+            "text": "F14 fixture: provider rate limit."
+          }
+        ]
+      }
+    ],
+    "outputSchemaId": "document.classification.v1",
+    "allowedToolNames": [],
+    "workflowRunId": null,
+    "budgetAccountId": null,
+    "maxOutputTokens": 400,
+    "stream": false
+  },
+  "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+  "configRevision": "models-default-2026-11-26",
+  "schemaVersion": 1,
+  "route": {
+    "provider": "replay",
+    "model": "replay-v1"
+  },
+  "outcome": {
+    "kind": "failure",
+    "code": "RATE_LIMIT",
+    "message": "Recorded provider rate limit (429)",
+    "retryable": true
+  }
+}

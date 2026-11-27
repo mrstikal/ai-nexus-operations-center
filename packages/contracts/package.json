@@ -75,6 +75,10 @@
     "./run-events": {
       "types": "./dist/run-events.d.ts",
       "default": "./dist/run-events.js"
+    },
+    "./ai-outputs": {
+      "types": "./dist/ai-outputs.d.ts",
+      "default": "./dist/ai-outputs.js"
     }
   },
   "scripts": {

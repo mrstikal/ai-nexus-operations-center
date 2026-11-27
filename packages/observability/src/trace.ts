@@ -18,6 +18,15 @@ export const TRACE_ALLOWED_KEYS = [
   'retry',
   'requestId',
   'correlationId',
+  'modelRole',
+  'outputSchemaId',
+  'mode',
+  'replayKey',
+  'costBasis',
+  'usageBasis',
+  'fixture',
+  'failureCode',
+  'uncertain',
 ] as const;
 export type TraceDataKey = (typeof TRACE_ALLOWED_KEYS)[number];
 export type TraceData = Partial<Record<TraceDataKey, string | number | boolean | null>>;

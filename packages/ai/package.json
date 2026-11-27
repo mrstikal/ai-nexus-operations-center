@@ -1,0 +1,44 @@
+{
+  "name": "@nexus/ai",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./gateway": {
+      "types": "./dist/gateway.d.ts",
+      "default": "./dist/gateway.js"
+    },
+    "./router": {
+      "types": "./dist/router.d.ts",
+      "default": "./dist/router.js"
+    },
+    "./budgets": {
+      "types": "./dist/budgets.d.ts",
+      "default": "./dist/budgets.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "default": "./dist/errors.js"
+    },
+    "./replay": {
+      "types": "./dist/replay.d.ts",
+      "default": "./dist/replay.js"
+    },
+    "./prompts": {
+      "types": "./dist/prompts/index.d.ts",
+      "default": "./dist/prompts/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nexus/contracts": "workspace:*",
+    "@nexus/domain": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.11"
+  }
+}

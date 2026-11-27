@@ -53,14 +53,18 @@ and makes no network request.
 - A timeout, rate limit or transport unavailability may use the one configured fallback route.
 - A model response that fails its Zod output schema may use one schema-repair attempt instead. The
   repair appends a fixed instruction naming the schema. Fallback and repair are never combined in a
-  single invocation.
+  single invocation; the repair remains available when a fallback route is merely configured but not
+  used.
 - Authorization, moderation, context-length, privacy-policy, budget and deterministic business
   failures do not retry.
 - Tool rounds and tool calls are bounded by `RunModelCaps` (two rounds, twelve calls for scenario
   runs; the assistant and other surfaces may lower them). Every fallback or repair consumes the same
-  physical-attempt counter.
-- Input is bounded at 16,000 estimated tokens and output at 4,000 tokens. Images use the documented
-  worst-case estimate. Exceeding a bound refuses the call rather than truncating required facts.
+  physical-attempt counter. A workflow-bound invocation must receive a shared run counter; omitting
+  it fails closed instead of starting a fresh per-call allowance.
+- Input is bounded at 16,000 estimated tokens. Output is bounded at 2,000 tokens for ordinary roles
+  and 4,000 tokens only for the bounded `analyse` role; a request or route above its role bound is
+  refused before reservation and provider I/O. Images use the documented worst-case estimate.
+  Exceeding a bound refuses the call rather than truncating required facts.
 
 ## Replay Keys
 
@@ -93,14 +97,22 @@ with basis `replay`.
 - each account has an immutable cap and mutable used/reserved micro-USD totals;
 - a standalone document or evaluation has its own root cap; document work started by a case is a
   child of that case's run budget;
-- maximum depth is three (root plus two parents), enforced on creation and on reservation;
-- the unique owner key is `(sandbox_id, owner_kind, owner_id)`.
+- maximum hierarchy depth is four accounts (root at depth zero, three child levels), enforced on
+  creation and on reservation;
+- the unique owner key is `(sandbox_id, owner_kind, owner_id)`;
+- a workflow-bound call must select the account owned by that exact workflow run or one of its
+  descendants. The ledger locks the chain and rejects an unrelated same-sandbox account before
+  reserving, so a standalone document/evaluation allowance cannot bypass the case/run cap.
+
+Hard ceilings and the 20% reservation buffer are code constants, not configuration values. A new
+account may lower its cap but cannot exceed the ceiling for its owner kind.
 
 ### Reservation and settlement
 
-Before a physical call, the gateway computes a conservative upper bound: estimated input tokens plus
-the configured maximum output at the selected tariff, raised by the 20% buffer. Unknown tariffs or
-pricing that exceeds the per-call price cap refuse the route.
+Before a physical call, the gateway computes a conservative upper bound: an input-token upper bound
+covering the trusted prompt, caller messages and every allowed tool schema, plus the effective
+maximum output at the selected tariff, raised by the fixed 20% buffer. Unknown tariffs or pricing
+that exceeds the per-call price cap refuse the route.
 
 Reservation is transactional:
 
@@ -114,20 +126,31 @@ Reservation is transactional:
 
 Two workers reserving against the same hierarchy therefore serialize and cannot both pass a cap
 check. An existing identical attempt returns its recorded reservation/state instead of reserving
-again.
+again. A workflow retry may pass a stable `invocationId`; reusing it returns the recorded attempt
+without repeating provider I/O. An attempt whose identity was already recorded is not silently
+retried with a fresh key.
 
 On success, the call settles with the actual reported provider cost, or a labelled token-tariff
 estimate when no reported cost exists. On a deterministic provider failure, the unspent reservation is
 released and actual cost is zero unless the provider reported usage. On a timeout, disconnect or
 unaccounted response, the full reservation remains as an `uncertain` charge; it is never released
-automatically. `finalizeUncertain` conservatively charges the reservation or an explicit actual
-amount. A provider bill may exceed an estimate, so the ledger reports conservative enforcement, not
-an absolute financial guarantee.
+automatically and its ledger row retains the failure code and bounded diagnostics. `finalizeUncertain`
+conservatively charges the reservation or an explicit actual amount. A provider bill may exceed an
+estimate, so the ledger reports conservative enforcement, not an absolute financial guarantee.
 
 `nexus.model_calls` records role, schema version, prompt/config revisions, route, mode, replay key,
 request hash, reservation set, usage, failure code, diagnostics and timestamps. The worker database
-role owns ledger writes; the API role may read the ledger and read/update budget totals for its own
-composition root. No key or raw prompt is stored.
+role owns account creation and every ledger mutation; the API role may read accounts and the ledger
+but cannot create an account or change spend totals. No key or raw prompt is stored.
+
+## Trusted Input and Cancellation
+
+Caller messages use only `user`, `assistant` and `tool` roles. Trusted instructions come from the
+versioned prompt and are never accepted from a request message, so document or email text cannot be
+smuggled into a system slot. `invoke` and `stream` accept an optional `AbortSignal`; admission declines
+before reserving when it is already aborted, and a live provider receives the same signal. An abort
+after provider I/O remains an accounted or uncertain charge rather than an unrecorded free call.
+A caller-supplied retry `invocationId` must be a UUID and is validated before any reservation.
 
 ## Tracing
 
