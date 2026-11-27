@@ -23,6 +23,8 @@ import type { NexusDb } from '../connection.js';
 import { activeSandbox, cases, sandboxes } from '../schema/cases.js';
 import { eventInbox } from '../schema/events.js';
 import { workflowDependencies } from '../schema/workflow-dependencies.js';
+import { actionExecutions } from '../schema/executions.js';
+import { actionCaseCancellations } from '../schema/execution-attempts.js';
 import {
   workflowJobs,
   workflowRuns,
@@ -289,6 +291,168 @@ async function approvalWaitIsCurrent(
   return (result.rows?.length ?? 0) > 0;
 }
 
+export async function completeCancelRequestedRuns(
+  db: NexusDb,
+  limit = 10,
+): Promise<number> {
+  let completed = 0;
+  for (let index = 0; index < limit; index += 1) {
+    const rows = await db
+      .select()
+      .from(workflowRuns)
+      .where(eq(workflowRuns.status, 'cancel_requested'))
+      .orderBy(workflowRuns.updatedAt)
+      .limit(1);
+    const candidate = rows[0];
+    if (!candidate) {
+      break;
+    }
+    const done = await db.transaction(async (tx) => {
+      const runRows = await tx
+        .select()
+        .from(workflowRuns)
+        .where(
+          and(
+            eq(workflowRuns.sandboxId, candidate.sandboxId),
+            eq(workflowRuns.id, candidate.id),
+          ),
+        )
+        .for('update')
+        .limit(1);
+      const run = runRows[0];
+      if (!run || run.status !== 'cancel_requested') {
+        return false;
+      }
+      const executionRows = await tx
+        .select()
+        .from(actionExecutions)
+        .where(
+          and(
+            eq(actionExecutions.sandboxId, run.sandboxId),
+            eq(actionExecutions.caseId, run.caseId),
+          ),
+        );
+      if (
+        executionRows.some((execution) =>
+          ['in_progress', 'unknown'].includes(execution.state),
+        )
+      ) {
+        return false;
+      }
+      const partialEffects: PartialEffect[] = executionRows
+        .filter((execution) => execution.state === 'succeeded')
+        .map((execution) => ({
+          kind: 'succeeded',
+          reference: execution.receiptKey ?? execution.itemId,
+        }));
+      for (const execution of executionRows) {
+        if (execution.state === 'cancelled') {
+          partialEffects.push({
+            kind: 'cancelled',
+            reference: execution.itemId,
+          });
+        }
+      }
+      await tx
+        .update(workflowDependencies)
+        .set({
+          state: 'cancelled',
+          resolvedAt: sql`clock_timestamp()`,
+          updatedAt: sql`clock_timestamp()`,
+        })
+        .where(
+          and(
+            eq(workflowDependencies.parentRunId, run.id),
+            eq(workflowDependencies.state, 'waiting'),
+          ),
+        );
+      await tx
+        .update(workflowRuns)
+        .set({
+          status: 'cancelled',
+          waitReason: null,
+          partialEffects: partialEffects as unknown as PartialEffect[],
+          lastError: run.cancelCause ?? 'cancel_requested',
+          version: sql`${workflowRuns.version} + 1`,
+          updatedAt: sql`clock_timestamp()`,
+        })
+        .where(eq(workflowRuns.id, run.id));
+      await cancelActiveJobs(tx, run.id, run.cancelCause ?? 'cancel_requested');
+      await tx
+        .update(workflowSteps)
+        .set({
+          status: 'cancelled',
+          errorClass: run.cancelCause ?? 'cancel_requested',
+          version: sql`${workflowSteps.version} + 1`,
+          updatedAt: sql`clock_timestamp()`,
+        })
+        .where(
+          and(
+            eq(workflowSteps.runId, run.id),
+            inArray(workflowSteps.status, ['pending', 'running', 'waiting']),
+          ),
+        );
+      const caseRows = await tx
+        .select({ status: cases.status })
+        .from(cases)
+        .where(
+          and(eq(cases.sandboxId, run.sandboxId), eq(cases.id, run.caseId)),
+        )
+        .limit(1);
+      const existingCaseStatus = caseRows[0]?.status as CaseStatus | undefined;
+      const caseStatus =
+        existingCaseStatus === 'resolved' ||
+        existingCaseStatus === 'escalated' ||
+        existingCaseStatus === 'cancelled'
+          ? existingCaseStatus
+          : await applyCaseStatus(
+              tx,
+              run,
+              'cancelled',
+              run.cancelCause ?? 'cancel_requested',
+            );
+      await appendAuditInTransaction(tx, {
+        actor: { kind: 'service', id: 'action-reconciler', roles: [] },
+        requestId: `cancel-complete-${run.id}`,
+        correlationId: `cancel-${run.id}`.slice(0, 128),
+        sandboxId: run.sandboxId,
+        runId: run.id,
+        targetType: 'workflow_run',
+        targetId: run.id,
+        targetVersion: String(run.version + 1),
+        action: 'workflow.cancelled',
+        beforeHash: null,
+        afterHash: null,
+        outcome: 'succeeded',
+        details: {
+          status: 'cancelled',
+          action: 'workflow.cancelled',
+          outcome: 'succeeded',
+        },
+      });
+      await appendTraceEventInTransaction(tx, {
+        sandboxId: run.sandboxId,
+        runId: run.id,
+        level: 'warn',
+        event: 'workflow.run.cancelled',
+        data: {
+          status: 'cancelled',
+          caseStatus,
+          count: partialEffects.length,
+          errorClass: run.cancelCause ?? 'cancel_requested',
+        },
+      });
+      return true;
+    });
+    if (done) {
+      completed += 1;
+    } else {
+      break;
+    }
+  }
+  return completed;
+}
+
 export function createWorkflowControlStore(
   db: NexusDb,
 ): ResumeStore & CancellationStore & {
@@ -437,6 +601,84 @@ export function createWorkflowControlStore(
         }
         if (status === 'cancel_requested') {
           return { ok: false, code: 'DUPLICATE_CANCELLATION' };
+        }
+        const unresolved = await tx
+          .select({ id: actionExecutions.id })
+          .from(actionExecutions)
+          .where(
+            and(
+              eq(actionExecutions.sandboxId, run.sandboxId),
+              eq(actionExecutions.caseId, run.caseId),
+              inArray(actionExecutions.state, ['in_progress', 'unknown']),
+            ),
+          )
+          .limit(1);
+        if (unresolved[0]) {
+          await tx
+            .update(actionExecutions)
+            .set({
+              state: 'cancelled',
+              updatedAt: sql`clock_timestamp()`,
+            })
+            .where(
+              and(
+                eq(actionExecutions.sandboxId, run.sandboxId),
+                eq(actionExecutions.caseId, run.caseId),
+                inArray(actionExecutions.state, [
+                  'pending',
+                  'retryable_failure',
+                  'permanent_failure',
+                ]),
+              ),
+            );
+          await tx
+            .insert(actionCaseCancellations)
+            .values({
+              sandboxId: run.sandboxId,
+              caseId: run.caseId,
+              requestedAt: sql`clock_timestamp()`,
+            })
+            .onConflictDoNothing();
+          await tx
+            .update(workflowRuns)
+            .set({
+              status: 'cancel_requested',
+              waitReason: null,
+              cancelCause: input.request.cause,
+              lastError: input.request.cause,
+              version: sql`${workflowRuns.version} + 1`,
+              updatedAt: sql`clock_timestamp()`,
+            })
+            .where(eq(workflowRuns.id, run.id));
+          await cancelActiveJobs(tx, run.id, input.request.cause);
+          const caseRows = await tx
+            .select({ status: cases.status })
+            .from(cases)
+            .where(
+              and(eq(cases.sandboxId, run.sandboxId), eq(cases.id, run.caseId)),
+            )
+            .limit(1);
+          const caseStatus = (caseRows[0]?.status ?? run.caseId) as CaseStatus;
+          await appendAuditInTransaction(tx, {
+            actor: input.actor,
+            requestId: input.requestId,
+            correlationId: input.correlationId,
+            sandboxId: run.sandboxId,
+            runId: run.id,
+            targetType: 'workflow_run',
+            targetId: run.id,
+            targetVersion: String(run.version + 1),
+            action: 'workflow.cancel_requested',
+            beforeHash: null,
+            afterHash: null,
+            outcome: 'succeeded',
+            details: {
+              status: 'cancel_requested',
+              action: 'workflow.cancel_requested',
+              outcome: 'succeeded',
+            },
+          });
+          return controlResponse(run.id, 'cancel_requested', caseStatus);
         }
         await tx
           .update(workflowDependencies)

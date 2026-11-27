@@ -35,6 +35,10 @@
     "./actions/bindings": {
       "types": "./dist/actions/bindings.d.ts",
       "default": "./dist/actions/bindings.js"
+    },
+    "./actions/item-hash": {
+      "types": "./dist/actions/item-hash.d.ts",
+      "default": "./dist/actions/item-hash.js"
     }
   },
   "scripts": {

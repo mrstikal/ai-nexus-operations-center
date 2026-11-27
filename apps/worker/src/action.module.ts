@@ -6,8 +6,11 @@ import {
 } from '@nestjs/common';
 import { createFilePolicySource } from '@nexus/application/actions/policy-source';
 import { ActionExecutor } from '@nexus/application/actions/executor';
+import { ReconcileService } from '@nexus/application/actions/reconcile';
 import { createNexusDb, createNexusPool } from '@nexus/db/connection';
 import { createExecutionStore } from '@nexus/db/repositories/executions';
+import { createReconciliationStore } from '@nexus/db/repositories/recovery';
+import { completeCancelRequestedRuns } from '@nexus/db/repositories/workflow-control';
 import { createEnterpriseCommandPort } from '@nexus/integrations/enterprise/commands';
 
 @Injectable()
@@ -33,14 +36,21 @@ export class ActionRuntime implements OnModuleInit, OnModuleDestroy {
     } catch {
       return;
     }
+    const db = createNexusDb(pool);
+    const policySource = createFilePolicySource({ cache: false });
     const executor = new ActionExecutor(
-      createExecutionStore(createNexusDb(pool)),
+      createExecutionStore(db),
       commandPort,
-      createFilePolicySource(),
+      policySource,
+    );
+    const reconciler = new ReconcileService(
+      createReconciliationStore(db),
+      commandPort,
+      policySource,
     );
     this.#pool = pool;
     this.#running = true;
-    this.#loop = this.#run(executor);
+    this.#loop = this.#run(db, executor, reconciler);
   }
 
   async onModuleDestroy(): Promise<void> {
@@ -51,8 +61,22 @@ export class ActionRuntime implements OnModuleInit, OnModuleDestroy {
     this.#pool = null;
   }
 
-  async #run(executor: ActionExecutor): Promise<void> {
+  async #run(
+    db: ReturnType<typeof createNexusDb>,
+    executor: ActionExecutor,
+    reconciler: ReconcileService,
+  ): Promise<void> {
     while (this.#running) {
+      try {
+        await reconciler.processOnce();
+      } catch {
+        // Reconciliation retries next tick; executor remains isolated.
+      }
+      try {
+        await completeCancelRequestedRuns(db);
+      } catch {
+        // A terminal-case cancellation must not block execution.
+      }
       try {
         await executor.processOnce();
       } catch {

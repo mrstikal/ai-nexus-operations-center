@@ -700,6 +700,24 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
           ) {
             return { status: 'stale' };
           }
+          const startedExecution = await tx
+            .select({ id: actionExecutions.id })
+            .from(actionExecutions)
+            .where(
+              and(
+                eq(actionExecutions.sandboxId, input.sandboxId),
+                eq(actionExecutions.actionRevisionId, current.id),
+                inArray(actionExecutions.state, [
+                  'in_progress',
+                  'unknown',
+                  'succeeded',
+                ]),
+              ),
+            )
+            .limit(1);
+          if (startedExecution[0]) {
+            return { status: 'stale' };
+          }
           const nextNumber = current.revisionNumber + 1;
           await tx
             .update(actionRevisions)

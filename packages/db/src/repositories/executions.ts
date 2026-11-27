@@ -29,6 +29,7 @@ import {
   actionExecutions,
   caseNotes,
 } from '../schema/executions.js';
+import { actionCaseCancellations, executionAttemptPayloads } from '../schema/execution-attempts.js';
 import { appendAuditInTransaction } from './audit.js';
 import { loadProposalDetail, resolveActiveSandbox } from './actions.js';
 import { appendTraceEventInTransaction } from './trace.js';
@@ -178,6 +179,11 @@ export function createExecutionStore(db: NexusDb): ExecutionRuntimeStore {
           ON case_row.sandbox_id = proposal.sandbox_id
          AND case_row.id = proposal.case_id
         WHERE case_row.status NOT IN ('resolved', 'escalated', 'cancelled')
+          AND NOT EXISTS (
+            SELECT 1 FROM nexus.action_case_cancellations AS cancellation
+            WHERE cancellation.sandbox_id = proposal.sandbox_id
+              AND cancellation.case_id = proposal.case_id
+          )
           AND proposal.sandbox_id = (SELECT sandbox_id FROM nexus.active_sandbox LIMIT 1)
           AND revision.expires_at > clock_timestamp()
           AND (
@@ -341,6 +347,19 @@ export function createExecutionStore(db: NexusDb): ExecutionRuntimeStore {
           .limit(1);
         const revision = revisionRows[0];
         if (!revision) {
+          return null;
+        }
+        const cancellation = await tx
+          .select({ caseId: actionCaseCancellations.caseId })
+          .from(actionCaseCancellations)
+          .where(
+            and(
+              eq(actionCaseCancellations.sandboxId, input.candidate.sandboxId),
+              eq(actionCaseCancellations.caseId, proposal.caseId),
+            ),
+          )
+          .limit(1);
+        if (cancellation[0]) {
           return null;
         }
         const caseRows = await tx
@@ -540,6 +559,21 @@ export function createExecutionStore(db: NexusDb): ExecutionRuntimeStore {
           receiptKey: null,
           startedAt: sql`clock_timestamp()`,
           finishedAt: null,
+          createdAt: sql`clock_timestamp()`,
+        });
+        await tx.insert(executionAttemptPayloads).values({
+          attemptId,
+          sandboxId: input.candidate.sandboxId,
+          executionId: execution.id,
+          requestPayload: input.payload as Record<string, unknown>,
+          baseExpectedVersions: [...input.baseExpectedVersions],
+          priorReceiptKeys: [...input.priorReceiptKeys],
+          commandKind: item.payload.kind,
+          receiptKey: execution.executionKey,
+          planHash: revision.planHash,
+          itemHash: input.itemHash,
+          executeBefore: new Date(input.executeBefore),
+          authorizationValidUntil: new Date(input.authorizationValidUntil),
           createdAt: sql`clock_timestamp()`,
         });
         await appendAuditInTransaction(tx, {

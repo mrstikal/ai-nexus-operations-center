@@ -1917,9 +1917,61 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f13b-recovery.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/db/src/schema/execution-attempts.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/migrations/0011_recovery.sql",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/db/src/repositories/recovery.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "packages/application/src/actions/reconcile.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/actions/cancel-plan.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/application/src/actions/partial-effects.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "tests/integration/f13b-recovery.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "docs/ACTIONS.md",
+          "minBytes": 4000
+        },
+        {
+          "path": "docs/OPERATIONS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F14",

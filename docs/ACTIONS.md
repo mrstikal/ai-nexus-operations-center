@@ -302,3 +302,37 @@ than silently skipping it. TIMEOUT/NETWORK/ABORTED, malformed/oversized/sandbox-
 and a local receipt-persistence failure after a remote success persist `unknown`; no-action and
 preflight block it. Cancellation or policy change after the claim but before the remote command is
 the documented claim-to-dispatch gap owned by F13B, not a claim that F13A is exactly-once.
+
+## Recovery, partial effects and cancellation (F13B)
+
+F13B reconciles remote uncertainty without repeating or pretending to undo effects. Every command
+attempt stores the exact resolved payload, base versions and prior receipt keys in
+`execution_attempt_payloads` before I/O. The reconciler queries the simulator receipt by the stable
+key before any retry. A found receipt is applied locally even if approval later expired or the plan
+was cancelled; the local execution becomes succeeded with its typed receipt/entity changes and a
+partial-effect record. Absence is `unknown` until the shared DB clock is past `executeBefore + 10s`;
+after that it is `absent_final`.
+
+Only after `absent_final`, with current approval/roles/evidence/versions/sandbox still valid and no
+cancellation, may the reconciler create the next command attempt with the same business payload and
+receipt key, a newly recorded bounded `executeBefore`, and at most three total attempts. It never
+changes payload, versions or plan hash to force a retry. An expired approval, revoked role, changed
+evidence, terminal case, attempt limit or missing safe deadline converts the item to cancelled with a
+partial-effect record. A 409 requires refreshed evidence/new revision, not a same-key retry.
+
+`CancelPlanService` first drains recoverable attempts. If any item remains in-progress or unknown it
+returns `PLAN_UNRESOLVED`; otherwise it marks only unsent items cancelled, preserves succeeded
+receipts/amounts, supersedes the plan/decisions and writes an `action_reanalysis_handoffs` row with
+the succeeded receipt keys and cancelled item IDs. Reanalysis creates the same handoff and never
+clones succeeded executions or approvals. Consuming the handoff creates a linked proposal containing
+only unsent items, with base versions advanced by prior receipts, message receipt facts from succeeded
+items rendered as text, and no approval rows; a repeat reuses receipts/handoff. The handoff is
+idempotent per source revision. No automatic refund/delete/unreserve/rollback is claimed. F13A edit freeze now
+rejects any revision containing in-progress, unknown or succeeded execution.
+
+Workflow cancellation first enters `cancel_requested`, marks unsent executions cancelled, and a
+worker completion step transitions the run/case to cancelled only after all in-progress/unknown
+executions resolve into found/succeeded or cancelled/absent states, recording run partial effects.
+The remote authorization interval remains bounded: a command accepted by the simulator after the
+executor's last local check cannot be undone by cancellation or later role removal. The simulator
+still enforces its own deadline; a found receipt always wins.

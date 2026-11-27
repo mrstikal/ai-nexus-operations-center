@@ -123,6 +123,18 @@
     "./actions/preflight": {
       "types": "./dist/actions/preflight.d.ts",
       "default": "./dist/actions/preflight.js"
+    },
+    "./actions/reconcile": {
+      "types": "./dist/actions/reconcile.d.ts",
+      "default": "./dist/actions/reconcile.js"
+    },
+    "./actions/partial-effects": {
+      "types": "./dist/actions/partial-effects.d.ts",
+      "default": "./dist/actions/partial-effects.js"
+    },
+    "./actions/cancel-plan": {
+      "types": "./dist/actions/cancel-plan.d.ts",
+      "default": "./dist/actions/cancel-plan.js"
     }
   },
   "scripts": {

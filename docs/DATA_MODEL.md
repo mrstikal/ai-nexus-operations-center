@@ -323,3 +323,25 @@ read-only execution/receipt/note access for prior commitments, preflight and no-
 JSON blob substitutes for the queryable execution state, per-item identity, committed amount,
 receipt key, result IDs/versions or entity-change versions. F13B adds recovery/cancellation/partial
 effect tables and the absent-final protocol; F13A does not claim exactly-once delivery.
+
+## Recovery, attempt payloads and partial effects (F13B)
+
+Migration `packages/db/migrations/0011_recovery.sql` adds:
+
+- `execution_attempt_payloads`: exact resolved payload, base expected versions, prior receipt keys,
+  command kind, stable receipt key and per-attempt deadlines stored before I/O; used to reissue only
+  the identical business payload after `absent_final`.
+- `execution_reconciliations`: append-only unknown/absent-final/found observations with the shared DB
+  clock and receipt key.
+- `action_partial_effects`: one typed succeeded/cancelled/unknown record per execution, preserving
+  effect identity instead of fictional rollback.
+- `action_reanalysis_handoffs`: source proposal/revision, succeeded receipt keys, cancelled item IDs,
+  pending/consumed state and an optional linked created proposal. At most one handoff exists per
+  source revision; consuming it creates a new proposal from only unsent items with advanced versions
+  and no cloned approvals.
+
+The worker owns reconciliation, partial-effect and handoff writes; the API may read them and may
+insert the F13 reanalysis handoff in the same transaction as that request. Receipt payloads and
+entity changes remain typed/queryable where they drive decisions; the raw simulator receipt is an
+audit copy, not the source of truth. F13A execution rows are frozen once any item starts; F13B
+reconciles before any reissue or cancellation.

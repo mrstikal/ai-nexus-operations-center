@@ -46,6 +46,8 @@ import {
 } from '../schema/approvals.js';
 import { cases } from '../schema/cases.js';
 import { actionExecutions } from '../schema/executions.js';
+import { actionReanalysisHandoffs } from '../schema/execution-attempts.js';
+import { createLinkedProposalForHandoff } from './recovery.js';
 import { userRoles } from '../schema/identity.js';
 import {
   workflowJobs,
@@ -1079,6 +1081,22 @@ export function createApprovalStore(db: NexusDb): ApprovalStoreBundle {
             );
             return { ok: false, code: 'APPROVAL_EXPIRED' };
           }
+          if (input.kind === 'reanalysis') {
+            const unresolved = await tx
+              .select({ id: actionExecutions.id })
+              .from(actionExecutions)
+              .where(
+                and(
+                  eq(actionExecutions.sandboxId, input.sandboxId),
+                  eq(actionExecutions.actionRevisionId, revision.id),
+                  inArray(actionExecutions.state, ['in_progress', 'unknown']),
+                ),
+              )
+              .limit(1);
+            if (unresolved[0]) {
+              return { ok: false, code: 'REQUEST_NOT_ALLOWED' };
+            }
+          }
           const allowed =
             input.kind === 'clarification'
               ? proposal.status === 'pending_approval' &&
@@ -1103,6 +1121,50 @@ export function createApprovalStore(db: NexusDb): ApprovalStoreBundle {
                 updatedAt: sql`clock_timestamp()`,
               })
               .where(eq(actionProposals.id, proposal.id));
+            const priorExecutions = await tx
+              .select()
+              .from(actionExecutions)
+              .where(
+                and(
+                  eq(actionExecutions.sandboxId, input.sandboxId),
+                  eq(actionExecutions.actionRevisionId, revision.id),
+                ),
+              );
+            await tx
+              .insert(actionReanalysisHandoffs)
+              .values({
+                id: randomUUID(),
+                sandboxId: input.sandboxId,
+                sourceProposalId: proposal.id,
+                sourceRevisionId: revision.id,
+                succeededReceiptKeys: [
+                  ...new Set(
+                    priorExecutions
+                      .filter(
+                        (execution) =>
+                          execution.state === 'succeeded' &&
+                          execution.receiptKey !== null,
+                      )
+                      .map((execution) => execution.receiptKey as string),
+                  ),
+                ].sort(),
+                cancelledItemIds: priorExecutions
+                  .filter((execution) => execution.state === 'cancelled')
+                  .map((execution) => execution.itemId)
+                  .sort(),
+                state: 'pending',
+                createdAt: sql`clock_timestamp()`,
+                updatedAt: sql`clock_timestamp()`,
+              })
+              .onConflictDoNothing();
+            const handoffRows = await tx
+              .select({ id: actionReanalysisHandoffs.id })
+              .from(actionReanalysisHandoffs)
+              .where(eq(actionReanalysisHandoffs.sourceRevisionId, revision.id))
+              .limit(1);
+            if (handoffRows[0]) {
+              await createLinkedProposalForHandoff(tx, handoffRows[0].id);
+            }
           }
           const requestId = randomUUID();
           const waitRunId = await moveWaitingRunsToHumanInput(

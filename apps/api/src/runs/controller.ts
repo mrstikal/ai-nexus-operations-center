@@ -74,6 +74,7 @@ function problemFor(error: unknown): never {
       case 'ILLEGAL_WAKE':
       case 'UNSUPPORTED_CAUSE':
       case 'DUPLICATE_CANCELLATION':
+      case 'RECONCILIATION_REQUIRED':
       case 'DEPENDENCY_MISMATCH':
       case 'DEPENDENCY_DEPTH_EXCEEDED':
       case 'DEPENDENCY_CHILD_TERMINAL':

@@ -21,6 +21,7 @@ export interface PolicyBundleSource {
 export interface FilePolicyBundleSourceOptions {
   readonly root?: string;
   readonly bundlePath?: string;
+  readonly cache?: boolean;
 }
 
 export function createFilePolicySource(
@@ -31,9 +32,13 @@ export function createFilePolicySource(
     root,
     options.bundlePath ?? DEFAULT_POLICY_BUNDLE_PATH,
   );
+  const cacheEnabled = options.cache ?? true;
   let cached: Promise<LoadedPolicyBundle> | null = null;
   return {
     load(): Promise<LoadedPolicyBundle> {
+      if (!cacheEnabled) {
+        return loadPolicyFiles(bundlePath);
+      }
       if (!cached) {
         cached = loadPolicyFiles(bundlePath);
       }

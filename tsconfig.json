@@ -266,6 +266,24 @@
       ],
       "@nexus/application/actions/preflight": [
         "./packages/application/src/actions/preflight.ts"
+      ],
+      "@nexus/application/actions/reconcile": [
+        "./packages/application/src/actions/reconcile.ts"
+      ],
+      "@nexus/db/repositories/recovery": [
+        "./packages/db/src/repositories/recovery.ts"
+      ],
+      "@nexus/db/schema/execution-attempts": [
+        "./packages/db/src/schema/execution-attempts.ts"
+      ],
+      "@nexus/application/actions/partial-effects": [
+        "./packages/application/src/actions/partial-effects.ts"
+      ],
+      "@nexus/application/actions/cancel-plan": [
+        "./packages/application/src/actions/cancel-plan.ts"
+      ],
+      "@nexus/domain/actions/item-hash": [
+        "./packages/domain/src/actions/item-hash.ts"
       ]
     },
     "skipLibCheck": true

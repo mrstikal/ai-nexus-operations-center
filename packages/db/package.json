@@ -111,6 +111,14 @@
     "./repositories/executions": {
       "types": "./dist/repositories/executions.d.ts",
       "default": "./dist/repositories/executions.js"
+    },
+    "./repositories/recovery": {
+      "types": "./dist/repositories/recovery.d.ts",
+      "default": "./dist/repositories/recovery.js"
+    },
+    "./schema/execution-attempts": {
+      "types": "./dist/schema/execution-attempts.d.ts",
+      "default": "./dist/schema/execution-attempts.js"
     }
   },
   "scripts": {

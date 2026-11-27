@@ -214,3 +214,23 @@ See [WORKFLOWS.md](WORKFLOWS.md) for claim/fence, retry, hash and runbook detail
   backup automation are provided.
 - RabbitMQ is a single local node, not an HA claim. Valkey is not a source of business
   truth. No model, external font, telemetry endpoint, or paid service is contacted.
+
+## F13B uncertain-outcome and cancellation runbook
+
+1. An execution in `unknown` is not safe to retry. Run the reconciler (`ReconcileService`; the worker
+   does this before the executor) and inspect `execution_reconciliations` plus the simulator receipt
+   lookup by the stable key.
+2. Found receipt: local execution becomes succeeded and a partial effect is recorded. Apply even if
+   the original approval has expired or the case was cancelled; do not create a replacement command.
+3. Absent before `executeBefore + 10s`: remain unknown. Do not reset, cancel as no-effect or reissue.
+4. Absent after grace: reissue only if approval, roles, evidence, versions, sandbox and cancellation
+   checks pass, using the stored identical payload/key and a new deadline; maximum three attempts.
+   Otherwise the item becomes cancelled with a partial effect.
+5. `CancelPlanService` returns `PLAN_UNRESOLVED` while any in-progress/unknown item remains. After
+   resolution it cancels unsent items only, preserves partial totals and creates a reanalysis
+   handoff. Never report succeeded effects as rolled back.
+6. The remote authorization interval is not atomic: the simulator is authoritative, its deadline
+   bounds late acceptance, and a found receipt always wins. F13B does not promise exactly-once
+   delivery beyond the tested reconciliation cases.
+
+Source: [ACTIONS.md](ACTIONS.md), [DATA_MODEL.md](DATA_MODEL.md), F13B integration tests.
