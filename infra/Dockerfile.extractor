@@ -1,0 +1,24 @@
+# Isolated document extractor image. F66 owns the final multi-service packaging;
+# this stage builds and runs only the parser service with no application data.
+FROM node:26.13.1-bookworm-slim AS build
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable
+WORKDIR /app
+COPY . .
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @nexus/contracts --filter @nexus/document-extractor build
+
+FROM node:26.13.1-bookworm-slim AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/apps/document-extractor/node_modules ./apps/document-extractor/node_modules
+COPY --from=build /app/apps/document-extractor/package.json ./apps/document-extractor/package.json
+COPY --from=build /app/apps/document-extractor/dist ./apps/document-extractor/dist
+COPY --from=build /app/packages/contracts/node_modules ./packages/contracts/node_modules
+COPY --from=build /app/packages/contracts/package.json ./packages/contracts/package.json
+COPY --from=build /app/packages/contracts/dist ./packages/contracts/dist
+USER node
+EXPOSE 8091
+CMD ["node", "apps/document-extractor/dist/main.js"]

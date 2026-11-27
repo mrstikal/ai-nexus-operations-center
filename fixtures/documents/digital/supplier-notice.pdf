@@ -1,0 +1,75 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 295 >>
+stream
+BT
+/F1 14 Tf
+72 720 Td
+(SUPPLIER DELAY NOTICE) Tj
+0 -22 Td
+(Supplier Northstar Components reported a production delay.) Tj
+0 -22 Td
+(Purchase order PO-2026-0001 is delayed by seven business days.) Tj
+0 -22 Td
+(Revised arrival date: 2026-11-10. This notice is synthetic test data.) Tj
+0 -22 Td
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 273 >>
+stream
+BT
+/F1 14 Tf
+72 720 Td
+(AFFECTED LINE ITEMS) Tj
+0 -22 Td
+(Line 1: 240 units of Smart Sensor S2, revised arrival 2026-11-10.) Tj
+0 -22 Td
+(Line 2: 120 units of Gateway G4, revised arrival 2026-11-12.) Tj
+0 -22 Td
+(No price change is requested by this notice.) Tj
+0 -22 Td
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Metadata /Subtype /XML /Length 0 >>
+stream
+
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000000696 00000 n 
+0000000822 00000 n 
+0000000000 65535 f 
+0000000000 65535 f 
+0000001146 00000 n 
+trailer
+<< /Size 11 /Root 1 0 R /Info << /Title (Synthetic supplier delay) >> >>
+startxref
+1226
+%%EOF

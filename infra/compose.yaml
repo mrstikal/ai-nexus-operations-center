@@ -89,8 +89,50 @@ services:
       nexus.phase: F02
     restart: "no"
 
+  extractor:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.extractor
+    image: nexus-document-extractor:0.1.0
+    profiles: ["extractor"]
+    environment:
+      PORT: "8091"
+      NEXUS_EXTRACTOR_TIMEOUT_MS: "120000"
+      NEXUS_EXTRACTOR_MAX_BODY_BYTES: "15728640"
+      NODE_ENV: production
+    networks:
+      - parser
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 512m
+    cpus: "1.0"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8091/healthz').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+    labels:
+      nexus.owner: ${NEXUS_OWNER:-local}
+      nexus.phase: F16
+    restart: "no"
+
 volumes:
   postgres_data:
   rabbitmq_data:
   valkey_data:
   nexus_blob_data:
+
+networks:
+  parser:
+    internal: true

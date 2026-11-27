@@ -147,6 +147,14 @@
     "./documents/admission": {
       "types": "./dist/documents/admission.d.ts",
       "default": "./dist/documents/admission.js"
+    },
+    "./documents/processing": {
+      "types": "./dist/documents/processing.d.ts",
+      "default": "./dist/documents/processing.js"
+    },
+    "./documents/extractor-client": {
+      "types": "./dist/documents/extractor-client.d.ts",
+      "default": "./dist/documents/extractor-client.js"
     }
   },
   "scripts": {

@@ -1,7 +1,7 @@
 # ADR 006: Document isolation, inert intake and private blobs
 
-Status: accepted for F15 (intake boundary). The parser as-built section is
-completed in F16.
+Status: accepted for F15 (intake boundary) and F16 (isolated digital parser). OCR/vision and
+structured extraction remain later stages.
 
 ## Context
 
@@ -12,7 +12,7 @@ path a hostile-parser attack surface. The fixed architecture (plan section
 2.4) requires a privilege-separated extractor, private blobs and no public
 object URLs.
 
-This ADR records the intake decisions; it does not add a second document
+This ADR records the intake and parser decisions; it does not add a second document
 architecture. F16 extends this file with the isolated parser as built.
 
 ## Decision
@@ -29,7 +29,7 @@ architecture. F16 extends this file with the isolated parser as built.
 4. Downloads require an authenticated session, are sandbox-scoped, are served
    as attachments with `nosniff`, a restrictive CSP and no public URL.
 5. No PDF/email parsing, OCR, rendering or executable content occurs in the
-   API or browser. F16 will run parsing in the isolated extractor service
+   API or browser. F16 runs digital parsing in the isolated extractor service
    described in the plan, connected only to its parser network, with no
    database, blob-store, model or host credentials.
 6. A database-locked admission counter bounds private blob storage. Only the
@@ -49,8 +49,8 @@ architecture. F16 extends this file with the isolated parser as built.
   safe cleanup is deferred to F57.
 - Duplicate bytes inside a sandbox share one blob row; duplicates are reported
   through `duplicateOf`. Another sandbox never shares the row or file.
-- Structured extraction, page text and corrections require the F16/F17
-  stages and cannot be claimed from this ADR.
+- Page text is delivered by F16; structured extraction and human corrections
+  require the F17 stages and cannot be claimed from this ADR.
 
 ## Alternatives considered
 
@@ -77,6 +77,35 @@ architecture. F16 extends this file with the isolated parser as built.
 - `apps/api/src/documents/controller.ts` exposes authenticated upload,
   list/detail and attachment download routes; the API never parses document
   content.
+
+## As-built (F16)
+
+- `apps/document-extractor` is a standalone HTTP service. It receives raw
+  bytes plus a job-correlation token and media type, and
+  parses digital PDFs (`pdfjs-dist` 6.5.438), plain email text and bounded
+  attachments (`mailparser` 3.15.0) and UTF-8 text. It has no database, blob,
+  model or host mounts, no egress network, a read-only root and a capped
+  tmpfs, and it runs each parse in a worker thread with a hard timeout and a
+  256 MiB old-generation bound.
+- `infra/Dockerfile.extractor` and the `extractor` Compose profile run it with
+  `read_only`, `cap_drop: ALL`, `no-new-privileges`, a 512 MiB / 1 CPU limit,
+  no published ports and only the internal `parser` network.
+- `packages/application/src/documents/processing.ts` and
+  `packages/db/src/repositories/document-processing.ts` claim jobs with
+  leases, stream current-version bytes, validate the parser result, store
+  immutable page text and attachment child documents, cache by
+  `(sandbox, blob hash, parser version)`, retry transport failures at most
+  three times and finalize status, audit and `nexus.document.ready.v1`
+  transactionally.
+- Encrypted, malformed and oversized documents become `rejected`. PDF pages
+  (and image documents until F26) with fewer than 40 non-whitespace characters
+  become `needs_review` with `OCR_REQUIRED`; text and email pages require only
+  at least one non-whitespace character, and whitespace-only content becomes
+  `needs_review` with `NO_TEXT`. Nothing is marked `ready` without actual
+  extracted content.
+- `apps/worker/src/document.module.ts` runs the document loop when
+  `NEXUS_EXTRACTOR_URL` is configured. The API process has no parser
+  dependency.
 
 ## Related
 

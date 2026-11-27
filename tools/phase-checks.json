@@ -2202,9 +2202,137 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f16-extraction.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "apps/document-extractor/src/main.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "apps/document-extractor/src/validate.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "apps/document-extractor/src/digital-pdf.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "apps/document-extractor/src/email.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "apps/document-extractor/src/text.ts",
+          "minBytes": 500
+        },
+        {
+          "path": "apps/document-extractor/package.json",
+          "minBytes": 300
+        },
+        {
+          "path": "apps/document-extractor/src/dispatch.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/document-extractor/src/worker.ts",
+          "minBytes": 800
+        },
+        {
+          "path": "apps/worker/src/document.module.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/contracts/src/documents.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "infra/Dockerfile.extractor",
+          "minBytes": 500
+        },
+        {
+          "path": "packages/application/src/documents/processing.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/application/src/documents/extractor-client.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/db/src/repositories/document-processing.ts",
+          "minBytes": 18000
+        },
+        {
+          "path": "packages/db/src/schema/documents.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/db/migrations/0014_document_extraction.sql",
+          "minBytes": 3000
+        },
+        {
+          "path": "fixtures/documents/digital/supplier-notice.pdf",
+          "minBytes": 800
+        },
+        {
+          "path": "fixtures/documents/digital/scan-empty.pdf",
+          "minBytes": 300
+        },
+        {
+          "path": "fixtures/documents/digital/encrypted.pdf",
+          "minBytes": 500
+        },
+        {
+          "path": "fixtures/documents/digital/supplier-delay.txt",
+          "minBytes": 100
+        },
+        {
+          "path": "fixtures/documents/email/po-delay.eml",
+          "minBytes": 2000
+        },
+        {
+          "path": "fixtures/security/inject-email.eml",
+          "minBytes": 500
+        },
+        {
+          "path": "fixtures/security/inject-pdf.pdf",
+          "minBytes": 800
+        },
+        {
+          "path": "tests/integration/f16-extraction.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "docs/DOCUMENTS.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/adr/006-document-isolation.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        },
+        {
+          "path": "tsconfig.json",
+          "minBytes": 1000
+        },
+        {
+          "path": ".env.example",
+          "minBytes": 500
+        },
+        {
+          "path": "infra/compose.yaml",
+          "minBytes": 2000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F17",

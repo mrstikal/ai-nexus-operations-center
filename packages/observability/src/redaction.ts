@@ -25,6 +25,11 @@ export const AUDIT_ALLOWED_KEYS = [
   'jobId',
   'mediaType',
   'sizeBytes',
+  'pageCount',
+  'attachmentCount',
+  'parserVersion',
+  'parentDocumentId',
+  'parentDocumentVersionId',
 ] as const;
 export type AuditDetailKey = (typeof AUDIT_ALLOWED_KEYS)[number];
 export type AuditDetails = Partial<Record<AuditDetailKey, string | number | boolean | null>>;

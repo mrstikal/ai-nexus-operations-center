@@ -1,0 +1,15 @@
+.git
+.gitignore
+node_modules
+**/node_modules
+**/dist
+**/.next
+.data
+.env
+.env.*
+!.env.example
+tests
+fixtures
+docs
+.autopilot
+agent-memory

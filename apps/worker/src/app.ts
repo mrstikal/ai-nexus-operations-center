@@ -2,6 +2,7 @@ import { Inject, Injectable, Module } from '@nestjs/common';
 import type { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ActionModule } from './action.module.js';
+import { DocumentModule } from './document.module.js';
 import { MessagingModule } from './messaging.module.js';
 import { ProposalEventsModule } from './proposal-events.module.js';
 import { WorkflowModule } from './workflow.module.js';
@@ -19,7 +20,13 @@ export class WorkerStatus {
 }
 
 @Module({
-  imports: [ActionModule, MessagingModule, WorkflowModule, ProposalEventsModule],
+  imports: [
+    ActionModule,
+    DocumentModule,
+    MessagingModule,
+    WorkflowModule,
+    ProposalEventsModule,
+  ],
   providers: [
     {
       provide: WORKER_PROVIDER,

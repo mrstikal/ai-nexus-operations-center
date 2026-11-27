@@ -243,8 +243,145 @@ export const documentUploads = nexusSchema.table(
   ],
 );
 
+export const documentPageTexts = nexusSchema.table(
+  'document_page_texts',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id').notNull(),
+    documentVersionId: uuid('document_version_id').notNull(),
+    pageNo: integer('page_no').notNull(),
+    text: text('text').notNull(),
+    charCount: integer('char_count').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_page_texts_version_page_key').on(
+      table.sandboxId,
+      table.documentVersionId,
+      table.pageNo,
+    ),
+    index('document_page_texts_version_idx').on(
+      table.sandboxId,
+      table.documentVersionId,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.documentVersionId],
+      foreignColumns: [documentVersions.sandboxId, documentVersions.id],
+    }),
+    check(
+      'document_page_texts_page_check',
+      sql`${table.pageNo} BETWEEN 1 AND 20`,
+    ),
+    check(
+      'document_page_texts_text_check',
+      sql`char_length(${table.text}) <= 200000 AND ${table.charCount} = char_length(${table.text})`,
+    ),
+  ],
+);
+
+export const documentAttachments = nexusSchema.table(
+  'document_attachments',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id').notNull(),
+    parentDocumentVersionId: uuid('parent_document_version_id').notNull(),
+    attachmentDocumentVersionId: uuid('attachment_document_version_id').notNull(),
+    filename: text('filename').notNull(),
+    mediaType: text('media_type').notNull(),
+    sizeBytes: bigint('size_bytes', { mode: 'number' }).notNull(),
+    sha256: text('sha256').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_attachments_parent_sha_key').on(
+      table.sandboxId,
+      table.parentDocumentVersionId,
+      table.sha256,
+    ),
+    uniqueIndex('document_attachments_parent_version_key').on(
+      table.sandboxId,
+      table.parentDocumentVersionId,
+      table.attachmentDocumentVersionId,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.parentDocumentVersionId],
+      foreignColumns: [documentVersions.sandboxId, documentVersions.id],
+    }),
+    foreignKey({
+      columns: [table.sandboxId, table.attachmentDocumentVersionId],
+      foreignColumns: [documentVersions.sandboxId, documentVersions.id],
+    }),
+    check(
+      'document_attachments_media_type_check',
+      sql`${table.mediaType} IN ('application/pdf','message/rfc822','text/plain','image/png','image/jpeg')`,
+    ),
+    check(
+      'document_attachments_size_check',
+      sql`${table.sizeBytes} > 0 AND ${table.sizeBytes} <= 15728640`,
+    ),
+    check(
+      'document_attachments_sha_check',
+      sql`${table.sha256} ~ '^[a-f0-9]{64}$'`,
+    ),
+    check(
+      'document_attachments_filename_check',
+      sql`length(${table.filename}) BETWEEN 1 AND 200`,
+    ),
+  ],
+);
+
+export const documentExtractionCache = nexusSchema.table(
+  'document_extraction_cache',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id').notNull(),
+    blobSha256: text('blob_sha256').notNull(),
+    parserVersion: text('parser_version').notNull(),
+    sourceDocumentVersionId: uuid('source_document_version_id').notNull(),
+    format: text('format').notNull(),
+    status: text('status').notNull(),
+    reasonCode: text('reason_code'),
+    pageCount: integer('page_count').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_extraction_cache_key').on(
+      table.sandboxId,
+      table.blobSha256,
+      table.parserVersion,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.sourceDocumentVersionId],
+      foreignColumns: [documentVersions.sandboxId, documentVersions.id],
+    }),
+    check(
+      'document_extraction_cache_sha_check',
+      sql`${table.blobSha256} ~ '^[a-f0-9]{64}$'`,
+    ),
+    check(
+      'document_extraction_cache_format_check',
+      sql`${table.format} IN ('digital_pdf','email','text')`,
+    ),
+    check(
+      'document_extraction_cache_status_check',
+      sql`${table.status} IN ('ready','needs_review','rejected')`,
+    ),
+    check(
+      'document_extraction_cache_page_count_check',
+      sql`${table.pageCount} BETWEEN 1 AND 20`,
+    ),
+    check(
+      'document_extraction_cache_parser_version_check',
+      sql`length(${table.parserVersion}) BETWEEN 1 AND 100`,
+    ),
+  ],
+);
+
 export type BlobRow = typeof blobs.$inferSelect;
 export type DocumentRow = typeof documents.$inferSelect;
 export type DocumentVersionRow = typeof documentVersions.$inferSelect;
 export type ExtractionJobRow = typeof extractionJobs.$inferSelect;
 export type DocumentUploadRow = typeof documentUploads.$inferSelect;
+export type DocumentPageTextRow = typeof documentPageTexts.$inferSelect;
+export type DocumentAttachmentRow = typeof documentAttachments.$inferSelect;
+export type DocumentExtractionCacheRow = typeof documentExtractionCache.$inferSelect;

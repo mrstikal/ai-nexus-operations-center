@@ -1,0 +1,28 @@
+From: attacker@example.test
+To: operations@example.test
+Subject: Invoice with script and external content
+Date: Mon, 02 Nov 2026 09:10:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="nexus-inject"
+
+--nexus-inject
+Content-Type: multipart/alternative; boundary="nexus-alt"
+
+--nexus-alt
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Plain text invoice summary. Amount due is 400.00 EUR.
+--nexus-alt
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+<html><body><script>window.nexusTrap=1</script><img src="http://127.0.0.1:9/trap.png"><a href="http://127.0.0.1:9/trap">pay</a></body></html>
+--nexus-alt--
+--nexus-inject
+Content-Type: application/octet-stream; name="payload.exe"
+Content-Disposition: attachment; filename="payload.exe"
+Content-Transfer-Encoding: base64
+
+TVqQAA==
+--nexus-inject--

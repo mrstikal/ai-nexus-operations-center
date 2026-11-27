@@ -324,11 +324,20 @@
       "@nexus/application/documents/admission": [
         "./packages/application/src/documents/admission.ts"
       ],
+      "@nexus/application/documents/processing": [
+        "./packages/application/src/documents/processing.ts"
+      ],
+      "@nexus/application/documents/extractor-client": [
+        "./packages/application/src/documents/extractor-client.ts"
+      ],
       "@nexus/db/schema/documents": [
         "./packages/db/src/schema/documents.ts"
       ],
       "@nexus/db/repositories/documents": [
         "./packages/db/src/repositories/documents.ts"
+      ],
+      "@nexus/db/repositories/document-processing": [
+        "./packages/db/src/repositories/document-processing.ts"
       ]
     },
     "skipLibCheck": true

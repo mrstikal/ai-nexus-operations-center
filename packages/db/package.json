@@ -139,6 +139,10 @@
     "./repositories/documents": {
       "types": "./dist/repositories/documents.d.ts",
       "default": "./dist/repositories/documents.js"
+    },
+    "./repositories/document-processing": {
+      "types": "./dist/repositories/document-processing.d.ts",
+      "default": "./dist/repositories/document-processing.js"
     }
   },
   "scripts": {
