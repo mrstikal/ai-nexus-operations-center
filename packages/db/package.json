@@ -131,6 +131,14 @@
     "./repositories/model-calls": {
       "types": "./dist/repositories/model-calls.d.ts",
       "default": "./dist/repositories/model-calls.js"
+    },
+    "./schema/documents": {
+      "types": "./dist/schema/documents.d.ts",
+      "default": "./dist/schema/documents.js"
+    },
+    "./repositories/documents": {
+      "types": "./dist/repositories/documents.d.ts",
+      "default": "./dist/repositories/documents.js"
     }
   },
   "scripts": {
@@ -138,13 +146,13 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@nexus/ai": "workspace:*",
     "@nexus/application": "workspace:*",
     "@nexus/contracts": "workspace:*",
     "@nexus/observability": "workspace:*",
     "drizzle-orm": "0.45.4",
     "pg": "8.23.1",
-    "@nexus/domain": "workspace:*"
+    "@nexus/domain": "workspace:*",
+    "@nexus/ai": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.11",

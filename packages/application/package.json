@@ -135,6 +135,18 @@
     "./actions/cancel-plan": {
       "types": "./dist/actions/cancel-plan.d.ts",
       "default": "./dist/actions/cancel-plan.js"
+    },
+    "./documents/upload": {
+      "types": "./dist/documents/upload.d.ts",
+      "default": "./dist/documents/upload.js"
+    },
+    "./documents/blob-store": {
+      "types": "./dist/documents/blob-store.d.ts",
+      "default": "./dist/documents/blob-store.js"
+    },
+    "./documents/admission": {
+      "types": "./dist/documents/admission.d.ts",
+      "default": "./dist/documents/admission.js"
     }
   },
   "scripts": {

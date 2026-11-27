@@ -79,6 +79,10 @@
     "./ai-outputs": {
       "types": "./dist/ai-outputs.d.ts",
       "default": "./dist/ai-outputs.js"
+    },
+    "./documents": {
+      "types": "./dist/documents.d.ts",
+      "default": "./dist/documents.js"
     }
   },
   "scripts": {

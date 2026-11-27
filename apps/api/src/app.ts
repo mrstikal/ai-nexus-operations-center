@@ -3,6 +3,7 @@ import type { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth/module.js';
 import { CasesModule } from './cases/module.js';
+import { DocumentsModule } from './documents/module.js';
 import { ActionsModule } from './actions.module.js';
 import { IngressModule } from './ingress/module.js';
 import { ProposalsModule } from './proposals/module.js';
@@ -41,7 +42,15 @@ export class HealthController {
 }
 
 @Module({
-  imports: [AuthModule, ActionsModule, CasesModule, IngressModule, RunsModule, ProposalsModule],
+  imports: [
+    AuthModule,
+    ActionsModule,
+    CasesModule,
+    DocumentsModule,
+    IngressModule,
+    RunsModule,
+    ProposalsModule,
+  ],
   controllers: [HealthController],
   providers: [
     {

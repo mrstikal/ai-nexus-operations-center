@@ -30,6 +30,9 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/cases/{caseId}/history',
       '/api/v1/cases/{caseId}/proposals',
       '/api/v1/cases/{caseId}/resolve-no-action',
+      '/api/v1/documents',
+      '/api/v1/documents/{documentId}',
+      '/api/v1/documents/{documentId}/content',
       '/api/v1/evidence/{evidenceId}',
       '/api/v1/proposals/{proposalId}',
       '/api/v1/proposals/{proposalId}/approve',
@@ -44,9 +47,21 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F13',
-      httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE',
+      stage: 'F15',
+      httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, and document upload/list/detail/content',
     });
+    const upload = document.paths['/api/v1/documents'] as {
+      post: {
+        requestBody: {
+          content: {
+            'multipart/form-data': { schema: { required?: string[] } };
+          };
+        };
+      };
+    };
+    expect(
+      upload.post.requestBody.content['multipart/form-data'].schema.required,
+    ).toContain('file');
     for (const readPath of [
       '/api/v1/runs/{runId}',
       '/api/v1/runs/{runId}/events/page',

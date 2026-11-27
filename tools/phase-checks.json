@@ -2105,9 +2105,93 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f15-intake.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/documents.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "packages/db/src/schema/documents.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/migrations/0013_documents.sql",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/db/src/repositories/documents.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "packages/application/src/documents/upload.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "packages/application/src/documents/blob-store.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/application/src/documents/admission.ts",
+          "minBytes": 6000
+        },
+        {
+          "path": "apps/api/src/documents/controller.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "apps/api/src/documents/storage-engine.ts",
+          "minBytes": 1200
+        },
+        {
+          "path": "apps/api/src/documents/module.ts",
+          "minBytes": 600
+        },
+        {
+          "path": "fixtures/documents/intake/supplier-delay.txt",
+          "minBytes": 200
+        },
+        {
+          "path": "fixtures/documents/intake/po-delay.eml",
+          "minBytes": 200
+        },
+        {
+          "path": "fixtures/documents/intake/purchase-order.pdf",
+          "minBytes": 400
+        },
+        {
+          "path": "fixtures/documents/intake/tiny.png",
+          "minBytes": 50
+        },
+        {
+          "path": "fixtures/documents/intake/tiny.jpg",
+          "minBytes": 100
+        },
+        {
+          "path": "tests/integration/f15-intake.test.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "docs/DOCUMENTS.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/adr/006-document-isolation.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/PROGRESS.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "tools/phase-checks.json",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F16",

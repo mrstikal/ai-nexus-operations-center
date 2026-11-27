@@ -1,0 +1,1 @@
+export const NEXUS_DOCUMENTS = 'NEXUS_DOCUMENTS';

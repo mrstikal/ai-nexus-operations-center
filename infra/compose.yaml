@@ -93,3 +93,4 @@ volumes:
   postgres_data:
   rabbitmq_data:
   valkey_data:
+  nexus_blob_data:

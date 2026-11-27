@@ -46,7 +46,9 @@ const {
   CostSchema,
   CsrfResponseSchema,
   DeferredBindingSchema,
+  DocumentListResponseSchema,
   DocumentStatusSchema,
+  DocumentUploadResponseSchema,
   DocumentVersionSchema,
   EntityRefSchema,
   ErrorCodeSchema,
@@ -148,6 +150,8 @@ const COMPONENTS = [
   ['WorkflowStep', WorkflowStepSchema],
   ['DocumentStatus', DocumentStatusSchema],
   ['DocumentVersion', DocumentVersionSchema],
+  ['DocumentUploadResponse', DocumentUploadResponseSchema],
+  ['DocumentListResponse', DocumentListResponseSchema],
   ['EvidenceKind', EvidenceKindSchema],
   ['FieldSource', FieldSourceSchema],
   ['ExtractedField', ExtractedFieldSchema],
@@ -947,6 +951,180 @@ function registerProposalPaths(registry) {
   });
 }
 
+function registerDocumentPaths(registry) {
+  const binarySchema = z.string().openapi({ format: 'binary' });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/documents',
+    tags: ['documents'],
+    summary: 'Upload a document into private quarantine storage',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({ 'idempotency-key': UuidSchema }),
+      query: z.object({ caseId: UuidSchema.optional() }),
+      body: {
+        required: true,
+        content: {
+          'multipart/form-data': {
+            schema: z.object({
+              file: binarySchema,
+              caseId: UuidSchema.optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      201: {
+        description: 'Durably stored inert document version with a pending extraction job',
+        content: { 'application/json': { schema: DocumentUploadResponseSchema } },
+      },
+      400: {
+        description: 'Invalid file, signature, filename, cursor, case ID or idempotency key',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Referenced case does not exist in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'Idempotency key was reused with a different document',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      413: {
+        description: 'File exceeds 15 MiB or the blob admission cap',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      415: {
+        description: 'Declared media type is not accepted',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Blob or document storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/documents',
+    tags: ['documents'],
+    summary: 'List current document versions in the active sandbox',
+    security: [{ sessionCookie: [] }],
+    request: {
+      query: z.object({
+        cursor: z.string().optional(),
+        limit: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Stable newest-first document list',
+        content: { 'application/json': { schema: DocumentListResponseSchema } },
+      },
+      400: {
+        description: 'Invalid cursor or limit',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Document storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/documents/{documentId}',
+    tags: ['documents'],
+    summary: 'Read current document version metadata',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ documentId: UuidSchema }) },
+    responses: {
+      200: {
+        description: 'Current document version metadata',
+        content: { 'application/json': { schema: DocumentVersionSchema } },
+      },
+      400: {
+        description: 'Malformed document identifier',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Document not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Document storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/documents/{documentId}/content',
+    tags: ['documents'],
+    summary: 'Download stored document bytes as an authenticated attachment',
+    security: [{ sessionCookie: [] }],
+    request: { params: z.object({ documentId: UuidSchema }) },
+    responses: {
+      200: {
+        description:
+          'Stored bytes served as an attachment with the validated media type, nosniff and a restrictive CSP',
+        content: {
+          'application/pdf': { schema: binarySchema },
+          'message/rfc822': { schema: binarySchema },
+          'text/plain': { schema: binarySchema },
+          'image/png': { schema: binarySchema },
+          'image/jpeg': { schema: binarySchema },
+        },
+      },
+      400: {
+        description: 'Malformed document identifier',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Viewer role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Document not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Blob storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+}
+
 function registerAuthPaths(registry) {
   registry.registerComponent('securitySchemes', 'sessionCookie', {
     type: 'apiKey',
@@ -1075,6 +1253,7 @@ export function generateOpenApiDocument() {
   registerCasePaths(registry);
   registerProposalPaths(registry);
   registerDecisionPaths(registry);
+  registerDocumentPaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -1082,13 +1261,13 @@ export function generateOpenApiDocument() {
       title: 'NEXUS API Contracts',
       version: '0.1.0',
       description:
-        'F03 contract catalog generated from the shared Zod schemas. No F03 HTTP controller is implemented; ' +
-        'these components are declared and frozen for later API route-owning phases.',
+        'NEXUS API contracts generated from the shared Zod schemas. Paths are declared by the ' +
+        'stage that owns the controller; later controllers remain pending.',
     },
     servers: [
       {
         url: '/api/v1',
-        description: 'Declared browser API base path; controllers begin in later phases',
+        description: 'Declared browser API base path',
       },
     ],
   });
@@ -1100,10 +1279,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F13',
+    stage: 'F15',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, and document upload/list/detail/content',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, and document upload/list/detail/content; later controllers are declared in their owner stages',
   };
 
   return document;

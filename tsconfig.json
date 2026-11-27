@@ -314,6 +314,21 @@
       ],
       "@nexus/contracts/ai-outputs": [
         "./packages/contracts/src/ai-outputs.ts"
+      ],
+      "@nexus/application/documents/upload": [
+        "./packages/application/src/documents/upload.ts"
+      ],
+      "@nexus/application/documents/blob-store": [
+        "./packages/application/src/documents/blob-store.ts"
+      ],
+      "@nexus/application/documents/admission": [
+        "./packages/application/src/documents/admission.ts"
+      ],
+      "@nexus/db/schema/documents": [
+        "./packages/db/src/schema/documents.ts"
+      ],
+      "@nexus/db/repositories/documents": [
+        "./packages/db/src/repositories/documents.ts"
       ]
     },
     "skipLibCheck": true

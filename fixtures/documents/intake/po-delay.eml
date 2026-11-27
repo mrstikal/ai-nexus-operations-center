@@ -1,0 +1,11 @@
+From: dispatch@baltic-components.example
+To: procurement@northstar.example
+Subject: Purchase order PO-2026-0042 delay notice
+Date: Mon, 02 Nov 2026 08:30:00 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Synthetic notice: purchase order PO-2026-0042 is delayed.
+
+This message contains no executable content and is used only in the local
+NEXUS replay demonstration.

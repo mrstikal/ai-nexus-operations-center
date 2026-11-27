@@ -8,45 +8,6 @@ import {
   UuidSchema,
 } from './common.js';
 
-export const DOCUMENT_STATUSES = [
-  'uploaded',
-  'validating',
-  'extracting',
-  'needs_review',
-  'ready',
-  'rejected',
-  'failed',
-] as const;
-
-export const DocumentStatusSchema = z.enum(DOCUMENT_STATUSES);
-export type DocumentStatus = z.infer<typeof DocumentStatusSchema>;
-
-export const DocumentMediaTypeSchema = z.enum([
-  'application/pdf',
-  'image/png',
-  'image/jpeg',
-  'message/rfc822',
-  'text/plain',
-]);
-
-export const DocumentVersionSchema = z
-  .object({
-    id: EntityIdSchema,
-    documentId: EntityIdSchema,
-    sandboxId: EntityIdSchema,
-    blobHash: HashSchema,
-    mediaType: DocumentMediaTypeSchema,
-    originalFilename: z.string().min(1).max(255),
-    sizeBytes: z.number().int().positive().max(5_368_709_120),
-    pageCount: z.number().int().positive().max(1000),
-    sourceEventId: UuidSchema.nullable(),
-    status: DocumentStatusSchema,
-    parserVersion: z.string().min(1).max(100).nullable(),
-    createdAt: IsoUtcTimestampSchema,
-  })
-  .strict();
-export type DocumentVersion = z.infer<typeof DocumentVersionSchema>;
-
 export const EvidenceKindSchema = z.enum([
   'enterprise_snapshot',
   'document_page',

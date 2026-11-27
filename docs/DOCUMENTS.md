@@ -27,16 +27,17 @@ Response shape for upload:
 {
   "document": {
     "id": "…",
+    "documentId": "…",
     "sandboxId": "…",
     "caseId": null,
-    "filename": "supplier-delay.txt",
+    "blobHash": "…",
     "mediaType": "text/plain",
+    "originalFilename": "supplier-delay.txt",
     "sizeBytes": 734,
-    "sha256": "…",
-    "status": "uploaded",
     "pageCount": null,
+    "sourceEventId": null,
+    "status": "uploaded",
     "parserVersion": null,
-    "version": 1,
     "createdAt": "2026-11-27T18:00:00.000Z"
   },
   "jobId": "…",
@@ -59,7 +60,7 @@ are not reported as duplicates.
      header section required for `message/rfc822`.
    Content signature, declared media type and known filename extension must
    agree. A mismatch is rejected; nothing is marked extracted or ready.
-3. A namespaced display filename is stored (path separators and control
+3. A sanitized display filename is stored (path separators and control
    characters are removed) and the original file path is never used as a
    filesystem path.
 4. Finalization moves the quarantine file to

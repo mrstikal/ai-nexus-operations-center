@@ -20,6 +20,11 @@ export const AUDIT_ALLOWED_KEYS = [
   'policyContentHash',
   'role',
   'decision',
+  'documentId',
+  'documentVersionId',
+  'jobId',
+  'mediaType',
+  'sizeBytes',
 ] as const;
 export type AuditDetailKey = (typeof AUDIT_ALLOWED_KEYS)[number];
 export type AuditDetails = Partial<Record<AuditDetailKey, string | number | boolean | null>>;

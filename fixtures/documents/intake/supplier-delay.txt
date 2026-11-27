@@ -1,0 +1,13 @@
+Supplier delay notice (synthetic fixture)
+
+Supplier: Baltic Components OÜ
+Purchase order: PO-2026-0042
+Line: 10
+Original promised arrival: 2026-11-03
+Revised promised arrival: 2026-11-07
+Original quantity: 240
+Revised quantity: 180
+
+The remaining 60 units are delayed by four calendar days because of a
+manufacturing line change. This text is synthetic and may be used only for the
+local NEXUS replay demonstration.
