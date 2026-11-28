@@ -1,0 +1,88 @@
+{
+  "recordId": "f17-extract-supply-notice",
+  "request": {
+    "role": "extract",
+    "capabilities": [
+      "structured_json"
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "kind": "text",
+            "text": "Document kind: supply_exception\n--- page 1 ---\nSUPPLIER DELAY NOTICE\nSupplier: Northstar Components AB\nPurchase order: PO-2026-0001\nOriginal delivery date: 2026-11-03\nRevised delivery date: 2026-11-07\nAffected product: NS-100, 240 units\n"
+          }
+        ]
+      }
+    ],
+    "outputSchemaId": "document.extraction.v1",
+    "allowedToolNames": [],
+    "workflowRunId": null,
+    "budgetAccountId": null,
+    "maxOutputTokens": 2000,
+    "stream": false
+  },
+  "promptVersion": "a4333cfb9c62fd1e6dd9f8c24e345355af134a44f9d829c487f7b92897944133",
+  "configRevision": "models-default-2026-11-26",
+  "schemaVersion": 1,
+  "route": {
+    "provider": "replay",
+    "model": "replay-v1"
+  },
+  "outcome": {
+    "kind": "success",
+    "output": {
+      "kind": "supply_exception",
+      "fields": [
+        {
+          "field": "supplier_name",
+          "value": "Northstar Components AB",
+          "source": {
+            "page": 1,
+            "start": 32,
+            "end": 55
+          },
+          "status": "extracted"
+        },
+        {
+          "field": "purchase_order_number",
+          "value": "PO-2026-0001",
+          "source": {
+            "page": 1,
+            "start": 72,
+            "end": 84
+          },
+          "status": "extracted"
+        },
+        {
+          "field": "delivery_date",
+          "value": "2026-11-07",
+          "source": {
+            "page": 1,
+            "start": 143,
+            "end": 153
+          },
+          "status": "extracted",
+          "alternatives": [
+            "2026-11-03"
+          ]
+        },
+        {
+          "field": "description",
+          "value": "Affected product: NS-100, 240 units",
+          "source": {
+            "page": 1,
+            "start": 154,
+            "end": 189
+          },
+          "status": "extracted"
+        }
+      ]
+    },
+    "recordedUsage": {
+      "inputTokens": 140,
+      "outputTokens": 60
+    }
+  }
+}

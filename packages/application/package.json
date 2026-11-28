@@ -155,6 +155,22 @@
     "./documents/extractor-client": {
       "types": "./dist/documents/extractor-client.d.ts",
       "default": "./dist/documents/extractor-client.js"
+    },
+    "./documents/classify": {
+      "types": "./dist/documents/classify.d.ts",
+      "default": "./dist/documents/classify.js"
+    },
+    "./documents/validate-fields": {
+      "types": "./dist/documents/validate-fields.d.ts",
+      "default": "./dist/documents/validate-fields.js"
+    },
+    "./documents/extract": {
+      "types": "./dist/documents/extract.d.ts",
+      "default": "./dist/documents/extract.js"
+    },
+    "./documents/correct": {
+      "types": "./dist/documents/correct.d.ts",
+      "default": "./dist/documents/correct.js"
     }
   },
   "scripts": {

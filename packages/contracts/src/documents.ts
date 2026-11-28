@@ -5,6 +5,7 @@ import {
   IsoUtcTimestampSchema,
   UuidSchema,
 } from './common.js';
+import { FieldSourceSchema } from './evidence.js';
 
 export const MAX_DOCUMENT_BYTES = 15 * 1024 * 1024;
 export const MAX_DOCUMENT_FILENAME_LENGTH = 200;
@@ -221,3 +222,118 @@ export type DocumentExtractionResult = z.infer<
 
 export const EXTRACTOR_JOB_TOKEN_HEADER = 'x-nexus-job-token';
 export const EXTRACTOR_MEDIA_TYPE_HEADER = 'x-nexus-media-type';
+
+export const DOCUMENT_KINDS = [
+  'supply_exception',
+  'invoice',
+  'delivery_note',
+  'customer_request',
+  'knowledge_document',
+  'other',
+  'unknown',
+] as const;
+export const DocumentKindSchema = z.enum(DOCUMENT_KINDS);
+export type DocumentKind = z.infer<typeof DocumentKindSchema>;
+
+export const EXTRACTION_FIELD_NAMES = [
+  'supplier_name',
+  'customer_name',
+  'purchase_order_number',
+  'invoice_number',
+  'delivery_note_number',
+  'sales_order_number',
+  'document_date',
+  'delivery_date',
+  'due_date',
+  'currency',
+  'net_amount_minor',
+  'tax_amount_minor',
+  'gross_amount_minor',
+  'tax_rate_bps',
+  'total_quantity',
+  'unit_price_minor',
+  'description',
+] as const;
+export const ExtractionFieldNameSchema = z.enum(EXTRACTION_FIELD_NAMES);
+export type ExtractionFieldName = z.infer<typeof ExtractionFieldNameSchema>;
+
+export const ExtractionFieldStatusSchema = z.enum([
+  'extracted',
+  'corrected',
+  'missing',
+  'ambiguous',
+]);
+export type ExtractionFieldStatus = z.infer<
+  typeof ExtractionFieldStatusSchema
+>;
+
+export const DocumentExtractionFieldSchema = z
+  .object({
+    field: ExtractionFieldNameSchema,
+    value: z.string().min(1).max(5000).nullable(),
+    source: FieldSourceSchema.nullable(),
+    status: ExtractionFieldStatusSchema,
+    alternatives: z.array(z.string().min(1).max(5000)).max(10).optional(),
+    evidenceId: UuidSchema.nullable(),
+  })
+  .strict();
+export type DocumentExtractionField = z.infer<
+  typeof DocumentExtractionFieldSchema
+>;
+
+export const DocumentExtractionRevisionSchema = z
+  .object({
+    id: UuidSchema,
+    documentId: UuidSchema,
+    documentVersionId: UuidSchema,
+    revisionNumber: z.number().int().positive().max(1_000_000),
+    kind: DocumentKindSchema,
+    revisionStatus: z.enum(['extracted', 'corrected']),
+    authoredByKind: z.enum(['model', 'human']),
+    authoredById: z.string().min(1).max(200),
+    supersedesRevisionId: UuidSchema.nullable(),
+    fields: z.array(DocumentExtractionFieldSchema).min(1).max(50),
+    reviewRequired: z.boolean(),
+    reviewReason: z.string().min(1).max(100).nullable(),
+    requestReason: z.string().min(1).max(1000).nullable(),
+    createdAt: IsoUtcTimestampSchema,
+  })
+  .strict();
+export type DocumentExtractionRevision = z.infer<
+  typeof DocumentExtractionRevisionSchema
+>;
+
+export const DocumentExtractionCorrectionFieldSchema = z
+  .object({
+    field: ExtractionFieldNameSchema,
+    value: z.string().min(1).max(5000).nullable(),
+    source: FieldSourceSchema.nullable().optional(),
+    reason: z.string().min(1).max(1000),
+  })
+  .strict();
+export type DocumentExtractionCorrectionField = z.infer<
+  typeof DocumentExtractionCorrectionFieldSchema
+>;
+
+export const DocumentExtractionCorrectionRequestSchema = z
+  .object({
+    reason: z.string().min(1).max(1000),
+    fields: z.array(DocumentExtractionCorrectionFieldSchema).min(1).max(50),
+  })
+  .strict()
+  .superRefine((request, context) => {
+    const seen = new Set<string>();
+    for (const field of request.fields) {
+      if (seen.has(field.field)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['fields'],
+          message: 'A correction may name each field only once',
+        });
+      }
+      seen.add(field.field);
+    }
+  });
+export type DocumentExtractionCorrectionRequest = z.infer<
+  typeof DocumentExtractionCorrectionRequestSchema
+>;

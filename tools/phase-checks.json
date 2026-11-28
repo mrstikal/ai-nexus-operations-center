@@ -2345,9 +2345,69 @@
       ],
       "checkpoint": false,
       "unitTests": [],
-      "integrationTests": [],
+      "integrationTests": [
+        "tests/integration/f17-extraction.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/documents.ts",
+          "minBytes": 7000
+        },
+        {
+          "path": "packages/contracts/src/ai-outputs.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/documents/classify.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "packages/application/src/documents/extract.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/application/src/documents/validate-fields.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/documents/correct.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/repositories/document-extraction.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "packages/db/migrations/0015_document_extraction_revisions.sql",
+          "minBytes": 3000
+        },
+        {
+          "path": "apps/api/src/documents/corrections-controller.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "fixtures/replay/v1/extraction/supply-notice-classify.json",
+          "minBytes": 500
+        },
+        {
+          "path": "fixtures/replay/v1/extraction/supply-notice-extract.json",
+          "minBytes": 800
+        },
+        {
+          "path": "tests/integration/f17-extraction.test.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "docs/DOCUMENTS.md",
+          "minBytes": 3000
+        },
+        {
+          "path": "docs/CONTRACTS.md",
+          "minBytes": 1000
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F18",

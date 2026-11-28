@@ -55,6 +55,7 @@ export const ReplayManifestSchema = z
   .object({
     version: z.literal('replay-v1'),
     records: z.array(ReplayRecordSchema),
+    recordFixtures: z.array(z.string().min(1).max(200)).default([]),
     failureFixtures: z.array(z.string().min(1).max(200)),
   })
   .strict();
@@ -182,6 +183,29 @@ export function loadReplayManifest(manifestPath: string): LoadedReplay {
   }
   const records = [...parsed.data.records];
   const baseDirectory = path.dirname(path.resolve(manifestPath));
+  for (const fixture of parsed.data.recordFixtures) {
+    let fixtureRaw: unknown;
+    const fixturePath = path.resolve(baseDirectory, fixture);
+    try {
+      fixtureRaw = JSON.parse(readFileSync(fixturePath, 'utf8'));
+    } catch (error) {
+      throw new ReplayManifestError(
+        `Cannot read replay record fixture ${fixturePath}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+    const record = ReplayRecordSchema.safeParse(fixtureRaw);
+    if (!record.success) {
+      throw new ReplayManifestError(
+        `Invalid replay record fixture ${fixturePath}: ${record.error.issues
+          .slice(0, 5)
+          .map((issue) => `${issue.path.join('.') || '<root>'}: ${issue.message}`)
+          .join('; ')}`,
+      );
+    }
+    records.push(record.data);
+  }
   for (const fixture of parsed.data.failureFixtures) {
     let fixtureRaw: unknown;
     const fixturePath = path.resolve(baseDirectory, fixture);

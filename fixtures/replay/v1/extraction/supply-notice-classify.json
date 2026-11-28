@@ -1,0 +1,45 @@
+{
+  "recordId": "f17-classify-supply-notice",
+  "request": {
+    "role": "classify",
+    "capabilities": [
+      "structured_json"
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "kind": "text",
+            "text": "--- page 1 ---\nSUPPLIER DELAY NOTICE\nSupplier: Northstar Components AB\nPurchase order: PO-2026-0001\nOriginal delivery date: 2026-11-03\nRevised delivery date: 2026-11-07\nAffected product: NS-100, 240 units\n"
+          }
+        ]
+      }
+    ],
+    "outputSchemaId": "document.classification.v1",
+    "allowedToolNames": [],
+    "workflowRunId": null,
+    "budgetAccountId": null,
+    "maxOutputTokens": 800,
+    "stream": false
+  },
+  "promptVersion": "02e614bf17bbede20723fb8072133ae3265666a6cde2676ab61c4c3617e162d3",
+  "configRevision": "models-default-2026-11-26",
+  "schemaVersion": 1,
+  "route": {
+    "provider": "replay",
+    "model": "replay-v1"
+  },
+  "outcome": {
+    "kind": "success",
+    "output": {
+      "kind": "supply_exception",
+      "evidenceIds": [],
+      "missingFields": []
+    },
+    "recordedUsage": {
+      "inputTokens": 90,
+      "outputTokens": 12
+    }
+  }
+}

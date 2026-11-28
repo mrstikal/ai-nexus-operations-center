@@ -143,6 +143,10 @@
     "./repositories/document-processing": {
       "types": "./dist/repositories/document-processing.d.ts",
       "default": "./dist/repositories/document-processing.js"
+    },
+    "./repositories/document-extraction": {
+      "types": "./dist/repositories/document-extraction.d.ts",
+      "default": "./dist/repositories/document-extraction.js"
     }
   },
   "scripts": {

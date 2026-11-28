@@ -390,3 +390,19 @@ Routes are `GET /api/v1/approvals`,
 `POST /api/v1/cases/{caseId}/resolve-no-action`. All mutation POSTs require UUID
 `Idempotency-Key`; decision/request routes use the server-selected role and current database roles.
 The OpenAPI paths and components are generated from these schemas. See [ACTIONS.md](ACTIONS.md).
+
+## Structured extraction additions (F17)
+
+`packages/contracts/src/documents.ts` adds the closed extraction vocabulary: document kinds,
+extraction field names (`supplier_name`, `purchase_order_number`, `invoice_number`, amounts,
+dates, currency, description), `DocumentExtractionField`, immutable
+`DocumentExtractionRevision`, and `DocumentExtractionCorrectionRequest`. Field sources reuse the
+existing `FieldSource` contract (`documentVersionId`, page, start, end, optional bbox) from
+`evidence.ts`; offsets are exact indexes into the stored page text.
+
+`packages/contracts/src/ai-outputs.ts` registers `document.extraction.v1` for the `extract` role.
+The model output carries only `{ page, start, end }` spans; the server binds the document version
+and rejects extracted values without a source. `document.classification.v1` remains the classify
+schema. The correction request contains a top-level reason and per-field reasons; `If-Match`
+carries the expected immutable revision number. The resulting revision exposes the request-level
+`requestReason` and stays nullable for model-authored revisions.

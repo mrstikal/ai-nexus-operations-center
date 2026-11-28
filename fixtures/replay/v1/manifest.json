@@ -246,5 +246,9 @@
     "../../failures/provider-rate-limit.json",
     "../../failures/provider-schema-invalid.json",
     "../../failures/budget-exhausted.json"
+  ],
+  "recordFixtures": [
+    "extraction/supply-notice-classify.json",
+    "extraction/supply-notice-extract.json"
   ]
 }

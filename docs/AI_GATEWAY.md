@@ -16,6 +16,7 @@ Every invocation names an output schema id registered in `packages/contracts/src
 | Schema id | Version | Role | Purpose |
 |---|---|---|---|
 | `document.classification.v1` | 1 | `classify` | Bounded document kind plus evidence ids |
+| `document.extraction.v1` | 1 | `extract` | Source-spanned document fields with nullable values |
 | `analysis.recommendation.v1` | 1 | `analyse` | Findings, options, explanation, missing fields |
 | `verification.review.v1` | 1 | `verify` | Supported/disputed/insufficient reviewer verdict |
 

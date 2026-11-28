@@ -204,6 +204,44 @@ async function insertEvidenceLinks(
   }
 }
 
+/**
+ * Revalidate and share-lock every evidence row cited by the plan inside the
+ * proposal transaction. A correction marks superseded extraction evidence in
+ * its own transaction; the conflicting row locks serialize the two paths so a
+ * proposal cannot commit against evidence that was superseded concurrently.
+ */
+async function lockAvailableEvidence(
+  tx: DbTransaction,
+  sandboxId: string,
+  items: readonly ActionPlanItem[],
+): Promise<boolean> {
+  const evidenceIds = [...new Set(items.flatMap((item) => item.evidenceIds))];
+  if (evidenceIds.length === 0) {
+    return true;
+  }
+  const rows = await tx
+    .select({
+      id: evidence.id,
+      sourceStatus: evidence.sourceStatus,
+      supersededAt: evidence.supersededAt,
+    })
+    .from(evidence)
+    .where(
+      and(
+        eq(evidence.sandboxId, sandboxId),
+        inArray(evidence.id, evidenceIds),
+      ),
+    )
+    .orderBy(evidence.id)
+    .for('share');
+  if (rows.length !== evidenceIds.length) {
+    return false;
+  }
+  return rows.every(
+    (row) => row.sourceStatus === 'available' && row.supersededAt === null,
+  );
+}
+
 async function appendProposalAudit(
   tx: DbTransaction,
   input: {
@@ -264,6 +302,145 @@ export interface ProposalStoreBundle
   extends ProposalStore,
     ProposalInvalidationStore,
     ProposalEventStore {}
+
+export async function expireProposalRevisionInTransaction(
+  tx: DbTransaction,
+  input: ExpireProposalRevisionInput,
+): Promise<boolean> {
+  const proposalRows = await tx
+    .select()
+    .from(actionProposals)
+    .where(
+      and(
+        eq(actionProposals.sandboxId, input.sandboxId),
+        eq(actionProposals.id, input.proposalId),
+      ),
+    )
+    .for('update')
+    .limit(1);
+  const proposal = proposalRows[0];
+  if (
+    !proposal ||
+    proposal.currentRevisionId !== input.revisionId ||
+    !isOpenStatus(proposal.status)
+  ) {
+    return false;
+  }
+  const revisionRows = await tx
+    .select()
+    .from(actionRevisions)
+    .where(
+      and(
+        eq(actionRevisions.sandboxId, input.sandboxId),
+        eq(actionRevisions.id, input.revisionId),
+      ),
+    )
+    .for('update')
+    .limit(1);
+  const revision = revisionRows[0];
+  if (!revision || !isOpenStatus(revision.state)) {
+    return false;
+  }
+  await tx
+    .update(actionRevisions)
+    .set({ state: 'expired', updatedAt: sql`clock_timestamp()` })
+    .where(eq(actionRevisions.id, input.revisionId));
+  const waitingRuns = await tx
+    .select()
+    .from(workflowRuns)
+    .where(
+      and(
+        eq(workflowRuns.sandboxId, input.sandboxId),
+        eq(workflowRuns.caseId, proposal.caseId),
+        eq(workflowRuns.status, 'waiting_approval'),
+        sql`${workflowRuns.waitReason}->>'proposalId' = ${input.proposalId}`,
+        sql`${workflowRuns.waitReason}->>'actionRevisionId' = ${input.revisionId}`,
+      ),
+    )
+    .for('update');
+  for (const run of waitingRuns) {
+    await tx
+      .update(workflowRuns)
+      .set({
+        status: 'waiting_input',
+        waitReason: {
+          kind: 'human_input',
+          prompt:
+            'Proposal expired after an external change. Provide new analysis input.',
+        },
+        version: sql`${workflowRuns.version} + 1`,
+        updatedAt: sql`clock_timestamp()`,
+      })
+      .where(eq(workflowRuns.id, run.id));
+    try {
+      await applyCaseTransition(tx, {
+        sandboxId: input.sandboxId,
+        caseId: proposal.caseId,
+        runId: run.id,
+        triggerEventId: run.triggerEventId,
+        targetStatus: 'needs_input',
+        reason: 'proposal_expired',
+        correlationId: input.correlationId,
+      });
+    } catch (error) {
+      if (!(error instanceof CaseWorkflowTransitionError)) {
+        throw error;
+      }
+    }
+  }
+  await tx
+    .update(approvalDecisions)
+    .set({
+      state: 'superseded',
+      supersededAt: sql`clock_timestamp()`,
+    })
+    .where(
+      and(
+        eq(approvalDecisions.sandboxId, input.sandboxId),
+        eq(approvalDecisions.actionRevisionId, input.revisionId),
+        eq(approvalDecisions.state, 'active'),
+      ),
+    );
+  await tx
+    .update(actionProposals)
+    .set({
+      status: 'expired',
+      version: sql`${actionProposals.version} + 1`,
+      updatedAt: sql`clock_timestamp()`,
+    })
+    .where(eq(actionProposals.id, input.proposalId));
+  await appendAuditInTransaction(tx, {
+    sandboxId: input.sandboxId,
+    requestId: input.requestId.slice(0, 128),
+    correlationId: input.correlationId.slice(0, 128),
+    actor: {
+      kind: 'service',
+      id: 'proposal-invalidation',
+      roles: [],
+    },
+    runId: null,
+    action: 'action.proposal_invalidated',
+    targetType: 'action_proposal',
+    targetId: input.proposalId,
+    targetVersion: String(revision.revisionNumber),
+    beforeHash: revision.planHash,
+    afterHash: revision.planHash,
+    outcome: 'succeeded',
+    details: {
+      caseId: proposal.caseId,
+      actionRevisionId: input.revisionId,
+      planHash: revision.planHash,
+      policyRevision: revision.policyRevision,
+      status: 'expired',
+      reasonCode: 'external_change',
+      entityType: input.entityRef.type,
+      entityId: input.entityRef.id,
+      entityVersion: input.entityRef.version,
+      contentHash: canonicalJsonSha256(input.changedFields),
+    },
+  });
+  return true;
+}
 
 export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
   return {
@@ -462,6 +639,14 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
               status: 'duplicate',
               detail: ActionProposalDetailSchema.parse(existing.response),
             };
+          }
+          // Take the evidence share locks before the case lock. The correction
+          // path marks evidence before it expires proposals (and thereby locks
+          // their cases), so both paths use the same global lock order.
+          if (
+            !(await lockAvailableEvidence(tx, input.sandboxId, input.items))
+          ) {
+            return { status: 'evidence_unavailable' };
           }
           const caseRows = await tx
             .select({ id: cases.id })
@@ -718,6 +903,11 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
           if (startedExecution[0]) {
             return { status: 'stale' };
           }
+          if (
+            !(await lockAvailableEvidence(tx, input.sandboxId, input.items))
+          ) {
+            return { status: 'evidence_unavailable' };
+          }
           const nextNumber = current.revisionNumber + 1;
           await tx
             .update(actionRevisions)
@@ -925,141 +1115,9 @@ export function createActionProposalStore(db: NexusDb): ProposalStoreBundle {
     async expireProposalRevision(
       input: ExpireProposalRevisionInput,
     ): Promise<boolean> {
-      return db.transaction(async (tx) => {
-        const proposalRows = await tx
-          .select()
-          .from(actionProposals)
-          .where(
-            and(
-              eq(actionProposals.sandboxId, input.sandboxId),
-              eq(actionProposals.id, input.proposalId),
-            ),
-          )
-          .for('update')
-          .limit(1);
-        const proposal = proposalRows[0];
-        if (
-          !proposal ||
-          proposal.currentRevisionId !== input.revisionId ||
-          !isOpenStatus(proposal.status)
-        ) {
-          return false;
-        }
-        const revisionRows = await tx
-          .select()
-          .from(actionRevisions)
-          .where(
-            and(
-              eq(actionRevisions.sandboxId, input.sandboxId),
-              eq(actionRevisions.id, input.revisionId),
-            ),
-          )
-          .for('update')
-          .limit(1);
-        const revision = revisionRows[0];
-        if (!revision || !isOpenStatus(revision.state)) {
-          return false;
-        }
-        await tx
-          .update(actionRevisions)
-          .set({ state: 'expired', updatedAt: sql`clock_timestamp()` })
-          .where(eq(actionRevisions.id, input.revisionId));
-        const waitingRuns = await tx
-          .select()
-          .from(workflowRuns)
-          .where(
-            and(
-              eq(workflowRuns.sandboxId, input.sandboxId),
-              eq(workflowRuns.caseId, proposal.caseId),
-              eq(workflowRuns.status, 'waiting_approval'),
-              sql`${workflowRuns.waitReason}->>'proposalId' = ${input.proposalId}`,
-              sql`${workflowRuns.waitReason}->>'actionRevisionId' = ${input.revisionId}`,
-            ),
-          )
-          .for('update');
-        for (const run of waitingRuns) {
-          await tx
-            .update(workflowRuns)
-            .set({
-              status: 'waiting_input',
-              waitReason: {
-                kind: 'human_input',
-                prompt:
-                  'Proposal expired after an external change. Provide new analysis input.',
-              },
-              version: sql`${workflowRuns.version} + 1`,
-              updatedAt: sql`clock_timestamp()`,
-            })
-            .where(eq(workflowRuns.id, run.id));
-          try {
-            await applyCaseTransition(tx, {
-              sandboxId: input.sandboxId,
-              caseId: proposal.caseId,
-              runId: run.id,
-              triggerEventId: run.triggerEventId,
-              targetStatus: 'needs_input',
-              reason: 'proposal_expired',
-              correlationId: input.correlationId,
-            });
-          } catch (error) {
-            if (!(error instanceof CaseWorkflowTransitionError)) {
-              throw error;
-            }
-          }
-        }
-        await tx
-          .update(approvalDecisions)
-          .set({
-            state: 'superseded',
-            supersededAt: sql`clock_timestamp()`,
-          })
-          .where(
-            and(
-              eq(approvalDecisions.sandboxId, input.sandboxId),
-              eq(approvalDecisions.actionRevisionId, input.revisionId),
-              eq(approvalDecisions.state, 'active'),
-            ),
-          );
-        await tx
-          .update(actionProposals)
-          .set({
-            status: 'expired',
-            version: sql`${actionProposals.version} + 1`,
-            updatedAt: sql`clock_timestamp()`,
-          })
-          .where(eq(actionProposals.id, input.proposalId));
-        await appendAuditInTransaction(tx, {
-          sandboxId: input.sandboxId,
-          requestId: input.requestId.slice(0, 128),
-          correlationId: input.correlationId.slice(0, 128),
-          actor: {
-            kind: 'service',
-            id: 'proposal-invalidation',
-            roles: [],
-          },
-          runId: null,
-          action: 'action.proposal_invalidated',
-          targetType: 'action_proposal',
-          targetId: input.proposalId,
-          targetVersion: String(revision.revisionNumber),
-          beforeHash: revision.planHash,
-          afterHash: revision.planHash,
-          outcome: 'succeeded',
-          details: {
-            caseId: proposal.caseId,
-            actionRevisionId: input.revisionId,
-            planHash: revision.planHash,
-            policyRevision: revision.policyRevision,
-            status: 'expired',
-            reasonCode: 'external_change',
-            entityType: input.entityRef.type,
-            entityId: input.entityRef.id,
-            entityVersion: input.entityRef.version,
-            contentHash: canonicalJsonSha256(input.changedFields),
-          },
-        });
-        return true;
-      });
+      return db.transaction((tx) =>
+        expireProposalRevisionInTransaction(tx, input),
+      );
     },
 
     async claimPendingProposalEvent(): Promise<ProposalEventClaim | null> {

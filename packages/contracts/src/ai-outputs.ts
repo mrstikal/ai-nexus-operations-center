@@ -7,6 +7,10 @@ import {
   type JsonValue,
 } from './common.js';
 import { ReviewerOutputSchema, type ModelRole } from './models.js';
+import {
+  DocumentKindSchema,
+  ExtractionFieldNameSchema,
+} from './documents.js';
 
 /**
  * Versioned, closed registry of AI output schemas.
@@ -35,6 +39,63 @@ export const DocumentClassificationV1Schema = z
 export type DocumentClassificationV1 = z.infer<
   typeof DocumentClassificationV1Schema
 >;
+
+const ModelFieldSourceV1Schema = z
+  .object({
+    page: z.number().int().positive().max(20),
+    start: z.number().int().nonnegative().max(10_000_000),
+    end: z.number().int().nonnegative().max(10_000_000),
+  })
+  .strict()
+  .refine((source) => source.end > source.start, 'end must be greater than start');
+
+export const DocumentExtractionFieldV1Schema = z
+  .object({
+    field: ExtractionFieldNameSchema,
+    value: z.string().min(1).max(5000).nullable(),
+    source: ModelFieldSourceV1Schema.nullable(),
+    status: z.enum(['extracted', 'missing', 'ambiguous']),
+    alternatives: z.array(z.string().min(1).max(5000)).max(10).optional(),
+  })
+  .strict()
+  .superRefine((field, context) => {
+    if (field.status === 'extracted' && (field.value === null || field.source === null)) {
+      context.addIssue({
+        code: 'custom',
+        message: 'An extracted field requires a value and a source span',
+      });
+    }
+    if (field.status === 'missing' && (field.value !== null || field.source !== null)) {
+      context.addIssue({
+        code: 'custom',
+        message: 'A missing field cannot carry a value or source span',
+      });
+    }
+  });
+export type DocumentExtractionFieldV1 = z.infer<
+  typeof DocumentExtractionFieldV1Schema
+>;
+
+export const DocumentExtractionV1Schema = z
+  .object({
+    kind: DocumentKindSchema,
+    fields: z.array(DocumentExtractionFieldV1Schema).min(1).max(50),
+  })
+  .strict()
+  .superRefine((output, context) => {
+    const seen = new Set<string>();
+    for (const field of output.fields) {
+      if (seen.has(field.field)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['fields'],
+          message: 'An extraction may contain each field only once',
+        });
+      }
+      seen.add(field.field);
+    }
+  });
+export type DocumentExtractionV1 = z.infer<typeof DocumentExtractionV1Schema>;
 
 export const AnalysisFindingV1Schema = z
   .object({
@@ -125,6 +186,12 @@ export const AI_OUTPUT_REGISTRY: readonly AiOutputRegistration[] = Object.freeze
     1,
     'classify',
     DocumentClassificationV1Schema as z.ZodType<JsonValue>,
+  ),
+  registration(
+    'document.extraction.v1',
+    1,
+    'extract',
+    DocumentExtractionV1Schema as z.ZodType<JsonValue>,
   ),
   registration(
     'analysis.recommendation.v1',

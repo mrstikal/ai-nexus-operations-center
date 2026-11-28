@@ -29,6 +29,8 @@ export const evidence = nexusSchema.table(
     locator: jsonb('locator').$type<Record<string, unknown> | null>(),
     capturedFacts: jsonb('captured_facts').$type<unknown>().notNull(),
     missingReason: text('missing_reason'),
+    supersededAt: timestamp('superseded_at', { withTimezone: true }),
+    supersededReason: text('superseded_reason'),
     capturedAt: timestamp('captured_at', { withTimezone: true }).notNull(),
   },
   (table) => [

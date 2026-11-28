@@ -56,12 +56,15 @@ zero-row update is a stale-state conflict, not a silent overwrite.
 
 ## Evidence
 
-`nexus.evidence` is insert-only. It stores kind, source status (`available` or `missing`),
-source system/type/ID/version/sandbox, a 64-character content hash, optional locator,
+`nexus.evidence` is append-only for its content. It stores kind, source status (`available` or
+`missing`), source system/type/ID/version/sandbox, a 64-character content hash, optional locator,
 captured facts, nullable missing reason and capture time. A missing source must have a null
 source reference and a non-null reason; an available source must have a same-sandbox source
 reference and no missing reason. The application validates source provenance and locator
-bounds before insert; runtime roles have no update/delete grant.
+bounds before insert. F17 adds nullable `superseded_at`/`superseded_reason` lifecycle markers;
+a human correction may set only those two columns through a column-level UPDATE grant, and the
+captured source fields, hash, locator and facts remain unchanged. Runtime roles have no other
+update/delete grant.
 
 Evidence can support a case but is immutable. Authoritative facts may expire for execution
 while the historical snapshot remains valid for audit. Raw uploads and personal address
@@ -96,7 +99,8 @@ Migrations `0003_cases_evidence_audit_trace.sql` and
 `nexus_api` may read sandboxes/active sandbox, select/insert/update cases, insert case links,
 read/insert evidence, read/insert audit/trace and update sequence counters. `nexus_worker`
 has the same case/evidence/audit/trace append/read grants for its future work. Neither role
-may update/delete evidence, audit or trace. Public access is revoked.
+may update/delete evidence content, audit or trace; the only evidence exception is the F17
+supersession marker columns. Public access is revoked.
 
 ## Enterprise supply, sales and commands (F07-F08)
 

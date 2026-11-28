@@ -140,6 +140,53 @@ database lease, streams the current version's bytes over the private parser netw
   `infra/Dockerfile.extractor` and declared with `read_only`, `cap_drop: ALL`, `no-new-privileges`,
   a 512 MiB / 1 CPU bound and only the internal `parser` network.
 
+## Structured extraction and correction (F17)
+
+`DocumentExtractionService` classifies and extracts a ready document through the shared model
+gateway. It uses the immutable stored page text, sends only that text (bounded to 16,000
+characters) to the classify/extract roles, and validates the result against the closed
+`document.extraction.v1` output schema (`packages/contracts/src/ai-outputs.ts`).
+
+- Every field is `{ field, value|null, source|null, status, alternatives?, evidenceId }` with
+  `status` in `extracted|corrected|missing|ambiguous`. `source` is an exact
+  `{ documentVersionId, page, start, end }` span into `document_page_texts`; the value must match
+  the spanned text. A missing page/span, an out-of-range offset or a value not present in the span
+  becomes `ambiguous` with a null value, never a guessed value. A value on an `ambiguous` field
+  without any source is also moved into `alternatives` and nulled. Any ambiguous financial or date
+  field forces `needs_review` (`AMBIGUOUS_FINANCIAL_DATA`) even when the kind does not require it.
+- Required fields (supplier/PO for supply, supplier/invoice/currency/net/tax/gross for invoices,
+  supplier/delivery-note/PO for delivery notes, customer for customer requests) stay null when
+  missing. Missing or ambiguous financial values are not converted to zero. Arithmetic
+  (`net + tax = gross`), date validity and contradictory dates are checked deterministically after
+  the model output; any failure marks the revision `reviewRequired` and the document
+  `needs_review`.
+- An extraction revision is immutable: revision 1 is `model`/`extracted`; a human correction
+  creates a new `human`/`corrected` revision that supersedes it. Correction rows preserve the
+  prior value, new value, actor, reason and timestamp. Optional human-provided spans are validated
+  against the stored page text; a human value without a source is allowed only as an explicit
+  correction.
+- Each sourced field also inserts one immutable `evidence` row (`kind='document_page'`,
+  locator page/start/end, content hash and captured facts) so proposals can cite the exact source.
+- `PATCH /api/v1/documents/:documentId/extraction` requires operator role, CSRF, `If-Match` with
+  the current revision number and a correction body. A stale revision is 409 `STALE_STATE`.
+  Corrections invalidate open proposals citing the old extraction evidence (their evidence from
+  the version) and expire the proposal/revision; if an execution derived from that evidence is
+  `pending|in_progress|retryable_failure|unknown`, the correction is refused with 409 `CONFLICT`
+  and the operator must reconcile first. The new revision, fields, correction rows, document
+  status and proposal invalidation commit in one database transaction, so an invalidation failure
+  rolls the correction back instead of leaving an approval bound to superseded evidence. Each
+  correction row stores the field, prior value, new value, per-field reason, actor and timestamp;
+  the request-level reason is stored on the immutable correction revision as `requestReason`.
+  Before writing the new revision, the correction marks the prior extraction evidence rows with
+  `superseded_at`/`superseded_reason` in the same transaction. Proposal creation and revision
+  share-lock every cited evidence row and recheck availability inside their own transaction, so a
+  proposal cannot commit against extraction evidence that a concurrent correction superseded;
+  such a request is rejected as `ACTION_EVIDENCE_MISSING`.
+- Extraction revisions, fields and corrections are append-only rows in
+  `document_extraction_revisions`, `document_extraction_fields` and
+  `document_extraction_corrections` (migration `0015_document_extraction_revisions.sql`).
+  No `document.ready` event is emitted by F17; F20 composes extraction into the supply workflow.
+
 ## Failure behavior
 
 - Unsupported media type: 415 `UNSUPPORTED_MEDIA`.
@@ -161,7 +208,7 @@ reference-safe cleanup.
 
 ## Out of scope
 
-No OCR, rasterization, vision fallback, image field extraction, structured business fields,
-human corrections, preview rendering, content searching or document workbench UI are implemented
+No OCR, rasterization, vision fallback, image field extraction, preview rendering, content
+searching or document workbench UI are implemented
 in F15/F16. Image and scanned documents become `needs_review` until F26. The API never executes
 a document, and parsing never runs in the API or browser process.

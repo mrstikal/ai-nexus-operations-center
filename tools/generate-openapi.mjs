@@ -50,6 +50,8 @@ const {
   DocumentStatusSchema,
   DocumentUploadResponseSchema,
   DocumentVersionSchema,
+  DocumentExtractionCorrectionRequestSchema,
+  DocumentExtractionRevisionSchema,
   EntityRefSchema,
   ErrorCodeSchema,
   EvidenceKindSchema,
@@ -1123,6 +1125,56 @@ function registerDocumentPaths(registry) {
       },
     },
   });
+  registry.registerPath({
+    method: 'patch',
+    path: '/api/v1/documents/{documentId}/extraction',
+    tags: ['documents'],
+    summary: 'Correct a structured extraction as an immutable human revision',
+    security: [{ sessionCookie: [] }],
+    request: {
+      params: z.object({ documentId: UuidSchema }),
+      headers: z.object({ 'if-match': z.string().regex(/^[1-9]\d{0,6}$/) }),
+      body: {
+        content: {
+          'application/json': { schema: DocumentExtractionCorrectionRequestSchema },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description:
+          'The new immutable correction revision with validated fields and review state',
+        content: {
+          'application/json': { schema: DocumentExtractionRevisionSchema },
+        },
+      },
+      400: {
+        description: 'Invalid correction body or missing If-Match revision',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role denied',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Document has no structured extraction in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description:
+          'Stale extraction revision or an unresolved execution derived from the extraction',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Extraction repository unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
 }
 
 function registerAuthPaths(registry) {
@@ -1279,10 +1331,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F15',
+    stage: 'F17',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, and document upload/list/detail/content',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, and document upload/list/detail/content; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, document upload/list/detail/content and extraction correction; later controllers are declared in their owner stages',
   };
 
   return document;

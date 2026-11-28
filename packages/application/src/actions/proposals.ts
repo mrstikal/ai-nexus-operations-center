@@ -155,7 +155,8 @@ export type ProposalCreateStoreResult =
         | 'sandbox_unavailable'
         | 'case_not_found'
         | 'open_procurement_conflict'
-        | 'idempotency_conflict';
+        | 'idempotency_conflict'
+        | 'evidence_unavailable';
     };
 
 export type ProposalReviseStoreResult =
@@ -166,7 +167,8 @@ export type ProposalReviseStoreResult =
         | 'stale'
         | 'sandbox_inactive'
         | 'sandbox_unavailable'
-        | 'open_procurement_conflict';
+        | 'open_procurement_conflict'
+        | 'evidence_unavailable';
     };
 
 export interface PolicyBundleRegistration {
@@ -759,6 +761,11 @@ export class ProposalService {
         throw new ProposalIdempotencyMismatchError();
       case 'case_not_found':
         throw new ProposalNotFoundError('Case was not found in the active sandbox');
+      case 'evidence_unavailable':
+        throw new ProposalValidationError(
+          'ACTION_EVIDENCE_MISSING',
+          'Action item references evidence that is no longer available',
+        );
       case 'open_procurement_conflict':
         throw new ProposalConflictError();
       case 'sandbox_inactive':
@@ -776,6 +783,11 @@ export class ProposalService {
         throw new ProposalNotFoundError();
       case 'stale':
         throw new ProposalStaleError();
+      case 'evidence_unavailable':
+        throw new ProposalValidationError(
+          'ACTION_EVIDENCE_MISSING',
+          'Action item references evidence that is no longer available',
+        );
       case 'open_procurement_conflict':
         throw new ProposalConflictError();
       case 'sandbox_inactive':

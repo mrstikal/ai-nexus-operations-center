@@ -6,6 +6,7 @@ import {
   foreignKey,
   index,
   integer,
+  jsonb,
   pgSchema,
   text,
   timestamp,
@@ -13,6 +14,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { cases, sandboxes } from './cases.js';
+import { evidence } from './evidence.js';
 
 export const nexusSchema = pgSchema('nexus');
 
@@ -377,6 +379,182 @@ export const documentExtractionCache = nexusSchema.table(
   ],
 );
 
+export const documentExtractionRevisions = nexusSchema.table(
+  'document_extraction_revisions',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id')
+      .notNull()
+      .references(() => sandboxes.id),
+    documentId: uuid('document_id').notNull(),
+    documentVersionId: uuid('document_version_id').notNull(),
+    revisionNumber: integer('revision_number').notNull(),
+    kind: text('kind').notNull(),
+    revisionStatus: text('revision_status').notNull(),
+    authoredByKind: text('authored_by_kind').notNull(),
+    authoredById: text('authored_by_id').notNull(),
+    supersedesRevisionId: uuid('supersedes_revision_id'),
+    reviewRequired: boolean('review_required').notNull(),
+    reviewReason: text('review_reason'),
+    requestReason: text('request_reason'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_extraction_revisions_sandbox_id_id_key').on(
+      table.sandboxId,
+      table.id,
+    ),
+    uniqueIndex('document_extraction_revisions_version_number_key').on(
+      table.sandboxId,
+      table.documentVersionId,
+      table.revisionNumber,
+    ),
+    index('document_extraction_revisions_document_idx').on(
+      table.sandboxId,
+      table.documentId,
+      table.createdAt,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.documentId],
+      foreignColumns: [documents.sandboxId, documents.id],
+    }),
+    foreignKey({
+      columns: [table.sandboxId, table.documentVersionId],
+      foreignColumns: [documentVersions.sandboxId, documentVersions.id],
+    }),
+    check(
+      'document_extraction_revisions_number_check',
+      sql`${table.revisionNumber} BETWEEN 1 AND 1000000`,
+    ),
+    check(
+      'document_extraction_revisions_kind_check',
+      sql`${table.kind} IN ('supply_exception','invoice','delivery_note','customer_request','knowledge_document','other','unknown')`,
+    ),
+    check(
+      'document_extraction_revisions_status_check',
+      sql`${table.revisionStatus} IN ('extracted','corrected')`,
+    ),
+    check(
+      'document_extraction_revisions_author_check',
+      sql`${table.authoredByKind} IN ('model','human') AND length(${table.authoredById}) BETWEEN 1 AND 200`,
+    ),
+    check(
+      'document_extraction_revisions_review_check',
+      sql`(${table.reviewRequired} AND ${table.reviewReason} IS NOT NULL) OR (NOT ${table.reviewRequired} AND ${table.reviewReason} IS NULL)`,
+    ),
+    check(
+      'document_extraction_revisions_request_reason_check',
+      sql`(${table.authoredByKind} = 'human' AND ${table.requestReason} IS NOT NULL AND length(${table.requestReason}) BETWEEN 1 AND 1000)
+        OR (${table.authoredByKind} = 'model' AND ${table.requestReason} IS NULL)`,
+    ),
+  ],
+);
+
+export const documentExtractionFields = nexusSchema.table(
+  'document_extraction_fields',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id').notNull(),
+    revisionId: uuid('revision_id').notNull(),
+    field: text('field').notNull(),
+    value: text('value'),
+    status: text('status').notNull(),
+    sourcePage: integer('source_page'),
+    sourceStart: integer('source_start'),
+    sourceEnd: integer('source_end'),
+    sourceBbox: jsonb('source_bbox').$type<Record<string, number> | null>(),
+    alternatives: jsonb('alternatives').$type<string[] | null>(),
+    evidenceId: uuid('evidence_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_extraction_fields_revision_field_key').on(
+      table.sandboxId,
+      table.revisionId,
+      table.field,
+    ),
+    index('document_extraction_fields_revision_idx').on(
+      table.sandboxId,
+      table.revisionId,
+    ),
+    index('document_extraction_fields_evidence_idx').on(
+      table.sandboxId,
+      table.evidenceId,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.revisionId],
+      foreignColumns: [
+        documentExtractionRevisions.sandboxId,
+        documentExtractionRevisions.id,
+      ],
+    }),
+    foreignKey({
+      columns: [table.sandboxId, table.evidenceId],
+      foreignColumns: [evidence.sandboxId, evidence.id],
+    }),
+    check(
+      'document_extraction_fields_field_check',
+      sql`${table.field} IN ('supplier_name','customer_name','purchase_order_number','invoice_number','delivery_note_number','sales_order_number','document_date','delivery_date','due_date','currency','net_amount_minor','tax_amount_minor','gross_amount_minor','tax_rate_bps','total_quantity','unit_price_minor','description')`,
+    ),
+    check(
+      'document_extraction_fields_status_check',
+      sql`${table.status} IN ('extracted','corrected','missing','ambiguous')`,
+    ),
+    check(
+      'document_extraction_fields_value_check',
+      sql`((${table.status} IN ('extracted','corrected') AND ${table.value} IS NOT NULL AND length(${table.value}) BETWEEN 1 AND 5000)
+        OR (${table.status} = 'missing' AND ${table.value} IS NULL)
+        OR (${table.status} = 'ambiguous' AND (${table.value} IS NULL OR length(${table.value}) BETWEEN 1 AND 5000)))`,
+    ),
+    check(
+      'document_extraction_fields_source_check',
+      sql`(${table.sourcePage} IS NULL AND ${table.sourceStart} IS NULL AND ${table.sourceEnd} IS NULL)
+        OR (${table.sourcePage} BETWEEN 1 AND 20 AND ${table.sourceStart} >= 0 AND ${table.sourceEnd} > ${table.sourceStart})`,
+    ),
+    check(
+      'document_extraction_fields_evidence_source_check',
+      sql`${table.evidenceId} IS NULL OR ${table.sourcePage} IS NOT NULL`,
+    ),
+  ],
+);
+
+export const documentExtractionCorrections = nexusSchema.table(
+  'document_extraction_corrections',
+  {
+    id: uuid('id').primaryKey(),
+    sandboxId: uuid('sandbox_id').notNull(),
+    revisionId: uuid('revision_id').notNull(),
+    field: text('field').notNull(),
+    priorValue: text('prior_value'),
+    newValue: text('new_value'),
+    reason: text('reason').notNull(),
+    actorId: text('actor_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+  },
+  (table) => [
+    uniqueIndex('document_extraction_corrections_revision_field_key').on(
+      table.sandboxId,
+      table.revisionId,
+      table.field,
+    ),
+    foreignKey({
+      columns: [table.sandboxId, table.revisionId],
+      foreignColumns: [
+        documentExtractionRevisions.sandboxId,
+        documentExtractionRevisions.id,
+      ],
+    }),
+    check(
+      'document_extraction_corrections_field_check',
+      sql`${table.field} IN ('supplier_name','customer_name','purchase_order_number','invoice_number','delivery_note_number','sales_order_number','document_date','delivery_date','due_date','currency','net_amount_minor','tax_amount_minor','gross_amount_minor','tax_rate_bps','total_quantity','unit_price_minor','description')`,
+    ),
+    check(
+      'document_extraction_corrections_reason_check',
+      sql`length(${table.reason}) BETWEEN 1 AND 1000`,
+    ),
+  ],
+);
+
 export type BlobRow = typeof blobs.$inferSelect;
 export type DocumentRow = typeof documents.$inferSelect;
 export type DocumentVersionRow = typeof documentVersions.$inferSelect;
@@ -385,3 +563,9 @@ export type DocumentUploadRow = typeof documentUploads.$inferSelect;
 export type DocumentPageTextRow = typeof documentPageTexts.$inferSelect;
 export type DocumentAttachmentRow = typeof documentAttachments.$inferSelect;
 export type DocumentExtractionCacheRow = typeof documentExtractionCache.$inferSelect;
+export type DocumentExtractionRevisionRow =
+  typeof documentExtractionRevisions.$inferSelect;
+export type DocumentExtractionFieldRow =
+  typeof documentExtractionFields.$inferSelect;
+export type DocumentExtractionCorrectionRow =
+  typeof documentExtractionCorrections.$inferSelect;

@@ -338,6 +338,21 @@
       ],
       "@nexus/db/repositories/document-processing": [
         "./packages/db/src/repositories/document-processing.ts"
+      ],
+      "@nexus/db/repositories/document-extraction": [
+        "./packages/db/src/repositories/document-extraction.ts"
+      ],
+      "@nexus/application/documents/classify": [
+        "./packages/application/src/documents/classify.ts"
+      ],
+      "@nexus/application/documents/validate-fields": [
+        "./packages/application/src/documents/validate-fields.ts"
+      ],
+      "@nexus/application/documents/extract": [
+        "./packages/application/src/documents/extract.ts"
+      ],
+      "@nexus/application/documents/correct": [
+        "./packages/application/src/documents/correct.ts"
       ]
     },
     "skipLibCheck": true
