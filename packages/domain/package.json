@@ -39,6 +39,22 @@
     "./actions/item-hash": {
       "types": "./dist/actions/item-hash.d.ts",
       "default": "./dist/actions/item-hash.js"
+    },
+    "./supply/allocate": {
+      "types": "./dist/supply/allocate.d.ts",
+      "default": "./dist/supply/allocate.js"
+    },
+    "./supply/alternatives": {
+      "types": "./dist/supply/alternatives.d.ts",
+      "default": "./dist/supply/alternatives.js"
+    },
+    "./supply/impact": {
+      "types": "./dist/supply/impact.d.ts",
+      "default": "./dist/supply/impact.js"
+    },
+    "./supply/calculate": {
+      "types": "./dist/supply/calculate.d.ts",
+      "default": "./dist/supply/calculate.js"
     }
   },
   "scripts": {

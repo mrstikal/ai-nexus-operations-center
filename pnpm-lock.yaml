@@ -532,6 +532,9 @@ importers:
       '@nexus/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@nexus/domain':
+        specifier: workspace:*
+        version: link:../domain
       ioredis:
         specifier: 6.1.0
         version: 6.1.0

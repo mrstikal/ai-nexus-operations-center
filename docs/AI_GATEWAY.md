@@ -184,3 +184,18 @@ Replay misses are `UNAVAILABLE` with the `replay_miss` diagnostic.
   The ledger and account service are ready for them.
 - No exactly-once claim is made for provider billing. The uncertain-reservation path is the
   conservative boundary.
+
+## Deterministic Supply Verification (F19)
+
+Before an AI recommendation can become a proposal, F19 recomputes every material supply claim
+from the immutable `SupplyCalculationResult`. Each claim must cite an existing `calculation`
+evidence record whose captured `inputHash` and `resultHash` equal the current result; otherwise it
+is stale and rejected. Option commitment, arrival, rank, shortage quantity, wait feasibility and
+the finance decision are compared for exact equality, so a real citation ID cannot support an
+invented amount. A selected option must exist and be feasible; an infeasible plan (any affected deadline without a
+feasible option) cannot select any option and escalates; a procurement-required case must select
+an option from the latest cumulative-deadline set unless waiting is feasible for every short
+product. The finance decision is recomputed from the
+option commitments the recommendation selects, never from an unrelated canonical option. This deterministic verifier is pure, makes no
+model call, and cannot be overruled by the reviewer (F28) or by a human override. See
+[SCENARIOS.md](SCENARIOS.md).

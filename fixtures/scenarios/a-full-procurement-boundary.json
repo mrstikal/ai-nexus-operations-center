@@ -1,0 +1,93 @@
+{
+  "fixtureId": "a-full-procurement-boundary",
+  "description": "A single eligible supplier covers the shortage and the cumulative commitment lands exactly on the EUR 500 threshold",
+  "request": {
+    "asOf": "2026-11-03T09:00:00.000Z",
+    "policyRevision": "northstar-v1",
+    "policyContentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "financeThresholdMinor": "50000",
+    "priorAdditionalCommittedMinor": "20000",
+    "purchaseOrder": {
+      "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "reference": "PO-2026-0001",
+      "status": "delayed",
+      "version": 3,
+      "currency": "EUR",
+      "expectedAt": "2026-11-06T17:00:00.000Z",
+      "lines": [
+        {
+          "lineId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01",
+          "productId": "11111111-1111-4111-8111-111111111111",
+          "orderedQuantity": 30,
+          "receivedQuantity": 0,
+          "unreceivedQuantity": 30,
+          "unitPriceMinor": "10000",
+          "currency": "EUR",
+          "confirmedArrivalAt": "2026-11-06T17:00:00.000Z"
+        }
+      ]
+    },
+    "inventory": [
+      {
+        "productId": "11111111-1111-4111-8111-111111111111",
+        "sku": "NS-100",
+        "onHandQuantity": 0,
+        "activeReservations": 0,
+        "confirmedInbound": [],
+        "version": 1
+      }
+    ],
+    "demand": [
+      {
+        "orderId": "cccccccc-cccc-4ccc-8ccc-cccccccccc05",
+        "reference": "SO-2026-0005",
+        "productId": "11111111-1111-4111-8111-111111111111",
+        "quantity": 30,
+        "promisedDeliveryAt": "2026-11-06T17:00:00.000Z",
+        "exposedValueMinor": "30000",
+        "currency": "EUR",
+        "penaltyDailyMinor": "1000",
+        "penaltyCapMinor": "5000",
+        "delayToleratedUntil": null,
+        "version": 1
+      }
+    ],
+    "offers": [
+      {
+        "productId": "11111111-1111-4111-8111-111111111111",
+        "offers": [
+          {
+            "agreementId": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeee06",
+            "agreementReference": "AGR-2026-0006",
+            "agreementVersion": 1,
+            "agreementStatus": "approved",
+            "currentlyValid": true,
+            "supplierId": "dddddddd-dddd-4ddd-8ddd-dddddddddd01",
+            "supplierReference": "SUP-1",
+            "supplierStatus": "active",
+            "unitPriceMinor": "1000",
+            "currency": "EUR",
+            "capacityQuantity": 30,
+            "latestArrivalAt": "2026-11-05T17:00:00.000Z",
+            "validFrom": "2026-11-01T00:00:00.000Z",
+            "validTo": "2026-12-01T00:00:00.000Z",
+            "expediteChargeMinor": "0"
+          }
+        ]
+      }
+    ],
+    "supplierNotice": {
+      "revisedArrivalAt": null,
+      "revisedQuantity": null
+    }
+  },
+  "expected": {
+    "noProcurementRequired": false,
+    "waitingFeasible": false,
+    "infeasible": false,
+    "financeApprovalRequired": false,
+    "additionalCommitmentMinor": "30000",
+    "bestOptionSuppliers": [["SUP-1"]],
+    "penalties": "0"
+  }
+}

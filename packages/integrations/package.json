@@ -27,6 +27,10 @@
     "./enterprise/commands": {
       "types": "./dist/enterprise/commands.d.ts",
       "default": "./dist/enterprise/commands.js"
+    },
+    "./tools/supply-calculation": {
+      "types": "./dist/tools/supply-calculation.d.ts",
+      "default": "./dist/tools/supply-calculation.js"
     }
   },
   "scripts": {
@@ -37,7 +41,8 @@
     "@nexus/application": "workspace:*",
     "@nexus/contracts": "workspace:*",
     "ioredis": "6.1.0",
-    "zod": "4.6.7"
+    "zod": "4.6.7",
+    "@nexus/domain": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.11",

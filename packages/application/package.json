@@ -195,6 +195,14 @@
     "./knowledge/lexical-retriever": {
       "types": "./dist/knowledge/lexical-retriever.d.ts",
       "default": "./dist/knowledge/lexical-retriever.js"
+    },
+    "./verification/citations": {
+      "types": "./dist/verification/citations.d.ts",
+      "default": "./dist/verification/citations.js"
+    },
+    "./verification/deterministic": {
+      "types": "./dist/verification/deterministic.d.ts",
+      "default": "./dist/verification/deterministic.js"
     }
   },
   "scripts": {

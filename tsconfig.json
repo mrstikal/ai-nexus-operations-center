@@ -285,6 +285,27 @@
       "@nexus/domain/actions/item-hash": [
         "./packages/domain/src/actions/item-hash.ts"
       ],
+      "@nexus/domain/supply/allocate": [
+        "./packages/domain/src/supply/allocate.ts"
+      ],
+      "@nexus/domain/supply/alternatives": [
+        "./packages/domain/src/supply/alternatives.ts"
+      ],
+      "@nexus/domain/supply/impact": [
+        "./packages/domain/src/supply/impact.ts"
+      ],
+      "@nexus/domain/supply/calculate": [
+        "./packages/domain/src/supply/calculate.ts"
+      ],
+      "@nexus/integrations/tools/supply-calculation": [
+        "./packages/integrations/src/tools/supply-calculation.ts"
+      ],
+      "@nexus/application/verification/citations": [
+        "./packages/application/src/verification/citations.ts"
+      ],
+      "@nexus/application/verification/deterministic": [
+        "./packages/application/src/verification/deterministic.ts"
+      ],
       "@nexus/ai/gateway": [
         "./packages/ai/src/gateway.ts"
       ],

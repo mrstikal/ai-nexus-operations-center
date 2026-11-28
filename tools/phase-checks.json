@@ -2506,10 +2506,88 @@
         "F18"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f19-supply.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f19-evidence.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/supply.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "packages/domain/src/supply/allocate.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/domain/src/supply/alternatives.ts",
+          "minBytes": 5000
+        },
+        {
+          "path": "packages/domain/src/supply/impact.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/domain/src/supply/calculate.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/application/src/verification/citations.ts",
+          "minBytes": 2000
+        },
+        {
+          "path": "packages/application/src/verification/deterministic.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/integrations/src/tools/supply-calculation.ts",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-partial-split.json",
+          "minBytes": 2000
+        },
+        {
+          "path": "fixtures/scenarios/a-wait-and-notify.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-no-feasible.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-full-on-hand.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-full-procurement-boundary.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-multi-deadline-infeasible.json",
+          "minBytes": 1500
+        },
+        {
+          "path": "fixtures/scenarios/a-multi-product-wait.json",
+          "minBytes": 2000
+        },
+        {
+          "path": "tests/unit/f19-supply.test.ts",
+          "minBytes": 10000
+        },
+        {
+          "path": "tests/integration/f19-evidence.test.ts",
+          "minBytes": 8000
+        },
+        {
+          "path": "docs/SCENARIOS.md",
+          "minBytes": 1500
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F20",
