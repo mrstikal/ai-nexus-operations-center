@@ -147,6 +147,14 @@
     "./repositories/document-extraction": {
       "types": "./dist/repositories/document-extraction.d.ts",
       "default": "./dist/repositories/document-extraction.js"
+    },
+    "./schema/knowledge": {
+      "types": "./dist/schema/knowledge.d.ts",
+      "default": "./dist/schema/knowledge.js"
+    },
+    "./repositories/knowledge": {
+      "types": "./dist/repositories/knowledge.d.ts",
+      "default": "./dist/repositories/knowledge.js"
     }
   },
   "scripts": {

@@ -14,7 +14,8 @@ are not created here.
 | Case foundation | `sandboxes`, `active_sandbox`, `cases`, `case_entity_links`, `sequence_counters`, `evidence`, `audit_events`, `trace_events` | F05 |
 | Enterprise supply/sales | `sandboxes`, `suppliers`, `products`, `customers`, `agreements`, `purchase_orders`, `purchase_order_lines`, `sales_orders`, `sales_order_lines`, `inventory`, `inventory_reservations` | F07 |
 | Enterprise commands | `command_receipts`, `command_receipt_base_versions`, `command_receipt_entity_changes`, `communications`, `communication_parts`, `event_outbox` | F08 |
-| Events/workflows/actions/documents/knowledge/etc. | their own migrations | later stages |
+| Knowledge | `knowledge_documents`, `knowledge_versions`, `knowledge_chunks`, `knowledge_retrieval_state` | F18 |
+| Events/workflows/actions/documents/memory/assistant/evaluation | their own migrations | later stages |
 
 Migrations are monotonically numbered SQL files under `packages/db/migrations/` and
 `packages/enterprise-db/migrations/`, applied with the checksummed ledger runner. Destructive
@@ -68,7 +69,9 @@ update/delete grant.
 
 Evidence can support a case but is immutable. Authoritative facts may expire for execution
 while the historical snapshot remains valid for audit. Raw uploads and personal address
-content are not written to audit rows.
+content are not written to audit rows. F18 attaches one `knowledge_chunk` evidence row per
+published knowledge chunk; the evidence locator pins the knowledge version and exact code-point
+span, and its captured facts keep the chunk text and heading path.
 
 ## Audit and trace
 
@@ -349,3 +352,23 @@ insert the F13 reanalysis handoff in the same transaction as that request. Recei
 entity changes remain typed/queryable where they drive decisions; the raw simulator receipt is an
 audit copy, not the source of truth. F13A execution rows are frozen once any item starts; F13B
 reconciles before any reissue or cancellation.
+
+## Versioned knowledge (F18)
+
+Migration `packages/db/migrations/0016_knowledge.sql` adds:
+
+- `knowledge_documents`: sandbox-scoped source identity with kind `policy` or `informational`,
+  an optional policy ID and a registered fixture path.
+- `knowledge_versions`: immutable content hash, optional policy bundle revision/content hash,
+  effective-from/until dates, publication timestamps and the `draft`, `published`, `superseded`
+  or `withdrawn` state. A version can be superseded only by publishing a newer version, and its
+  chunks and evidence remain readable for historical traces.
+- `knowledge_chunks`: heading path, exact text, code-point locator, content hash and the attached
+  evidence ID. A GIN expression index on `to_tsvector('english', text)` serves lexical search.
+- `knowledge_retrieval_state`: one committed retrieval generation per sandbox, incremented in
+  the publication/revocation transaction.
+
+`nexus_api` may insert documents, versions and chunks, update only the version lifecycle columns
+and chunk evidence link, and read/insert/update the retrieval generation. It may also update the
+workflow-run wait columns because a policy publication expires waiting approvals. No runtime
+role deletes knowledge history.

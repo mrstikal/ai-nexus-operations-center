@@ -63,6 +63,17 @@ const {
   GatewayResultSchema,
   GatewaySuccessSchema,
   IdempotencyKeySchema,
+  KnowledgeChunkLocatorSchema,
+  KnowledgeChunkSchema,
+  KnowledgeDocumentSchema,
+  KnowledgeIngestRequestSchema,
+  KnowledgeIngestResponseSchema,
+  KnowledgeListResponseSchema,
+  KnowledgePublicationResponseSchema,
+  KnowledgeRevokeRequestSchema,
+  KnowledgeSearchRequestSchema,
+  KnowledgeSearchResponseSchema,
+  KnowledgeVersionSchema,
   LoginRequestSchema,
   NoActionInputSchema,
   NoActionResponseSchema,
@@ -154,6 +165,17 @@ const COMPONENTS = [
   ['DocumentVersion', DocumentVersionSchema],
   ['DocumentUploadResponse', DocumentUploadResponseSchema],
   ['DocumentListResponse', DocumentListResponseSchema],
+  ['KnowledgeChunkLocator', KnowledgeChunkLocatorSchema],
+  ['KnowledgeChunk', KnowledgeChunkSchema],
+  ['KnowledgeVersion', KnowledgeVersionSchema],
+  ['KnowledgeDocument', KnowledgeDocumentSchema],
+  ['KnowledgeIngestRequest', KnowledgeIngestRequestSchema],
+  ['KnowledgeIngestResponse', KnowledgeIngestResponseSchema],
+  ['KnowledgeSearchRequest', KnowledgeSearchRequestSchema],
+  ['KnowledgeSearchResponse', KnowledgeSearchResponseSchema],
+  ['KnowledgePublicationResponse', KnowledgePublicationResponseSchema],
+  ['KnowledgeRevokeRequest', KnowledgeRevokeRequestSchema],
+  ['KnowledgeListResponse', KnowledgeListResponseSchema],
   ['EvidenceKind', EvidenceKindSchema],
   ['FieldSource', FieldSourceSchema],
   ['ExtractedField', ExtractedFieldSchema],
@@ -1177,6 +1199,204 @@ function registerDocumentPaths(registry) {
   });
 }
 
+function registerKnowledgePaths(registry) {
+  registry.registerPath({
+    method: 'get',
+    path: '/api/v1/knowledge',
+    tags: ['knowledge'],
+    summary: 'List knowledge documents and their latest version in the active sandbox',
+    security: [{ sessionCookie: [] }],
+    request: {
+      query: z.object({
+        cursor: z.string().optional(),
+        limit: z.string().optional(),
+      }),
+    },
+    responses: {
+      200: {
+        description: 'Knowledge catalog page',
+        content: { 'application/json': { schema: KnowledgeListResponseSchema } },
+      },
+      400: {
+        description: 'Invalid cursor or limit',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Knowledge storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/knowledge',
+    tags: ['knowledge'],
+    summary: 'Ingest a registered knowledge fixture as an immutable draft version',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({
+        Origin: z.string(),
+        'X-CSRF-Token': z.string(),
+      }),
+      body: {
+        content: { 'application/json': { schema: KnowledgeIngestRequestSchema } },
+      },
+    },
+    responses: {
+      201: {
+        description: 'Draft knowledge version with deterministic chunks',
+        content: { 'application/json': { schema: KnowledgeIngestResponseSchema } },
+      },
+      400: {
+        description: 'Invalid ingest body, path or bounds',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Admin role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Knowledge storage or policy bundle unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/knowledge/search',
+    tags: ['knowledge'],
+    summary: 'Search published knowledge chunks with lexical full-text ranking',
+    security: [{ sessionCookie: [] }],
+    request: {
+      body: {
+        content: { 'application/json': { schema: KnowledgeSearchRequestSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Ranked published chunks or an explicit no-evidence outcome',
+        content: { 'application/json': { schema: KnowledgeSearchResponseSchema } },
+      },
+      400: {
+        description: 'Invalid query, limit or filter',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Operator role required',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Knowledge search unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/knowledge/{documentId}/publish',
+    tags: ['knowledge'],
+    summary: 'Publish the latest draft version after policy hash validation',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({
+        Origin: z.string(),
+        'X-CSRF-Token': z.string(),
+      }),
+      params: z.object({ documentId: UuidSchema }),
+    },
+    responses: {
+      200: {
+        description:
+          'Published version, committed retrieval generation and expired proposal IDs',
+        content: {
+          'application/json': { schema: KnowledgePublicationResponseSchema },
+        },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Admin role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Knowledge document not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'No draft version or policy text does not match the canonical bundle',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Knowledge storage or policy bundle unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+  registry.registerPath({
+    method: 'post',
+    path: '/api/v1/knowledge/{documentId}/revoke',
+    tags: ['knowledge'],
+    summary: 'Withdraw a published knowledge version and invalidate policy dependents',
+    security: [{ sessionCookie: [] }],
+    request: {
+      headers: z.object({
+        Origin: z.string(),
+        'X-CSRF-Token': z.string(),
+      }),
+      params: z.object({ documentId: UuidSchema }),
+      body: {
+        content: { 'application/json': { schema: KnowledgeRevokeRequestSchema } },
+      },
+    },
+    responses: {
+      200: {
+        description: 'Withdrawn version, committed retrieval generation and expired proposals',
+        content: {
+          'application/json': { schema: KnowledgePublicationResponseSchema },
+        },
+      },
+      400: {
+        description: 'Invalid revocation body',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      401: {
+        description: 'Session missing or expired',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      403: {
+        description: 'Admin role, origin or CSRF check failed',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      404: {
+        description: 'Knowledge document not found in the active sandbox',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      409: {
+        description: 'No published version matches the revocation',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+      503: {
+        description: 'Knowledge storage unavailable',
+        content: { 'application/problem+json': { schema: ProblemSchema } },
+      },
+    },
+  });
+}
+
 function registerAuthPaths(registry) {
   registry.registerComponent('securitySchemes', 'sessionCookie', {
     type: 'apiKey',
@@ -1306,6 +1526,7 @@ export function generateOpenApiDocument() {
   registerProposalPaths(registry);
   registerDecisionPaths(registry);
   registerDocumentPaths(registry);
+  registerKnowledgePaths(registry);
   const generator = new OpenApiGeneratorV31(registry.definitions);
   const document = generator.generateDocument({
     openapi: '3.1.0',
@@ -1331,10 +1552,10 @@ export function generateOpenApiDocument() {
   }
 
   document['x-nexus-implementation-status'] = {
-    stage: 'F17',
+    stage: 'F18',
     contracts: 'declared-and-frozen',
-    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections',
-    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, document upload/list/detail/content and extraction correction; later controllers are declared in their owner stages',
+    httpControllers: 'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections, knowledge catalog/ingest/publication/revocation and lexical search',
+    openapiPaths: 'auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, document upload/list/detail/content and extraction correction, knowledge catalog/ingest/publication/revocation and lexical search; later controllers are declared in their owner stages',
   };
 
   return document;

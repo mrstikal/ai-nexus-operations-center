@@ -30,6 +30,11 @@ export const AUDIT_ALLOWED_KEYS = [
   'parserVersion',
   'parentDocumentId',
   'parentDocumentVersionId',
+  'sourcePath',
+  'chunkCount',
+  'retrievalGeneration',
+  'expiredProposalCount',
+  'reason',
 ] as const;
 export type AuditDetailKey = (typeof AUDIT_ALLOWED_KEYS)[number];
 export type AuditDetails = Partial<Record<AuditDetailKey, string | number | boolean | null>>;

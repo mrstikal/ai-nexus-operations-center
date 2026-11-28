@@ -353,6 +353,30 @@
       ],
       "@nexus/application/documents/correct": [
         "./packages/application/src/documents/correct.ts"
+      ],
+      "@nexus/application/ports/knowledge": [
+        "./packages/application/src/ports/knowledge.ts"
+      ],
+      "@nexus/application/knowledge/chunk": [
+        "./packages/application/src/knowledge/chunk.ts"
+      ],
+      "@nexus/application/knowledge/errors": [
+        "./packages/application/src/knowledge/errors.ts"
+      ],
+      "@nexus/application/knowledge/ingest": [
+        "./packages/application/src/knowledge/ingest.ts"
+      ],
+      "@nexus/application/knowledge/publish": [
+        "./packages/application/src/knowledge/publish.ts"
+      ],
+      "@nexus/application/knowledge/lexical-retriever": [
+        "./packages/application/src/knowledge/lexical-retriever.ts"
+      ],
+      "@nexus/db/schema/knowledge": [
+        "./packages/db/src/schema/knowledge.ts"
+      ],
+      "@nexus/db/repositories/knowledge": [
+        "./packages/db/src/repositories/knowledge.ts"
       ]
     },
     "skipLibCheck": true

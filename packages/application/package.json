@@ -171,6 +171,30 @@
     "./documents/correct": {
       "types": "./dist/documents/correct.d.ts",
       "default": "./dist/documents/correct.js"
+    },
+    "./ports/knowledge": {
+      "types": "./dist/ports/knowledge.d.ts",
+      "default": "./dist/ports/knowledge.js"
+    },
+    "./knowledge/chunk": {
+      "types": "./dist/knowledge/chunk.d.ts",
+      "default": "./dist/knowledge/chunk.js"
+    },
+    "./knowledge/errors": {
+      "types": "./dist/knowledge/errors.d.ts",
+      "default": "./dist/knowledge/errors.js"
+    },
+    "./knowledge/ingest": {
+      "types": "./dist/knowledge/ingest.d.ts",
+      "default": "./dist/knowledge/ingest.js"
+    },
+    "./knowledge/publish": {
+      "types": "./dist/knowledge/publish.d.ts",
+      "default": "./dist/knowledge/publish.js"
+    },
+    "./knowledge/lexical-retriever": {
+      "types": "./dist/knowledge/lexical-retriever.d.ts",
+      "default": "./dist/knowledge/lexical-retriever.js"
     }
   },
   "scripts": {

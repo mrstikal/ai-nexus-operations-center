@@ -406,3 +406,27 @@ and rejects extracted values without a source. `document.classification.v1` rema
 schema. The correction request contains a top-level reason and per-field reasons; `If-Match`
 carries the expected immutable revision number. The resulting revision exposes the request-level
 `requestReason` and stays nullable for model-authored revisions.
+
+## Knowledge contracts (F18)
+
+`packages/contracts/src/knowledge.ts` declares the closed knowledge vocabulary:
+`KnowledgeDocumentKind` (`policy` or `informational`), `KnowledgeVersionState` (`draft`,
+`published`, `superseded`, `withdrawn`), the version/document views, the chunk locator
+(`sourcePath`, `headingPath`, code-point `startOffset`/`endOffset`) and the retrieval chunk
+(`id`, `documentVersionId`, `policyBundleVersion`, `text`, `locator`, `score`, `evidenceId`).
+
+`KnowledgeIngestRequest` accepts only a registered fixture path, a kind, an optional policy ID
+for policy documents and an optional effective time. `KnowledgeSearchRequest` bounds the query
+to 500 plain-text characters, the limit to six and accepts policy ID, kind and effective-time
+filters. `KnowledgeSearchResponse` is `{ mode: 'lexical', queryId, noEvidence, chunks }`; an
+empty result is explicit and never fabricates a citation. `KnowledgePublicationResponse`
+returns the current document/version, the committed retrieval generation, whether the state
+changed and the IDs of proposals expired by a policy change. `KnowledgeRevokeRequest` carries
+an optional version ID and a bounded reason. `KnowledgeListResponse` is cursor-paginated.
+
+The evidence contract adds `knowledge_chunk`; each published chunk writes one same-sandbox
+evidence row whose locator pins the knowledge version and exact span, and whose captured facts
+keep the heading path and text. The OpenAPI paths are `GET /api/v1/knowledge`,
+`POST /api/v1/knowledge`, `POST /api/v1/knowledge/{documentId}/publish`,
+`POST /api/v1/knowledge/{documentId}/revoke` and `POST /api/v1/knowledge/search`. See
+[KNOWLEDGE.md](KNOWLEDGE.md).

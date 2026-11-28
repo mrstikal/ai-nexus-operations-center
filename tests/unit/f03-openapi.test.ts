@@ -35,6 +35,10 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/documents/{documentId}/content',
       '/api/v1/documents/{documentId}/extraction',
       '/api/v1/evidence/{evidenceId}',
+      '/api/v1/knowledge',
+      '/api/v1/knowledge/search',
+      '/api/v1/knowledge/{documentId}/publish',
+      '/api/v1/knowledge/{documentId}/revoke',
       '/api/v1/proposals/{proposalId}',
       '/api/v1/proposals/{proposalId}/approve',
       '/api/v1/proposals/{proposalId}/clarification',
@@ -48,9 +52,9 @@ describe('F03 OpenAPI fixture parity', () => {
       '/api/v1/sandbox',
     ]);
     expect(document['x-nexus-implementation-status']).toMatchObject({
-      stage: 'F17',
+      stage: 'F18',
       httpControllers:
-        'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections',
+        'auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections, knowledge catalog/ingest/publication/revocation and lexical search',
     });
     const upload = document.paths['/api/v1/documents'] as {
       post: {

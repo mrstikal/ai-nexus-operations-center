@@ -12,6 +12,7 @@ export const EvidenceKindSchema = z.enum([
   'enterprise_snapshot',
   'document_page',
   'policy_version',
+  'knowledge_chunk',
   'calculation',
   'historical_memory',
   'reconciliation_report',

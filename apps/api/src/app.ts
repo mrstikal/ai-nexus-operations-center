@@ -6,6 +6,7 @@ import { CasesModule } from './cases/module.js';
 import { DocumentsModule } from './documents/module.js';
 import { ActionsModule } from './actions.module.js';
 import { IngressModule } from './ingress/module.js';
+import { KnowledgeModule } from './knowledge/module.js';
 import { ProposalsModule } from './proposals/module.js';
 import { RunsModule } from './runs/module.js';
 import { ProblemFilter } from './errors.js';
@@ -48,6 +49,7 @@ export class HealthController {
     CasesModule,
     DocumentsModule,
     IngressModule,
+    KnowledgeModule,
     RunsModule,
     ProposalsModule,
   ],

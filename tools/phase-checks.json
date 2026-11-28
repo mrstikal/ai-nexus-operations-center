@@ -2419,10 +2419,80 @@
         "F17"
       ],
       "checkpoint": false,
-      "unitTests": [],
-      "integrationTests": [],
+      "unitTests": [
+        "tests/unit/f18-knowledge.test.ts"
+      ],
+      "integrationTests": [
+        "tests/integration/f18-knowledge.test.ts"
+      ],
       "e2eTests": [],
-      "artifacts": []
+      "artifacts": [
+        {
+          "path": "packages/contracts/src/knowledge.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/ports/knowledge.ts",
+          "minBytes": 600
+        },
+        {
+          "path": "packages/application/src/knowledge/chunk.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/application/src/knowledge/ingest.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/application/src/knowledge/publish.ts",
+          "minBytes": 3000
+        },
+        {
+          "path": "packages/application/src/knowledge/lexical-retriever.ts",
+          "minBytes": 2500
+        },
+        {
+          "path": "packages/db/src/schema/knowledge.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "packages/db/src/repositories/knowledge.ts",
+          "minBytes": 15000
+        },
+        {
+          "path": "packages/db/migrations/0016_knowledge.sql",
+          "minBytes": 4000
+        },
+        {
+          "path": "apps/api/src/knowledge/controller.ts",
+          "minBytes": 4000
+        },
+        {
+          "path": "fixtures/knowledge/support-guide.md",
+          "minBytes": 1000
+        },
+        {
+          "path": "fixtures/security/inject-policy.md",
+          "minBytes": 500
+        },
+        {
+          "path": "tests/integration/f18-knowledge.test.ts",
+          "minBytes": 12000
+        },
+        {
+          "path": "tests/unit/f18-knowledge.test.ts",
+          "minBytes": 1000
+        },
+        {
+          "path": "docs/KNOWLEDGE.md",
+          "minBytes": 2000
+        },
+        {
+          "path": "docs/adr/007-lexical-hybrid-retrieval.md",
+          "minBytes": 1500
+        }
+      ],
+      "requiresInfrastructure": true
     },
     {
       "id": "F19",

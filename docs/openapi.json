@@ -3217,12 +3217,1239 @@
         ],
         "additionalProperties": false
       },
+      "KnowledgeChunkLocator": {
+        "type": "object",
+        "properties": {
+          "sourcePath": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+          },
+          "headingPath": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "maxItems": 8
+          },
+          "startOffset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000000
+          },
+          "endOffset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000000
+          }
+        },
+        "required": [
+          "sourcePath",
+          "headingPath",
+          "startOffset",
+          "endOffset"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeChunk": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "documentVersionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "policyBundleVersion": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000
+          },
+          "locator": {
+            "type": "object",
+            "properties": {
+              "sourcePath": {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+              },
+              "headingPath": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 200
+                },
+                "maxItems": 8
+              },
+              "startOffset": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000000
+              },
+              "endOffset": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000000
+              }
+            },
+            "required": [
+              "sourcePath",
+              "headingPath",
+              "startOffset",
+              "endOffset"
+            ],
+            "additionalProperties": false
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0
+          },
+          "evidenceId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          }
+        },
+        "required": [
+          "id",
+          "documentVersionId",
+          "policyBundleVersion",
+          "text",
+          "locator",
+          "score",
+          "evidenceId"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "documentId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "versionNo": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "superseded",
+              "withdrawn"
+            ]
+          },
+          "contentSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "policyBundleVersion": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "policyContentHash": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          },
+          "effectiveUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          },
+          "publishedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          },
+          "withdrawnAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          },
+          "sourcePath": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+          },
+          "charCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000000
+          },
+          "chunkCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "createdAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          }
+        },
+        "required": [
+          "id",
+          "documentId",
+          "versionNo",
+          "state",
+          "contentSha256",
+          "policyBundleVersion",
+          "policyContentHash",
+          "effectiveFrom",
+          "effectiveUntil",
+          "publishedAt",
+          "withdrawnAt",
+          "sourcePath",
+          "charCount",
+          "chunkCount",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeDocument": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "sandboxId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "policy",
+              "informational"
+            ]
+          },
+          "policyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "sourcePath": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+          },
+          "createdAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          },
+          "latestVersion": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "documentId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "versionNo": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "draft",
+                  "published",
+                  "superseded",
+                  "withdrawn"
+                ]
+              },
+              "contentSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "policyBundleVersion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "policyContentHash": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "effectiveFrom": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "effectiveUntil": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "publishedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "withdrawnAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "sourcePath": {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+              },
+              "charCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000000
+              },
+              "chunkCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "createdAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              }
+            },
+            "required": [
+              "id",
+              "documentId",
+              "versionNo",
+              "state",
+              "contentSha256",
+              "policyBundleVersion",
+              "policyContentHash",
+              "effectiveFrom",
+              "effectiveUntil",
+              "publishedAt",
+              "withdrawnAt",
+              "sourcePath",
+              "charCount",
+              "chunkCount",
+              "createdAt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "sandboxId",
+          "kind",
+          "policyId",
+          "sourcePath",
+          "createdAt",
+          "latestVersion"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeIngestRequest": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "policy",
+              "informational"
+            ]
+          },
+          "policyId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 120,
+            "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          }
+        },
+        "required": [
+          "kind",
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeIngestResponse": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "sandboxId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "policy",
+                  "informational"
+                ]
+              },
+              "policyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "sourcePath": {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+              },
+              "createdAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "latestVersion": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "documentId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "versionNo": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "published",
+                      "superseded",
+                      "withdrawn"
+                    ]
+                  },
+                  "contentSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "policyBundleVersion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "policyContentHash": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "effectiveFrom": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "effectiveUntil": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "publishedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "withdrawnAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "sourcePath": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                  },
+                  "charCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "chunkCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  }
+                },
+                "required": [
+                  "id",
+                  "documentId",
+                  "versionNo",
+                  "state",
+                  "contentSha256",
+                  "policyBundleVersion",
+                  "policyContentHash",
+                  "effectiveFrom",
+                  "effectiveUntil",
+                  "publishedAt",
+                  "withdrawnAt",
+                  "sourcePath",
+                  "charCount",
+                  "chunkCount",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "sandboxId",
+              "kind",
+              "policyId",
+              "sourcePath",
+              "createdAt",
+              "latestVersion"
+            ],
+            "additionalProperties": false
+          },
+          "deduplicated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "document",
+          "deduplicated"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeSearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "policyId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "policy",
+              "informational"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeSearchResponse": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "lexical"
+            ]
+          },
+          "queryId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "noEvidence": {
+            "type": "boolean"
+          },
+          "chunks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "documentVersionId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "policyBundleVersion": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "locator": {
+                  "type": "object",
+                  "properties": {
+                    "sourcePath": {
+                      "type": "string",
+                      "maxLength": 120,
+                      "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                    },
+                    "headingPath": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "maxItems": 8
+                    },
+                    "startOffset": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000000
+                    },
+                    "endOffset": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000000
+                    }
+                  },
+                  "required": [
+                    "sourcePath",
+                    "headingPath",
+                    "startOffset",
+                    "endOffset"
+                  ],
+                  "additionalProperties": false
+                },
+                "score": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "evidenceId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                }
+              },
+              "required": [
+                "id",
+                "documentVersionId",
+                "policyBundleVersion",
+                "text",
+                "locator",
+                "score",
+                "evidenceId"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 6
+          }
+        },
+        "required": [
+          "mode",
+          "queryId",
+          "noEvidence",
+          "chunks"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgePublicationResponse": {
+        "type": "object",
+        "properties": {
+          "document": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "sandboxId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "policy",
+                  "informational"
+                ]
+              },
+              "policyId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[a-z][a-z0-9-]*$"
+              },
+              "sourcePath": {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+              },
+              "createdAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "latestVersion": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "documentId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "versionNo": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000000
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "published",
+                      "superseded",
+                      "withdrawn"
+                    ]
+                  },
+                  "contentSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "policyBundleVersion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "policyContentHash": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "effectiveFrom": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "effectiveUntil": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "publishedAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "withdrawnAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  },
+                  "sourcePath": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                  },
+                  "charCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000000
+                  },
+                  "chunkCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 10000
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  }
+                },
+                "required": [
+                  "id",
+                  "documentId",
+                  "versionNo",
+                  "state",
+                  "contentSha256",
+                  "policyBundleVersion",
+                  "policyContentHash",
+                  "effectiveFrom",
+                  "effectiveUntil",
+                  "publishedAt",
+                  "withdrawnAt",
+                  "sourcePath",
+                  "charCount",
+                  "chunkCount",
+                  "createdAt"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "sandboxId",
+              "kind",
+              "policyId",
+              "sourcePath",
+              "createdAt",
+              "latestVersion"
+            ],
+            "additionalProperties": false
+          },
+          "version": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "documentId": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+              },
+              "versionNo": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000
+              },
+              "state": {
+                "type": "string",
+                "enum": [
+                  "draft",
+                  "published",
+                  "superseded",
+                  "withdrawn"
+                ]
+              },
+              "contentSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "policyBundleVersion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "policyContentHash": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "effectiveFrom": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "effectiveUntil": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "publishedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "withdrawnAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              },
+              "sourcePath": {
+                "type": "string",
+                "maxLength": 120,
+                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+              },
+              "charCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000000
+              },
+              "chunkCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "createdAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+              }
+            },
+            "required": [
+              "id",
+              "documentId",
+              "versionNo",
+              "state",
+              "contentSha256",
+              "policyBundleVersion",
+              "policyContentHash",
+              "effectiveFrom",
+              "effectiveUntil",
+              "publishedAt",
+              "withdrawnAt",
+              "sourcePath",
+              "charCount",
+              "chunkCount",
+              "createdAt"
+            ],
+            "additionalProperties": false
+          },
+          "retrievalGeneration": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "expiredProposalIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+            },
+            "maxItems": 1000
+          }
+        },
+        "required": [
+          "document",
+          "version",
+          "retrievalGeneration",
+          "changed",
+          "expiredProposalIds"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeRevokeRequest": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeListResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "sandboxId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "policy",
+                    "informational"
+                  ]
+                },
+                "policyId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 64,
+                  "pattern": "^[a-z][a-z0-9-]*$"
+                },
+                "sourcePath": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                },
+                "latestVersion": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "documentId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "versionNo": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 1000000
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "published",
+                        "superseded",
+                        "withdrawn"
+                      ]
+                    },
+                    "contentSha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "policyBundleVersion": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "policyContentHash": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "effectiveFrom": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "effectiveUntil": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "publishedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "withdrawnAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    },
+                    "sourcePath": {
+                      "type": "string",
+                      "maxLength": 120,
+                      "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                    },
+                    "charCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000000
+                    },
+                    "chunkCount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 10000
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "documentId",
+                    "versionNo",
+                    "state",
+                    "contentSha256",
+                    "policyBundleVersion",
+                    "policyContentHash",
+                    "effectiveFrom",
+                    "effectiveUntil",
+                    "publishedAt",
+                    "withdrawnAt",
+                    "sourcePath",
+                    "charCount",
+                    "chunkCount",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "id",
+                "sandboxId",
+                "kind",
+                "policyId",
+                "sourcePath",
+                "createdAt",
+                "latestVersion"
+              ],
+              "additionalProperties": false
+            },
+            "maxItems": 100
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "additionalProperties": false
+      },
       "EvidenceKind": {
         "type": "string",
         "enum": [
           "enterprise_snapshot",
           "document_page",
           "policy_version",
+          "knowledge_chunk",
           "calculation",
           "historical_memory",
           "reconciliation_report"
@@ -16560,6 +17787,7 @@
               "enterprise_snapshot",
               "document_page",
               "policy_version",
+              "knowledge_chunk",
               "calculation",
               "historical_memory",
               "reconciliation_report"
@@ -38470,13 +39698,2336 @@
           }
         }
       }
+    },
+    "/api/v1/knowledge": {
+      "get": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "List knowledge documents and their latest version in the active sandbox",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Knowledge catalog page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "sandboxId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "policy",
+                              "informational"
+                            ]
+                          },
+                          "policyId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "minLength": 1,
+                            "maxLength": 64,
+                            "pattern": "^[a-z][a-z0-9-]*$"
+                          },
+                          "sourcePath": {
+                            "type": "string",
+                            "maxLength": 120,
+                            "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                          },
+                          "latestVersion": {
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                              },
+                              "documentId": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                              },
+                              "versionNo": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 1000000
+                              },
+                              "state": {
+                                "type": "string",
+                                "enum": [
+                                  "draft",
+                                  "published",
+                                  "superseded",
+                                  "withdrawn"
+                                ]
+                              },
+                              "contentSha256": {
+                                "type": "string",
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "policyBundleVersion": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "minLength": 1,
+                                "maxLength": 100
+                              },
+                              "policyContentHash": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "pattern": "^[a-f0-9]{64}$"
+                              },
+                              "effectiveFrom": {
+                                "type": "string",
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                              },
+                              "effectiveUntil": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                              },
+                              "publishedAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                              },
+                              "withdrawnAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                              },
+                              "sourcePath": {
+                                "type": "string",
+                                "maxLength": 120,
+                                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                              },
+                              "charCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10000000
+                              },
+                              "chunkCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10000
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "documentId",
+                              "versionNo",
+                              "state",
+                              "contentSha256",
+                              "policyBundleVersion",
+                              "policyContentHash",
+                              "effectiveFrom",
+                              "effectiveUntil",
+                              "publishedAt",
+                              "withdrawnAt",
+                              "sourcePath",
+                              "charCount",
+                              "chunkCount",
+                              "createdAt"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "sandboxId",
+                          "kind",
+                          "policyId",
+                          "sourcePath",
+                          "createdAt",
+                          "latestVersion"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 100
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 512
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid cursor or limit",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Knowledge storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Ingest a registered knowledge fixture as an immutable draft version",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "Origin",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "X-CSRF-Token",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "policy",
+                      "informational"
+                    ]
+                  },
+                  "policyId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "path": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                  },
+                  "effectiveFrom": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "path"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Draft knowledge version with deterministic chunks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "document": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "sandboxId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "policy",
+                            "informational"
+                          ]
+                        },
+                        "policyId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^[a-z][a-z0-9-]*$"
+                        },
+                        "sourcePath": {
+                          "type": "string",
+                          "maxLength": 120,
+                          "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "latestVersion": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "documentId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "versionNo": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 1000000
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "draft",
+                                "published",
+                                "superseded",
+                                "withdrawn"
+                              ]
+                            },
+                            "contentSha256": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "policyBundleVersion": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "minLength": 1,
+                              "maxLength": 100
+                            },
+                            "policyContentHash": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "effectiveFrom": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "effectiveUntil": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "publishedAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "withdrawnAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "sourcePath": {
+                              "type": "string",
+                              "maxLength": 120,
+                              "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                            },
+                            "charCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000000
+                            },
+                            "chunkCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "documentId",
+                            "versionNo",
+                            "state",
+                            "contentSha256",
+                            "policyBundleVersion",
+                            "policyContentHash",
+                            "effectiveFrom",
+                            "effectiveUntil",
+                            "publishedAt",
+                            "withdrawnAt",
+                            "sourcePath",
+                            "charCount",
+                            "chunkCount",
+                            "createdAt"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sandboxId",
+                        "kind",
+                        "policyId",
+                        "sourcePath",
+                        "createdAt",
+                        "latestVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "deduplicated": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "document",
+                    "deduplicated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ingest body, path or bounds",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin role, origin or CSRF check failed",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Knowledge storage or policy bundle unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/search": {
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Search published knowledge chunks with lexical full-text ranking",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 6
+                  },
+                  "policyId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[a-z][a-z0-9-]*$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "policy",
+                      "informational"
+                    ]
+                  },
+                  "effectiveAt": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                  }
+                },
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked published chunks or an explicit no-evidence outcome",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mode": {
+                      "type": "string",
+                      "enum": [
+                        "lexical"
+                      ]
+                    },
+                    "queryId": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                    },
+                    "noEvidence": {
+                      "type": "boolean"
+                    },
+                    "chunks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "documentVersionId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          },
+                          "policyBundleVersion": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "minLength": 1,
+                            "maxLength": 100
+                          },
+                          "text": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 20000
+                          },
+                          "locator": {
+                            "type": "object",
+                            "properties": {
+                              "sourcePath": {
+                                "type": "string",
+                                "maxLength": 120,
+                                "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                              },
+                              "headingPath": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 200
+                                },
+                                "maxItems": 8
+                              },
+                              "startOffset": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10000000
+                              },
+                              "endOffset": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10000000
+                              }
+                            },
+                            "required": [
+                              "sourcePath",
+                              "headingPath",
+                              "startOffset",
+                              "endOffset"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "score": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "evidenceId": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "documentVersionId",
+                          "policyBundleVersion",
+                          "text",
+                          "locator",
+                          "score",
+                          "evidenceId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "maxItems": 6
+                    }
+                  },
+                  "required": [
+                    "mode",
+                    "queryId",
+                    "noEvidence",
+                    "chunks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query, limit or filter",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Operator role required",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Knowledge search unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/{documentId}/publish": {
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Publish the latest draft version after policy hash validation",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+            },
+            "required": true,
+            "name": "documentId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "Origin",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "X-CSRF-Token",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published version, committed retrieval generation and expired proposal IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "document": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "sandboxId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "policy",
+                            "informational"
+                          ]
+                        },
+                        "policyId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^[a-z][a-z0-9-]*$"
+                        },
+                        "sourcePath": {
+                          "type": "string",
+                          "maxLength": 120,
+                          "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "latestVersion": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "documentId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "versionNo": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 1000000
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "draft",
+                                "published",
+                                "superseded",
+                                "withdrawn"
+                              ]
+                            },
+                            "contentSha256": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "policyBundleVersion": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "minLength": 1,
+                              "maxLength": 100
+                            },
+                            "policyContentHash": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "effectiveFrom": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "effectiveUntil": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "publishedAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "withdrawnAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "sourcePath": {
+                              "type": "string",
+                              "maxLength": 120,
+                              "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                            },
+                            "charCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000000
+                            },
+                            "chunkCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "documentId",
+                            "versionNo",
+                            "state",
+                            "contentSha256",
+                            "policyBundleVersion",
+                            "policyContentHash",
+                            "effectiveFrom",
+                            "effectiveUntil",
+                            "publishedAt",
+                            "withdrawnAt",
+                            "sourcePath",
+                            "charCount",
+                            "chunkCount",
+                            "createdAt"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sandboxId",
+                        "kind",
+                        "policyId",
+                        "sourcePath",
+                        "createdAt",
+                        "latestVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "version": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "documentId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "versionNo": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1000000
+                        },
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "draft",
+                            "published",
+                            "superseded",
+                            "withdrawn"
+                          ]
+                        },
+                        "contentSha256": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "policyBundleVersion": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "policyContentHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "effectiveFrom": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "effectiveUntil": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "publishedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "withdrawnAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "sourcePath": {
+                          "type": "string",
+                          "maxLength": 120,
+                          "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                        },
+                        "charCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 10000000
+                        },
+                        "chunkCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 10000
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "documentId",
+                        "versionNo",
+                        "state",
+                        "contentSha256",
+                        "policyBundleVersion",
+                        "policyContentHash",
+                        "effectiveFrom",
+                        "effectiveUntil",
+                        "publishedAt",
+                        "withdrawnAt",
+                        "sourcePath",
+                        "charCount",
+                        "chunkCount",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "retrievalGeneration": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 2147483647
+                    },
+                    "changed": {
+                      "type": "boolean"
+                    },
+                    "expiredProposalIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                      },
+                      "maxItems": 1000
+                    }
+                  },
+                  "required": [
+                    "document",
+                    "version",
+                    "retrievalGeneration",
+                    "changed",
+                    "expiredProposalIds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin role, origin or CSRF check failed",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Knowledge document not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No draft version or policy text does not match the canonical bundle",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Knowledge storage or policy bundle unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/knowledge/{documentId}/revoke": {
+      "post": {
+        "tags": [
+          "knowledge"
+        ],
+        "summary": "Withdraw a published knowledge version and invalidate policy dependents",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+            },
+            "required": true,
+            "name": "documentId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "Origin",
+            "in": "header"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "X-CSRF-Token",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "versionId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Withdrawn version, committed retrieval generation and expired proposals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "document": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "sandboxId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "policy",
+                            "informational"
+                          ]
+                        },
+                        "policyId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 64,
+                          "pattern": "^[a-z][a-z0-9-]*$"
+                        },
+                        "sourcePath": {
+                          "type": "string",
+                          "maxLength": 120,
+                          "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "latestVersion": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "documentId": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                            },
+                            "versionNo": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 1000000
+                            },
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "draft",
+                                "published",
+                                "superseded",
+                                "withdrawn"
+                              ]
+                            },
+                            "contentSha256": {
+                              "type": "string",
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "policyBundleVersion": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "minLength": 1,
+                              "maxLength": 100
+                            },
+                            "policyContentHash": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^[a-f0-9]{64}$"
+                            },
+                            "effectiveFrom": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "effectiveUntil": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "publishedAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "withdrawnAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            },
+                            "sourcePath": {
+                              "type": "string",
+                              "maxLength": 120,
+                              "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                            },
+                            "charCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000000
+                            },
+                            "chunkCount": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 10000
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "documentId",
+                            "versionNo",
+                            "state",
+                            "contentSha256",
+                            "policyBundleVersion",
+                            "policyContentHash",
+                            "effectiveFrom",
+                            "effectiveUntil",
+                            "publishedAt",
+                            "withdrawnAt",
+                            "sourcePath",
+                            "charCount",
+                            "chunkCount",
+                            "createdAt"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "sandboxId",
+                        "kind",
+                        "policyId",
+                        "sourcePath",
+                        "createdAt",
+                        "latestVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "version": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "documentId": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                        },
+                        "versionNo": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1000000
+                        },
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "draft",
+                            "published",
+                            "superseded",
+                            "withdrawn"
+                          ]
+                        },
+                        "contentSha256": {
+                          "type": "string",
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "policyBundleVersion": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "minLength": 1,
+                          "maxLength": 100
+                        },
+                        "policyContentHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^[a-f0-9]{64}$"
+                        },
+                        "effectiveFrom": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "effectiveUntil": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "publishedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "withdrawnAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        },
+                        "sourcePath": {
+                          "type": "string",
+                          "maxLength": 120,
+                          "pattern": "^fixtures\\/(?:knowledge\\/[a-z0-9][a-z0-9._-]{0,99}\\.md|security\\/inject-policy\\.md)$"
+                        },
+                        "charCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 10000000
+                        },
+                        "chunkCount": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 10000
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,9})?Z$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "documentId",
+                        "versionNo",
+                        "state",
+                        "contentSha256",
+                        "policyBundleVersion",
+                        "policyContentHash",
+                        "effectiveFrom",
+                        "effectiveUntil",
+                        "publishedAt",
+                        "withdrawnAt",
+                        "sourcePath",
+                        "charCount",
+                        "chunkCount",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "retrievalGeneration": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 2147483647
+                    },
+                    "changed": {
+                      "type": "boolean"
+                    },
+                    "expiredProposalIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i"
+                      },
+                      "maxItems": 1000
+                    }
+                  },
+                  "required": [
+                    "document",
+                    "version",
+                    "retrievalGeneration",
+                    "changed",
+                    "expiredProposalIds"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid revocation body",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session missing or expired",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin role, origin or CSRF check failed",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Knowledge document not found in the active sandbox",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No published version matches the revocation",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Knowledge storage unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64,
+                      "pattern": "^[A-Z][A-Z0-9_]*$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2000
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {},
+                      "maxItems": 50
+                    },
+                    "retryAfterMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 86400000
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "webhooks": {},
   "x-nexus-implementation-status": {
-    "stage": "F17",
+    "stage": "F18",
     "contracts": "declared-and-frozen",
-    "httpControllers": "auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections",
-    "openapiPaths": "auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, document upload/list/detail/content and extraction correction; later controllers are declared in their owner stages"
+    "httpControllers": "auth, case reads, durable case intake, proposal create/edit/read, human decisions/clarification/reanalysis, no-action control, run control and run read/SSE, document upload/list/detail/content and extraction corrections, knowledge catalog/ingest/publication/revocation and lexical search",
+    "openapiPaths": "auth, sandbox, case/evidence reads, case intake, proposal create/edit/read, human decision/clarification/reanalysis/no-action control, run control, run detail/event pages and persisted SSE, document upload/list/detail/content and extraction correction, knowledge catalog/ingest/publication/revocation and lexical search; later controllers are declared in their owner stages"
   }
 }
